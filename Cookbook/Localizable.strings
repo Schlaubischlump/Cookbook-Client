@@ -1,0 +1,35 @@
+/* 
+  Localizable.strings
+  Cookbook
+
+  Created by David Klopp on 02.03.20.
+  Copyright © 2020 David Klopp. All rights reserved.
+*/
+"RECIPES"="Recipes";
+"DESCRIPTION"="Description";
+"SOURCE"="Source";
+"PREPARATION_TIME"="Preparation time";
+"COOKING_TIME"="Cooking time";
+"TOTAL_TIME"="Total time";
+"SERVINGS"="Servings";
+"TOOLS"="Tools";
+"INGREDIENTS"="Ingredients";
+"INSTRUCTIONS"="Instructions";
+"SERVER"="Server";
+"USER"="User";
+"PASSWORD"="Password";
+"LOGIN"="Login";
+"LOGOUT"="Logout";
+"INVALID_LOGIN"="Invalid login data!";
+"ERROR_LOADING_RECIPES"="Error loading recipes!";
+"ERROR_LOADING_RECIPE_DETAILS"="Error loading recipe details!";
+"PREFERENCES_MENU"="Preferences...";
+"PREFERENCES"="Preferences";
+"SERVER_CONFIGURATION"="Server configuration";
+"SETTINGS"="Settings";
+// Used on macOS only
+"SHARE_PALETTE_LABEL"="Share";
+"SETTINGS_PALETTE_LABEL"="Settings"; // unused
+"TOGGLE_SIDEBAR_PALETTE_LABEL"="Toggle Sidebar";
+"FIXED_SPACE_PALETTE_LABEL"="Fixed space";
+"OPEN_IN_NEW_WINDOW"="Open in new window";
