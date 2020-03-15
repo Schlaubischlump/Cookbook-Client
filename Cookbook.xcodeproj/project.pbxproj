@@ -80,7 +80,6 @@
 		638BA69F2414616C007F6B74 /* PreferencesViewControlleriOS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewControlleriOS.swift; sourceTree = "<group>"; };
 		638BA6A724146198007F6B74 /* PreferencesViewControllerMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewControllerMac.swift; sourceTree = "<group>"; };
 		638BA6A824146198007F6B74 /* PreferencesSceneDelegateMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesSceneDelegateMac.swift; sourceTree = "<group>"; };
-		638BA6AB2415C2EF007F6B74 /* recipe_template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = recipe_template.html; sourceTree = "<group>"; };
 		639AE67123AF7588008244BA /* Cookbook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cookbook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		639AE67423AF7588008244BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		639AE67623AF7588008244BA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -180,7 +179,6 @@
 		638BA67F24110E7E007F6B74 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
-				638BA6AB2415C2EF007F6B74 /* recipe_template.html */,
 				638BA69724139B97007F6B74 /* Credits.rtf */,
 				639AE67C23AF7588008244BA /* Main.storyboard */,
 				639AE67F23AF758E008244BA /* Assets.xcassets */,

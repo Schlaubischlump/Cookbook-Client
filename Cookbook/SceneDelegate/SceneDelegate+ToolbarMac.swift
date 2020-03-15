@@ -13,11 +13,8 @@ extension SceneDelegate: NSToolbarDelegate {
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
                  willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
         guard let window = window else { return nil }
-        guard let splitViewController = window.rootViewController as? UISplitViewController else { return nil }
-        guard let navigationController = splitViewController.viewControllers.first as? UINavigationController else {
-            return nil
-        }
-        guard let masterController = navigationController.topViewController as? RecipesViewController else { return nil}
+        guard let splitViewController = window.rootViewController as? SplitViewController else { return nil }
+        guard let masterController = splitViewController.recipesMasterController else { return nil }
 
         if let barType = BarButtonType(rawValue: itemIdentifier.rawValue),
             let item = masterController.barButtonForType(barType) {

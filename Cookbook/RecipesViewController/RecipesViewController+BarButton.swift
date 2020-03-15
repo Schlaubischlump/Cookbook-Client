@@ -51,11 +51,11 @@ extension RecipesViewController {
 extension RecipesViewController {
     @objc func shareRecipe(item: Any) {
         // Disable the toolbar items if we request the login information
-        if self.presentedViewController != nil {
-            return
-        }
+        guard self.presentedViewController == nil else { return }
 
-        if let data = self.detailViewController?.pdfRepresentation() {
+        guard let splitViewController = self.splitViewController as? SplitViewController else { return }
+
+        if let data = splitViewController.recipeDetailController?.pdfRepresentation() {
             let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("Recipe.pdf")
             try? data.write(to: url)
             let acViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)

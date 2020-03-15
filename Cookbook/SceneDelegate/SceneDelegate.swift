@@ -17,11 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let window = window else { return }
-        guard let splitViewController = window.rootViewController as? UISplitViewController else { return }
-        guard let navigationController = splitViewController.viewControllers.last as? UINavigationController else {
-            return
-        }
-        guard let navItem = navigationController.topViewController?.navigationItem else { return }
+        guard let splitViewController = window.rootViewController as? SplitViewController else { return }
+        guard let navItem = splitViewController.recipeDetailController?.navigationItem else { return }
 
         navItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         navItem.leftItemsSupplementBackButton = true
@@ -67,13 +64,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         guard activity.title == ActivityTitle.newWindow else { return false }
 
         guard let row = activity.userInfo?["row"] as? Int,
-            let splitViewController = window?.rootViewController as? UISplitViewController,
-            let navController = splitViewController.viewControllers.first as? UINavigationController,
-            let recipesController = navController.topViewController as? RecipesViewController else { return false }
+            let splitViewController = window?.rootViewController as? SplitViewController else { return false }
 
         // Select the user specified row.
-        recipesController.firstSelectedRow = row
-        recipesController.isActivatedByNewWindowActivity = true
+        splitViewController.recipesMasterController?.firstSelectedRow = row
+        splitViewController.recipesMasterController?.isActivatedByNewWindowActivity = true
         return true
     }
 
@@ -82,28 +77,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
     func splitViewController(_ splitViewController: UISplitViewController,
                              collapseSecondary secondaryViewController: UIViewController,
                              onto primaryViewController: UIViewController) -> Bool {
-        guard let navController = secondaryViewController as? UINavigationController else { return false }
-        guard let detailController = navController.topViewController as? RecipeDetailViewController else { return false}
 
-        if detailController.detailItem == nil {
+        if (splitViewController as? SplitViewController)?.recipeDetailController?.detailItem == nil {
             // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will
             // be discarded.
             return true
         }
         return false
     }
-
-    /*func splitViewController(_ svc: UISplitViewController,
-                             willChangeTo displayMode: UISplitViewController.DisplayMode) {
-        guard let navController = svc.viewControllers.last as? UINavigationController,
-            let detailController = navController.topViewController as? RecipeDetailViewController else { return }
-
-        if detailController.isViewLoaded {
-            print("Yes is loaded")
-            UIView.animate(withDuration: 0.5, animations: {
-                // Force a relayout.
-                detailController.updateContentSize()
-            })
-        }
-    }*/
 }

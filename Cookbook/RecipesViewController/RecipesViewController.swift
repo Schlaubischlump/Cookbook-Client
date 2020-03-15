@@ -30,7 +30,6 @@ class RecipesViewController: UITableViewController {
     private var reloadObserver: NSObjectProtocol?
     private var loginObserver: NSObjectProtocol?
 
-    var detailViewController: RecipeDetailViewController?
     var recipes: [Recipe] = []
     /// First row to select when the tableView appears
     var firstSelectedRow: Int = 0
@@ -230,8 +229,6 @@ extension RecipesViewController {
                 controller.navigationItem.leftItemsSupplementBackButton = true
 
                 controller.navigationItem.rightBarButtonItem = self.barButtonForType(.share)
-
-                detailViewController = controller
             }
         }
     }

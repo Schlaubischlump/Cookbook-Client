@@ -10,6 +10,16 @@ import Foundation
 import UIKit
 
 class SplitViewController: UISplitViewController {
+    // MARK: - Variables
+    public var recipeDetailController: RecipeDetailViewController? {
+        return (self.viewControllers.last as? UINavigationController)?.topViewController as? RecipeDetailViewController
+    }
+
+    public var recipesMasterController: RecipesViewController? {
+        return (self.viewControllers.first as? UINavigationController)?.topViewController as? RecipesViewController
+    }
+
+    // MARK: - Init
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
@@ -18,12 +28,16 @@ class SplitViewController: UISplitViewController {
         super.init(coder: coder)
     }
 
+    // MARK: - Catalyst Helper
     override var displayModeButtonItem: UIBarButtonItem {
-        // Catalyst does not support SF Symbols yet and splitViewController.displayModeButtonItem is not implemented.
+        // Catalyst does not implement splitViewController.displayModeButtonItem yet.
         #if targetEnvironment(macCatalyst)
-        let size = CGSize(width: 44, height: 44)
-        return UIBarButtonItem(image: UIImage(named: "sidebar.left")?.af_imageAspectScaled(toFit: size),
-                               style: .plain, target: self, action: #selector(self.toggleSidebar))
+        let configuration = UIImage.SymbolConfiguration(weight: .light)
+        let tintColor = UIColor(displayP3Red: 86/255.0, green: 86/255.0, blue: 86/255.0, alpha: 1.0)
+        var sidebarImage = UIImage(systemName: "sidebar.left", withConfiguration: configuration)
+        sidebarImage = sidebarImage?.withTintColor(tintColor)
+        sidebarImage = sidebarImage?.af_imageAspectScaled(toFit: CGSize(width: 44, height: 44))
+        return UIBarButtonItem(image: sidebarImage, style: .plain, target: self, action: #selector(self.toggleSidebar))
         #else
         return super.displayModeButtonItem
         #endif
@@ -31,13 +45,7 @@ class SplitViewController: UISplitViewController {
 
     @objc func toggleSidebar(item: Any) {
         // Make sure to make the master view controller the new fist responder.
-        let viewController = self.viewControllers.first
-        var view = viewController?.view
-        if let navController = viewController as? UINavigationController {
-            view = navController.topViewController?.view
-        }
-
-        view?.becomeFirstResponder()
+        self.recipesMasterController?.view.becomeFirstResponder()
 
         // Toggle the sidebar button.
         UIView.animate(withDuration: 0.25, animations: {
@@ -48,13 +56,7 @@ class SplitViewController: UISplitViewController {
             }
 
             // Force a relayout of the detailView
-            let viewController = self.viewControllers.last
-            var view = viewController?.view
-            if let navController = viewController as? UINavigationController {
-                view = navController.topViewController?.view
-            }
-            view?.setNeedsLayout()
-            view?.layoutIfNeeded()
+            self.recipeDetailController?.updateContentSize()
         })
     }
 }
