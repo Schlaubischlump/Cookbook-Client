@@ -30,6 +30,9 @@ class RecipesViewController: UITableViewController {
     private var reloadObserver: NSObjectProtocol?
     private var loginObserver: NSObjectProtocol?
 
+    let searchController = UISearchController(searchResultsController: nil)
+    var filteredRecipes: [Recipe] = []
+
     var recipes: [Recipe] = []
     /// First row to select when the tableView appears
     var firstSelectedRow: Int = 0
@@ -40,7 +43,6 @@ class RecipesViewController: UITableViewController {
     // MARK: - View handling
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = NSLocalizedString("RECIPES", comment: "")
         self.splitViewController?.maximumPrimaryColumnWidth = kMaxWidth
 
         // Add drag and drop support.
@@ -49,20 +51,41 @@ class RecipesViewController: UITableViewController {
         // Customize appearance.
         self.view.backgroundColor = .systemBackground
 
+        // Add a searchbar.
+        self.searchController.searchResultsUpdater = self
+        self.searchController.obscuresBackgroundDuringPresentation = false
+        self.searchController.hidesNavigationBarDuringPresentation = false
+        self.searchController.searchBar.placeholder = NSLocalizedString("SEARCH_RECIPES", comment: "")
+        self.navigationItem.searchController = searchController
+        self.definesPresentationContext = true
+
         #if targetEnvironment(macCatalyst)
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.tableView.contentInset.top = 15.0
         self.tableView.rowHeight = 30.0
+
+        // Add a fake title.
+        self.title = ""
+
+        let label = UILabel()
+        label.text = NSLocalizedString("RECIPES", comment: "")
+        label.textColor = .darkGray
+        label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .semibold)
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: label)
+
         #else
+
+        // Set the navigationbar title.
+        self.title = NSLocalizedString("RECIPES", comment: "")
+
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.tableView.rowHeight = 80.0
+
+        // Add a settings button on the right hand side on iOS.
+        navigationItem.rightBarButtonItem = self.barButtonForType(.settings)
         #endif
 
         // Do any additional setup after loading the view.
         //navigationItem.leftBarButtonItem = editButtonItem
-
-        #if !targetEnvironment(macCatalyst)
-        navigationItem.rightBarButtonItem = self.barButtonForType(.settings)
-        #endif
 
         // If the login credentials are available load the data.
         if loginCredentials.informationIsSet() {
@@ -118,6 +141,7 @@ class RecipesViewController: UITableViewController {
         // Called after a successfull logout.
         self.logoutObserver = center.addObserver(forName: .logout, object: nil, queue: .main) { [weak self] _ in
             self?.recipes = []
+            self?.filteredRecipes = []
             self?.tableView.reloadData()
             self?.showNextcloudLogin()
         }
@@ -180,11 +204,13 @@ extension RecipesViewController {
     func reloadRecipes(_ completion: @escaping ResultHandler = { _ in }) {
         Recipe.loadRecipes(completionHandler: { recipes in
             self.recipes = recipes
+            self.filteredRecipes = recipes
             self.tableView.reloadData()
             // Reload did work.
             completion(Swift.Result.success(()))
         }, errorHandler: { err in
             self.recipes = []
+            self.filteredRecipes = []
             self.tableView.reloadData()
             // Reload failed
             completion(Swift.Result.failure(err))
@@ -221,14 +247,22 @@ extension RecipesViewController {
 extension RecipesViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
-                guard let navController = segue.destination as? UINavigationController else { return }
-                guard let controller = navController.topViewController as? RecipeDetailViewController else { return }
-                controller.detailItem = self.recipes[indexPath.row]
+            if let indexPath = self.tableView.indexPathForSelectedRow {
+                guard let navController = segue.destination as? UINavigationController,
+                    let controller = navController.topViewController as? RecipeDetailViewController else {
+                        return
+                }
+
+                let recipe = self.filteredRecipes[indexPath.row]
+                controller.detailItem = recipe
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
 
                 controller.navigationItem.rightBarButtonItem = self.barButtonForType(.share)
+
+                // Set this value, to open the currently selected row, if the search result is cleared, after an item
+                // was selected. We need to find the row of the selected item inside the unfiltered tableView.
+                self.firstSelectedRow = self.recipes.firstIndex(where: { $0.recipeID == recipe.recipeID }) ?? 0
             }
         }
     }
@@ -244,6 +278,9 @@ extension RecipesViewController {
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.font = .boldSystemFont(ofSize: UIFont.labelFontSize)
         #endif
+
+        // Do not auto select an item if we are searching.
+        guard !self.searchController.searchBar.isFirstResponder else { return }
 
         // If both views are visible select the first item if possible and none is currently selected.
         // This prevents opening the first item when the app launches on an iPhone.
@@ -279,20 +316,14 @@ extension RecipesViewController {
         return 1
     }
 
-    #if targetEnvironment(macCatalyst)
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return NSLocalizedString("RECIPES", comment: "")
-    }
-    #endif
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.recipes.count
+        return self.filteredRecipes.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        let recipe = self.recipes[indexPath.row]
+        let recipe = self.filteredRecipes[indexPath.row]
         cell.textLabel!.text = recipe.description
         cell.selectionStyle = .blue
 

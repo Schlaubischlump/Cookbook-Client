@@ -45,6 +45,7 @@
 		63DA2E7724172B0800DC3A4A /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA2E7524172B0800DC3A4A /* Credential.swift */; };
 		63DC16C0241E590900CF9F96 /* RecipeDetailViewController+PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */; };
 		63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */; platformFilter = maccatalyst; };
+		63DC16CC241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,7 @@
 		63DA2E7524172B0800DC3A4A /* Credential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credential.swift; sourceTree = "<group>"; };
 		63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+PDF.swift"; sourceTree = "<group>"; };
 		63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+UIMenu.swift"; sourceTree = "<group>"; };
+		63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UISearchController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 			children = (
 				63DC16C4241E60E000CF9F96 /* Mac */,
 				639AE67823AF7588008244BA /* RecipesViewController.swift */,
+				63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */,
 				63D8CA61241D355D004A7F9C /* RecipesViewController+BarButton.swift */,
 				63D8CA63241D38FA004A7F9C /* RecipesViewController+DragAndDrop.swift */,
 			);
@@ -531,6 +534,7 @@
 			files = (
 				638BA66C240EED6F007F6B74 /* DateComponents+Extension.swift in Sources */,
 				6369336D241D1752009831C9 /* SceneDelegate+NSToolbar.swift in Sources */,
+				63DC16CC241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift in Sources */,
 				63D8CA64241D38FA004A7F9C /* RecipesViewController+DragAndDrop.swift in Sources */,
 				63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */,
 				6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */,

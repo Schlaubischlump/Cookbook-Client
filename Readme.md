@@ -7,7 +7,7 @@ At the moment this application is a macOS / iOS / iPadOS viewer for your recipes
 - [x] Support dark mode    
 - [x] Support multiple windows    
 - [x] Support autolayout / size classes  
-- [ ] Add search function    
+- [x] Add search function    
 - [ ] Add / edit / delete recipe    
 - [ ] Custom recipe folder    
 - [ ] Keyboard shortcuts iOS    

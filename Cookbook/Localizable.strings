@@ -27,6 +27,7 @@
 "PREFERENCES"="Preferences";
 "SERVER_CONFIGURATION"="Server configuration";
 "SETTINGS"="Settings";
+"SEARCH_RECIPES"="Search recipes";
 // Used on macOS only
 "SHARE_PALETTE_LABEL"="Share";
 "SETTINGS_PALETTE_LABEL"="Settings"; // unused
