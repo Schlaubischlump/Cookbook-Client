@@ -37,9 +37,8 @@ extension RecipesViewController {
         case .settings:
             // This is only available on iOS. MacOS does not yet support SF Symbols.
             let configuration = UIImage.SymbolConfiguration(weight: .black)
-            let appDelegate = UIApplication.shared.delegate as? AppDelegate
             return UIBarButtonItem(image: UIImage(systemName: "gear", withConfiguration: configuration),
-                                   style: .plain, target: appDelegate, action: #selector(appDelegate?.showPreferences))
+                                   style: .plain, target: self, action: #selector(self.showPreferencesiOS))
         case .sidebar:
             return self.splitViewController?.displayModeButtonItem
         }
@@ -49,6 +48,7 @@ extension RecipesViewController {
 // MARK: - Bar Button Callbacks
 
 extension RecipesViewController {
+    /// Show the share sheet.
     @objc func shareRecipe(item: Any) {
         // Disable the toolbar items if we request the login information
         guard self.presentedViewController == nil else { return }
@@ -63,5 +63,23 @@ extension RecipesViewController {
             acViewController.popoverPresentationController?.barButtonItem = item as? UIBarButtonItem
             self.present(acViewController, animated: true)
         }
+    }
+
+    /// Present the settings view controller on iOS
+    @objc func showPreferencesiOS(item: Any) {
+        #if !targetEnvironment(macCatalyst)
+        let settingsViewController = PreferencesViewControlleriOS()
+        settingsViewController.beginSheetModal(self) { [weak settingsViewController] response in
+            settingsViewController?.dismiss(animated: true)
+            switch response {
+            case .save:
+                NotificationCenter.default.post(name: .reload, object: nil)
+            case .cancel:
+                break
+            case .logout:
+                NotificationCenter.default.post(name: .logout, object: nil)
+            }
+        }
+        #endif
     }
 }

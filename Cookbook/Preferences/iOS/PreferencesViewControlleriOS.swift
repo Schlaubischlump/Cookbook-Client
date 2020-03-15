@@ -91,7 +91,7 @@ class PreferencesButtonCell: UITableViewCell {
     }
 }
 
-// MARK: - UITableViews
+// MARK: - Preference TableView
 class PreferencesViewControlleriOS: UITableViewController {
     private var modalCompletionHandler: PreferencesModalCompletionType?
     private var textFieldValues: [IndexPath: String] = [:]
@@ -179,10 +179,11 @@ class PreferencesViewControlleriOS: UITableViewController {
     }
 
     // MARK: - Sheet presentation
-    func beginSheetModal(completionHandler: @escaping PreferencesModalCompletionType) {
+    func beginSheetModal(_ mainViewController: UIViewController?,
+                         completionHandler: @escaping PreferencesModalCompletionType) {
         guard !self.isBeingPresented else { return }
-        guard let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return }
-        guard let mainViewController = keyWindow.rootViewController else { return }
+        //guard let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return }
+        //guard let mainViewController = keyWindow.rootViewController else { return }
 
         let preferencesNavController = UINavigationController(rootViewController: self)
         preferencesNavController.modalPresentationStyle = .formSheet
@@ -195,7 +196,7 @@ class PreferencesViewControlleriOS: UITableViewController {
         self.navigationItem.leftBarButtonItem = cancelButton
 
         self.modalCompletionHandler = completionHandler
-        mainViewController.present(preferencesNavController, animated: true)
+        mainViewController?.present(preferencesNavController, animated: true)
     }
 
     // MARK: - Helper

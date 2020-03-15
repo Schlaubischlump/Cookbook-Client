@@ -9,13 +9,24 @@
 import Foundation
 import UIKit
 
+/**
+ The enumeration style to use inside for the EnumerationList class.
+ */
 enum EnumerationType {
+    /// Lorem ipsum dolor sit amet
     case none
+    /// **1.** Lorem ipsum dolor sit amet
     case number
+    /// **•** Lorem ipsum dolor sit amet
     case bullet(_ char: Character = "•")
+    /// **Description:** Lorem ipsum dolor sit amet
     case string(_ keys: [String])
 }
 
+/**
+ This class implements a tableView cell with no selection highlight and some
+ additional properties.
+ */
 open class EnumerationCell: UITableViewCell {
     static let identifier = "EnumerationCell"
 
@@ -37,7 +48,7 @@ open class EnumerationCell: UITableViewCell {
 /**
  This class implements a simplified list with different styles.
  */
-class EnumerationList: UITableView, UITableViewDataSource, UITableViewDelegate {
+class EnumerationList: UITableView {
     /// Enumeration display style.
     var enumerationStyle: EnumerationType = .none
 
@@ -125,9 +136,11 @@ class EnumerationList: UITableView, UITableViewDataSource, UITableViewDelegate {
         super.reloadData()
         self.invalidateIntrinsicContentSize()
     }
+}
 
-    // MARK: - UITableViewDataSource
+// MARK: - UITableViewDataSource
 
+extension EnumerationList: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return self.title
     }
@@ -175,9 +188,11 @@ class EnumerationList: UITableView, UITableViewDataSource, UITableViewDelegate {
 
         return cell
     }
+}
 
-    // MARK: - UITableViewDelegate
+// MARK: - UITableViewDelegate
 
+extension EnumerationList: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         guard let headerView = view as? UITableViewHeaderFooterView else { return }
         headerView.textLabel?.font = .systemFont(ofSize: 18)

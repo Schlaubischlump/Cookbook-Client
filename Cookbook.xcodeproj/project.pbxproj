@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		6338231E240B497A002DA167 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6338231D240B497A002DA167 /* String+Extension.swift */; };
 		63382322240C0176002DA167 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63382321240C0176002DA167 /* Array+Extension.swift */; };
-		6369336A241D0D15009831C9 /* RecipesViewController+ContextMenuMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63693369241D0D15009831C9 /* RecipesViewController+ContextMenuMac.swift */; platformFilter = maccatalyst; };
-		6369336D241D1752009831C9 /* SceneDelegate+ToolbarMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6369336C241D1752009831C9 /* SceneDelegate+ToolbarMac.swift */; platformFilter = maccatalyst; };
+		6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */; platformFilter = maccatalyst; };
+		6369336D241D1752009831C9 /* SceneDelegate+NSToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6369336C241D1752009831C9 /* SceneDelegate+NSToolbar.swift */; platformFilter = maccatalyst; };
 		638BA668240C6ABF007F6B74 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA667240C6ABF007F6B74 /* UIView+Extension.swift */; };
 		638BA66A240D83AE007F6B74 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 638BA669240D83AE007F6B74 /* Localizable.strings */; };
 		638BA66C240EED6F007F6B74 /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA66B240EED6E007F6B74 /* DateComponents+Extension.swift */; };
@@ -43,6 +43,8 @@
 		63D8CA66241D456F004A7F9C /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA65241D456F004A7F9C /* SplitViewController.swift */; };
 		63DA2E7624172B0800DC3A4A /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA2E7424172B0800DC3A4A /* Recipe.swift */; };
 		63DA2E7724172B0800DC3A4A /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA2E7524172B0800DC3A4A /* Credential.swift */; };
+		63DC16C0241E590900CF9F96 /* RecipeDetailViewController+PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */; };
+		63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */; platformFilter = maccatalyst; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,8 +67,8 @@
 /* Begin PBXFileReference section */
 		6338231D240B497A002DA167 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		63382321240C0176002DA167 /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
-		63693369241D0D15009831C9 /* RecipesViewController+ContextMenuMac.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+ContextMenuMac.swift"; sourceTree = "<group>"; };
-		6369336C241D1752009831C9 /* SceneDelegate+ToolbarMac.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+ToolbarMac.swift"; sourceTree = "<group>"; };
+		63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UIContextMenu.swift"; sourceTree = "<group>"; };
+		6369336C241D1752009831C9 /* SceneDelegate+NSToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+NSToolbar.swift"; sourceTree = "<group>"; };
 		638BA667240C6ABF007F6B74 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		638BA669240D83AE007F6B74 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		638BA66B240EED6E007F6B74 /* DateComponents+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
@@ -103,6 +105,8 @@
 		63D8CA65241D456F004A7F9C /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		63DA2E7424172B0800DC3A4A /* Recipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		63DA2E7524172B0800DC3A4A /* Credential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credential.swift; sourceTree = "<group>"; };
+		63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+PDF.swift"; sourceTree = "<group>"; };
+		63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+UIMenu.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,10 +154,10 @@
 		63693368241D0CF6009831C9 /* RecipesViewController */ = {
 			isa = PBXGroup;
 			children = (
+				63DC16C4241E60E000CF9F96 /* Mac */,
 				639AE67823AF7588008244BA /* RecipesViewController.swift */,
 				63D8CA61241D355D004A7F9C /* RecipesViewController+BarButton.swift */,
 				63D8CA63241D38FA004A7F9C /* RecipesViewController+DragAndDrop.swift */,
-				63693369241D0D15009831C9 /* RecipesViewController+ContextMenuMac.swift */,
 			);
 			path = RecipesViewController;
 			sourceTree = "<group>";
@@ -161,8 +165,8 @@
 		6369336B241D1731009831C9 /* SceneDelegate */ = {
 			isa = PBXGroup;
 			children = (
+				63DC16C6241E615E00CF9F96 /* Mac */,
 				639AE67623AF7588008244BA /* SceneDelegate.swift */,
-				6369336C241D1752009831C9 /* SceneDelegate+ToolbarMac.swift */,
 			);
 			path = SceneDelegate;
 			sourceTree = "<group>";
@@ -199,21 +203,21 @@
 			name = Settings;
 			sourceTree = "<group>";
 		};
-		638BA69E2414616C007F6B74 /* Preferences (iOS) */ = {
+		638BA69E2414616C007F6B74 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
 				638BA69F2414616C007F6B74 /* PreferencesViewControlleriOS.swift */,
 			);
-			path = "Preferences (iOS)";
+			path = iOS;
 			sourceTree = "<group>";
 		};
-		638BA6A624146198007F6B74 /* Preferences (Mac) */ = {
+		638BA6A624146198007F6B74 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				638BA6A724146198007F6B74 /* PreferencesViewControllerMac.swift */,
-				638BA6A824146198007F6B74 /* PreferencesSceneDelegateMac.swift */,
+				638BA69E2414616C007F6B74 /* iOS */,
+				63DC16C5241E611D00CF9F96 /* Mac */,
 			);
-			path = "Preferences (Mac)";
+			path = Preferences;
 			sourceTree = "<group>";
 		};
 		639AE66823AF7588008244BA = {
@@ -240,17 +244,16 @@
 			isa = PBXGroup;
 			children = (
 				639AE6A623AF759E008244BA /* Cookbook.entitlements */,
-				639AE67423AF7588008244BA /* AppDelegate.swift */,
 				63D8CA65241D456F004A7F9C /* SplitViewController.swift */,
+				63DC16C1241E601300CF9F96 /* AppDelegate */,
 				6369336B241D1731009831C9 /* SceneDelegate */,
 				63693368241D0CF6009831C9 /* RecipesViewController */,
-				6338231A240B3B3A002DA167 /* Extensions */,
+				63DC16BE241E58F500CF9F96 /* RecipeDetailViewController */,
+				638BA6A624146198007F6B74 /* Preferences */,
 				63DA2E7324172B0800DC3A4A /* Model */,
-				638BA6A624146198007F6B74 /* Preferences (Mac) */,
-				638BA69E2414616C007F6B74 /* Preferences (iOS) */,
 				639AE6A723AF7630008244BA /* Network */,
 				638BA66D240EEDA6007F6B74 /* Components */,
-				639AE67A23AF7588008244BA /* RecipeDetailViewController.swift */,
+				6338231A240B3B3A002DA167 /* Extensions */,
 				638BA67F24110E7E007F6B74 /* Supporting files */,
 			);
 			path = Cookbook;
@@ -289,6 +292,57 @@
 				63DA2E7524172B0800DC3A4A /* Credential.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		63DC16BE241E58F500CF9F96 /* RecipeDetailViewController */ = {
+			isa = PBXGroup;
+			children = (
+				639AE67A23AF7588008244BA /* RecipeDetailViewController.swift */,
+				63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */,
+			);
+			path = RecipeDetailViewController;
+			sourceTree = "<group>";
+		};
+		63DC16C1241E601300CF9F96 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				63DC16C7241E618600CF9F96 /* Mac */,
+				639AE67423AF7588008244BA /* AppDelegate.swift */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		63DC16C4241E60E000CF9F96 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */,
+			);
+			path = Mac;
+			sourceTree = "<group>";
+		};
+		63DC16C5241E611D00CF9F96 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				638BA6A724146198007F6B74 /* PreferencesViewControllerMac.swift */,
+				638BA6A824146198007F6B74 /* PreferencesSceneDelegateMac.swift */,
+			);
+			path = Mac;
+			sourceTree = "<group>";
+		};
+		63DC16C6241E615E00CF9F96 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				6369336C241D1752009831C9 /* SceneDelegate+NSToolbar.swift */,
+			);
+			path = Mac;
+			sourceTree = "<group>";
+		};
+		63DC16C7241E618600CF9F96 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */,
+			);
+			path = Mac;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -476,9 +530,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				638BA66C240EED6F007F6B74 /* DateComponents+Extension.swift in Sources */,
-				6369336D241D1752009831C9 /* SceneDelegate+ToolbarMac.swift in Sources */,
+				6369336D241D1752009831C9 /* SceneDelegate+NSToolbar.swift in Sources */,
 				63D8CA64241D38FA004A7F9C /* RecipesViewController+DragAndDrop.swift in Sources */,
-				6369336A241D0D15009831C9 /* RecipesViewController+ContextMenuMac.swift in Sources */,
+				63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */,
+				6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */,
 				638BA668240C6ABF007F6B74 /* UIView+Extension.swift in Sources */,
 				639AE67523AF7588008244BA /* AppDelegate.swift in Sources */,
 				638BA66F240EEDC9007F6B74 /* NextCloudLoginViewController.swift in Sources */,
@@ -493,6 +548,7 @@
 				639AE67B23AF7588008244BA /* RecipeDetailViewController.swift in Sources */,
 				638BA6AA24146199007F6B74 /* PreferencesSceneDelegateMac.swift in Sources */,
 				638BA6A924146199007F6B74 /* PreferencesViewControllerMac.swift in Sources */,
+				63DC16C0241E590900CF9F96 /* RecipeDetailViewController+PDF.swift in Sources */,
 				638BA6A02414616D007F6B74 /* PreferencesViewControlleriOS.swift in Sources */,
 				63D8CA62241D355D004A7F9C /* RecipesViewController+BarButton.swift in Sources */,
 				63DA2E7624172B0800DC3A4A /* Recipe.swift in Sources */,

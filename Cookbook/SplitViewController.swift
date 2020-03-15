@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class SplitViewController: UISplitViewController {
-    // MARK: - Variables
+    // MARK: - Properties
     public var recipeDetailController: RecipeDetailViewController? {
         return (self.viewControllers.last as? UINavigationController)?.topViewController as? RecipeDetailViewController
     }
