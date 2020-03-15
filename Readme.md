@@ -12,7 +12,7 @@ At the moment this application is a macOS / iOS / iPadOS viewer for your recipes
 - [ ] Custom recipe folder    
 - [ ] Keyboard shortcuts iOS    
 - [ ] Offline support / Caching   
-- [ ] Allow text selection
+- [x] Allow text selection
 - [ ] NextCloud two factor authentication (use an application password) 
 
 ### macOS

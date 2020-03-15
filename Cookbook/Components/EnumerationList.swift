@@ -32,12 +32,75 @@ open class EnumerationCell: UITableViewCell {
 
     fileprivate var referencedURL: URL?
 
+    lazy var textView: UITextView = {
+        let textView = UITextView(frame: .zero)
+        textView.font = .systemFont(ofSize: UIFont.labelFontSize)
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        return textView
+    }()
+
+    lazy var detailLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .semibold)
+        label.backgroundColor = .clear
+        return label
+    }()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.backgroundColor = .clear
         self.contentView.backgroundColor = .clear
-        self.textLabel!.numberOfLines = 0
+
+        self.contentView.addSubview(self.detailLabel)
+        self.contentView.addSubview(self.textView)
+
+        self.textView.translatesAutoresizingMaskIntoConstraints = false
+        let leadingConstraint = NSLayoutConstraint(item: self.textView,
+                                                   attribute: NSLayoutConstraint.Attribute.leading,
+                                                   relatedBy: NSLayoutConstraint.Relation.equal,
+                                                   toItem: self.detailLabel,
+                                                   attribute: NSLayoutConstraint.Attribute.trailing,
+                                                   multiplier: 1,
+                                                   constant: 5)
+        let trailingConstraint = NSLayoutConstraint(item: self.textView,
+                                                    attribute: NSLayoutConstraint.Attribute.trailing,
+                                                    relatedBy: NSLayoutConstraint.Relation.equal,
+                                                    toItem: self.contentView,
+                                                    attribute: NSLayoutConstraint.Attribute.trailing,
+                                                    multiplier: 1,
+                                                    constant: 0)
+        let bottomConstraint = NSLayoutConstraint(item: self.textView,
+                                                  attribute: NSLayoutConstraint.Attribute.bottom,
+                                                  relatedBy: NSLayoutConstraint.Relation.equal,
+                                                  toItem: self.contentView,
+                                                  attribute: NSLayoutConstraint.Attribute.bottom,
+                                                  multiplier: 1,
+                                                  constant: 0)
+        let topConstraint = NSLayoutConstraint(item: self.textView,
+                                               attribute: NSLayoutConstraint.Attribute.top,
+                                               relatedBy: NSLayoutConstraint.Relation.equal,
+                                               toItem: self.contentView,
+                                               attribute: NSLayoutConstraint.Attribute.top,
+                                               multiplier: 1,
+                                               constant: 0)
+
+        self.contentView.addConstraints([leadingConstraint, trailingConstraint, bottomConstraint, topConstraint])
+    }
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+
+        //let width = self.contentView.frame.width
+
+        self.detailLabel.sizeToFit()
+        var frame = detailLabel.frame
+        frame.size.width = self.detailLabel.frame.width //min(width*0.2, self.detailLabel.frame.width)
+        frame.origin.x = self.separatorInset.left
+        frame.origin.y = self.textView.textContainerInset.top
+        self.detailLabel.frame = frame
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -111,7 +174,7 @@ class EnumerationList: UITableView {
         case .none:
             return ""
         case .number:
-            return "\(row+1).\t"
+            return "\(row+1)."
         case .bullet(let char):
             return "\(char) "
         case .string(let keys):
@@ -152,39 +215,34 @@ extension EnumerationList: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: EnumerationCell.identifier, for: indexPath)
 
-        let defaultFont: UIFont = .systemFont(ofSize: UIFont.labelFontSize)
-        let normalAttr: [NSAttributedString.Key: Any] = [
-            .font: defaultFont
-        ]
-        let defaultFontSemiBold: UIFont = .systemFont(ofSize: UIFont.labelFontSize, weight: .semibold)
-        let boldAttr: [NSAttributedString.Key: Any] = [
-            .font: defaultFontSemiBold
-        ]
-
+        let prefix = self.prefix(indexPath.row)
         let data = self.data[indexPath.row]
 
-        let prefix = self.prefix(indexPath.row)
-        let string: String = prefix+"\(data)"
-        let attrStr = NSMutableAttributedString(string: string)
-        attrStr.addAttributes(normalAttr, range: NSRange(location: 0, length: string.count))
-        attrStr.addAttributes(boldAttr, range: NSRange(location: 0, length: prefix.count))
+        if let myCell = cell as? EnumerationCell {
+            myCell.detailLabel.text = prefix
 
-        // Add url support
-        if let nsrange = data.containedURL(), let range = Range(nsrange, in: data) {
-            let urlStr = String(data[range])
+            // Add url support
+            if let nsrange = data.containedURL(), let range = Range(nsrange, in: data) {
+                let urlStr = String(data[range])
 
-            // Store the link for future use.
-            if let enumCell = cell as? EnumerationCell {
-                enumCell.referencedURL = URL(string: urlStr)
+                // Store the link for future use.
+                if let enumCell = cell as? EnumerationCell {
+                    enumCell.referencedURL = URL(string: urlStr)
+                }
+                // Underline the string.
+                let attrStr = NSMutableAttributedString(string: data)
+                let normalAttr: [NSAttributedString.Key: Any] = [ .font: myCell.textView.font! ]
+                let linkAttr: [NSAttributedString.Key: Any] = [ .underlineStyle: NSUnderlineStyle.single.rawValue ]
+                attrStr.addAttributes(normalAttr, range: NSRange(location: 0, length: data.count))
+                attrStr.addAttributes(linkAttr, range: nsrange)
+
+                myCell.textView.attributedText = attrStr
+                myCell.textView.isUserInteractionEnabled = false
+            } else {
+                myCell.textView.text = data
+                myCell.isUserInteractionEnabled = true
             }
-            // Underline the string.
-            let linkAttr: [NSAttributedString.Key: Any] = [
-                .underlineStyle: NSUnderlineStyle.single.rawValue
-            ]
-            attrStr.addAttributes(linkAttr, range: NSRange(location: nsrange.location+prefix.count,
-                                                           length: nsrange.length))
         }
-        cell.textLabel!.attributedText = attrStr
 
         return cell
     }
@@ -199,8 +257,10 @@ extension EnumerationList: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.textLabel?.attributedText = nil
-        cell.textLabel?.text = nil
+        guard let myCell = cell as? EnumerationCell else { return }
+        myCell.detailLabel.text = nil
+        myCell.textView.text = nil
+        myCell.textView.attributedText = nil
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
