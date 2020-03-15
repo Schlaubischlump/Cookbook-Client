@@ -20,7 +20,7 @@ At the moment this application is a macOS / iOS / iPadOS viewer for your recipes
 
 | ![](Screenshots/mac_dark.png) | ![](Screenshots/mac_light.png) |
 |---|---|
-| ![](Screenshots/mac_login.png)  |   |
+| ![](Screenshots/mac_login.png)  | ![](Screenshots/mac_fullscreen_split.png)  |
 
 
 ### iOS

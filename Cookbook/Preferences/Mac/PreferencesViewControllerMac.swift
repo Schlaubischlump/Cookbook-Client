@@ -72,6 +72,12 @@ class PreferencesViewControllerMac: UIViewController {
         try? loginCredentials.updateStoredInformation()
 
         NotificationCenter.default.post(name: .logout, object: nil)
+
+        /*
+         // If you want to close the window after a logout.
+         if let session = self.view.window?.windowScene?.session {
+            UIApplication.shared.requestSceneSessionDestruction(session, options: nil)
+        }*/
     }
 
     override func viewWillDisappear(_ animated: Bool) {

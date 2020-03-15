@@ -64,6 +64,9 @@ extension AppDelegate {
     @objc func activateSearch(sender: Any) {
         let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
         let splitViewController = window?.rootViewController as? SplitViewController
+
+        guard splitViewController?.recipesMasterController?.presentedViewController == nil else { return }
+
         splitViewController?.recipesMasterController?.searchController.searchBar.becomeFirstResponder()
     }
 }
