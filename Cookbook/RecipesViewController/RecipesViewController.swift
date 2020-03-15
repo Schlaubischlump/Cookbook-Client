@@ -68,7 +68,7 @@ class RecipesViewController: UITableViewController {
 
         let label = UILabel()
         label.text = NSLocalizedString("RECIPES", comment: "")
-        label.textColor = .darkGray
+        label.textColor = .gray
         label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .semibold)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: label)
 

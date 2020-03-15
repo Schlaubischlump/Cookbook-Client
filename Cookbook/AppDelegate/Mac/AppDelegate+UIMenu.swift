@@ -16,23 +16,30 @@ extension AppDelegate {
      Create the menubar items.
      */
     override func buildMenu(with builder: UIMenuBuilder) {
-       super.buildMenu(with: builder)
+        super.buildMenu(with: builder)
 
-       // Add a custom Preferences... window.
-       let prefrencesCommand = UIKeyCommand(input: ",", modifierFlags: [.command],
+        // Add a custom Preferences... window.
+        let prefrencesCommand = UIKeyCommand(input: ",", modifierFlags: [.command],
                                             action: #selector(self.showPreferences))
-       prefrencesCommand.title = NSLocalizedString("PREFERENCES_MENU", comment: "")
-       let prefrencesCommandMenu = UIMenu(title: prefrencesCommand.title,
+        prefrencesCommand.title = NSLocalizedString("PREFERENCES_MENU", comment: "")
+        let prefrencesCommandMenu = UIMenu(title: prefrencesCommand.title,
                                           image: nil, identifier: UIMenu.Identifier("preferences"),
                                           options: .displayInline, children: [prefrencesCommand])
-       builder.insertSibling(prefrencesCommandMenu, afterMenu: .about)
 
+        let searchCommand = UIKeyCommand(input: "f", modifierFlags: [.command], action: #selector(self.activateSearch))
+        searchCommand.title = NSLocalizedString("SEARCH_MENU", comment: "")
+        let searchCommandMenu = UIMenu(title: searchCommand.title,
+                                       image: nil, identifier: UIMenu.Identifier("find"),
+                                       options: .displayInline, children: [searchCommand])
+
+        builder.insertSibling(prefrencesCommandMenu, afterMenu: .about)
+        builder.insertChild(searchCommandMenu, atEndOfMenu: .file)
     }
 
     /**
     Create a new preference window on macOS or bring the existing one to the front.
     */
-    @objc func showPreferences(_ sender: Any, _ mainViewController: UIViewController?) {
+    @objc func showPreferences(_ sender: Any) {
        //
        let uiApp = UIApplication.shared
        let windowScenes = uiApp.connectedScenes.filter {
@@ -49,5 +56,14 @@ extension AppDelegate {
            let activity = NSUserActivity(activityType: ActivityType.preferences)
            uiApp.requestSceneSessionActivation(nil, userActivity: activity, options: nil)
        }
+    }
+
+    /**
+     Activate the searchbar to find a recipe
+     */
+    @objc func activateSearch(sender: Any) {
+        let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
+        let splitViewController = window?.rootViewController as? SplitViewController
+        splitViewController?.recipesMasterController?.searchController.searchBar.becomeFirstResponder()
     }
 }

@@ -23,7 +23,6 @@
 "INVALID_LOGIN"="Invalid login data!";
 "ERROR_LOADING_RECIPES"="Error loading recipes!";
 "ERROR_LOADING_RECIPE_DETAILS"="Error loading recipe details!";
-"PREFERENCES_MENU"="Preferences...";
 "PREFERENCES"="Preferences";
 "SERVER_CONFIGURATION"="Server configuration";
 "SETTINGS"="Settings";
@@ -34,3 +33,5 @@
 "TOGGLE_SIDEBAR_PALETTE_LABEL"="Toggle Sidebar";
 "FIXED_SPACE_PALETTE_LABEL"="Fixed space";
 "OPEN_IN_NEW_WINDOW"="Open in new window";
+"PREFERENCES_MENU"="Preferences...";
+"SEARCH_MENU"="Find";
