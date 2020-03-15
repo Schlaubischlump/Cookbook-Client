@@ -12,7 +12,6 @@
 		6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */; platformFilter = maccatalyst; };
 		6369336D241D1752009831C9 /* SceneDelegate+NSToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6369336C241D1752009831C9 /* SceneDelegate+NSToolbar.swift */; platformFilter = maccatalyst; };
 		638BA668240C6ABF007F6B74 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA667240C6ABF007F6B74 /* UIView+Extension.swift */; };
-		638BA66A240D83AE007F6B74 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 638BA669240D83AE007F6B74 /* Localizable.strings */; };
 		638BA66C240EED6F007F6B74 /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA66B240EED6E007F6B74 /* DateComponents+Extension.swift */; };
 		638BA66F240EEDC9007F6B74 /* NextCloudLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA66E240EEDC9007F6B74 /* NextCloudLoginViewController.swift */; };
 		638BA67724108CBB007F6B74 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 638BA67624108CBB007F6B74 /* MBProgressHUD */; };
@@ -46,6 +45,7 @@
 		63DC16C0241E590900CF9F96 /* RecipeDetailViewController+PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */; };
 		63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */; platformFilter = maccatalyst; };
 		63DC16CC241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */; };
+		63DC16CD241EDB1100CF9F96 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63DC16CF241EDB1100CF9F96 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,7 +71,6 @@
 		63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UIContextMenu.swift"; sourceTree = "<group>"; };
 		6369336C241D1752009831C9 /* SceneDelegate+NSToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+NSToolbar.swift"; sourceTree = "<group>"; };
 		638BA667240C6ABF007F6B74 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
-		638BA669240D83AE007F6B74 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		638BA66B240EED6E007F6B74 /* DateComponents+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
 		638BA66E240EEDC9007F6B74 /* NextCloudLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextCloudLoginViewController.swift; sourceTree = "<group>"; };
 		638BA67824109417007F6B74 /* MBProgressHUD+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MBProgressHUD+Extension.swift"; sourceTree = "<group>"; };
@@ -109,6 +108,10 @@
 		63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+PDF.swift"; sourceTree = "<group>"; };
 		63DC16C2241E602600CF9F96 /* AppDelegate+UIMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+UIMenu.swift"; sourceTree = "<group>"; };
 		63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UISearchController.swift"; sourceTree = "<group>"; };
+		63DC16CE241EDB1100CF9F96 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		63DC16D0241EDB3D00CF9F96 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
+		63DC16D1241EDB3E00CF9F96 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		63DC16D2241EDB3F00CF9F96 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,7 +195,7 @@
 				639AE68123AF758E008244BA /* LaunchScreen.storyboard */,
 				638BA690241272B6007F6B74 /* Preferences_Mac.storyboard */,
 				639AE68423AF758E008244BA /* Info.plist */,
-				638BA669240D83AE007F6B74 /* Localizable.strings */,
+				63DC16CF241EDB1100CF9F96 /* Localizable.strings */,
 				638BA68F24118FB7007F6B74 /* Settings */,
 			);
 			name = "Supporting files";
@@ -441,6 +444,7 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = 639AE66823AF7588008244BA;
 			packageReferences = (
@@ -466,7 +470,7 @@
 			files = (
 				639AE68323AF758E008244BA /* LaunchScreen.storyboard in Resources */,
 				638BA691241272B6007F6B74 /* Preferences_Mac.storyboard in Resources */,
-				638BA66A240D83AE007F6B74 /* Localizable.strings in Resources */,
+				63DC16CD241EDB1100CF9F96 /* Localizable.strings in Resources */,
 				638BA68124110EAF007F6B74 /* Settings.bundle in Resources */,
 				639AE68023AF758E008244BA /* Assets.xcassets in Resources */,
 				638BA69824139B97007F6B74 /* Credits.rtf in Resources */,
@@ -598,6 +602,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				639AE67D23AF7588008244BA /* Base */,
+				63DC16D0241EDB3D00CF9F96 /* de */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -606,8 +611,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				639AE68223AF758E008244BA /* Base */,
+				63DC16D1241EDB3E00CF9F96 /* de */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		63DC16CF241EDB1100CF9F96 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				63DC16CE241EDB1100CF9F96 /* en */,
+				63DC16D2241EDB3F00CF9F96 /* de */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -617,6 +632,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -677,6 +693,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

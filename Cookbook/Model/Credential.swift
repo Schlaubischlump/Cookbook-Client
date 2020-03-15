@@ -12,9 +12,6 @@ extension UserDefaults.Key {
     static let server: UserDefaults.Key = "SERVER"
     static let user: UserDefaults.Key = "USER"
     static let password: UserDefaults.Key = "PASSWORD"
-    static let creditsMBProgressHUD: UserDefaults.Key = "MBProgressHUD_FIELD"
-    static let creditsAlamorefire: UserDefaults.Key = "Alamorefire_FIELD"
-    static let creditsAlamorefireImage: UserDefaults.Key = "AlamorefireImage_FIELD"
 }
 
 enum KeychainError: Error {
