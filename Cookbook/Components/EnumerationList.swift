@@ -237,6 +237,7 @@ extension EnumerationList: UITableViewDataSource {
                 attrStr.addAttributes(linkAttr, range: nsrange)
 
                 myCell.textView.attributedText = attrStr
+                myCell.textView.textColor = .label
                 myCell.textView.isUserInteractionEnabled = false
             } else {
                 myCell.textView.text = data
