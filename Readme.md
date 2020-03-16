@@ -8,11 +8,11 @@ At the moment this application is a macOS / iOS / iPadOS viewer for your recipes
 - [x] Support multiple windows    
 - [x] Support autolayout / size classes  
 - [x] Support search function    
+- [x] Allow text selection    
 - [ ] Support Add / edit / delete recipe    
 - [ ] Custom recipe folder    
 - [ ] Keyboard shortcuts iOS    
 - [ ] Offline support / Caching   
-- [x] Allow text selection
 - [ ] NextCloud two factor authentication (use an application password) 
 
 ### macOS
