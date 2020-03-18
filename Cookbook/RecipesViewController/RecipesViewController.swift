@@ -21,6 +21,20 @@ typealias ResultHandler = (Swift.Result<Void, Error>) -> Void
 
 class RecipesTableViewCell: UITableViewCell {
     var imageLoadingRequestReceipt: RequestReceipt?
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.setup()
+    }
+
+    func setup() {
+        self.imageView?.image = #imageLiteral(resourceName: "placeholder_thumb")
+    }
 }
 
 class RecipesViewController: UITableViewController {
@@ -76,41 +90,32 @@ class RecipesViewController: UITableViewController {
 
         // Set the navigationbar title.
         self.title = NSLocalizedString("RECIPES", comment: "")
-
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.tableView.rowHeight = 80.0
 
+        // Add a toolbar item to create new reciped.
+        self.navigationController?.isToolbarHidden = false
+        let addButton = BarButtonItem.with(type: .add)
+        addButton.target = self
+        addButton.action = #selector(self.addRecipe)
+        self.toolbarItems = [addButton]
+
         // Add a settings button on the right hand side on iOS.
-        navigationItem.rightBarButtonItem = self.barButtonForType(.settings)
+        let settingsButton = BarButtonItem.with(type: .settings)
+        settingsButton.target = self
+        settingsButton.action = #selector(self.showPreferencesiOS)
+        navigationItem.rightBarButtonItem = settingsButton
         #endif
 
-        // Do any additional setup after loading the view.
-        //navigationItem.leftBarButtonItem = editButtonItem
-
-        // If the login credentials are available load the data.
-        if loginCredentials.informationIsSet() {
-            let hud = MBProgressHUD.showSpinner(attachedTo: self.splitViewController?.view)
-            self.reloadRecipes { [weak self] result in
-                hud?.hide(animated: true)
-
-                switch result {
-                case .success:
-                    break
-                case .failure:
-                    // Login information seems to be incorrect => Show login dialog
-                    self?.showNextcloudLogin()
-                    MBProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
-                                            message: NSLocalizedString("ERROR_LOADING_RECIPES", comment: ""),
-                                            animated: true)?
-                                 .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
-                }
-            }
-        }
+        self.loadDataIfLoginCredentialsAreSet()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         self.clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
         super.viewWillAppear(animated)
+
+        // Make sure that the new names and images are loaded even on the iPhone.
+        // self.tableView.reloadData()
 
         // Register NotificationCenter callbacks.
         let center = NotificationCenter.default
@@ -118,7 +123,7 @@ class RecipesViewController: UITableViewController {
         // Called after a successfull login.
         self.loginObserver = center.addObserver(forName: .login, object: nil, queue: .main, using: { [weak self] _ in
             // Show progress spinner.
-            let hud = MBProgressHUD.showSpinner(attachedTo: self?.presentedViewController?.view)
+            let hud = ProgressHUD.showSpinner(attachedTo: self?.presentedViewController?.view)
             self?.reloadRecipes { result in
                 hud?.hide(animated: true)
 
@@ -130,10 +135,9 @@ class RecipesViewController: UITableViewController {
 
                 case .failure:
                     // Show an error message
-                    MBProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
-                                            message: NSLocalizedString("INVALID_LOGIN", comment: ""),
-                                            animated: true)?
-                                 .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
+                    ProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
+                                          message: NSLocalizedString("INVALID_LOGIN", comment: ""),
+                                          animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
                 }
             }
         })
@@ -150,7 +154,7 @@ class RecipesViewController: UITableViewController {
         self.reloadObserver = center.addObserver(forName: .reload, object: nil, queue: .main) { [weak self] _ in
             guard loginCredentials.informationIsSet() else { return }
             // Reload data and show an error if required.
-            let hud = MBProgressHUD.showSpinner(attachedTo: self?.splitViewController?.view)
+            let hud = ProgressHUD.showSpinner(attachedTo: self?.splitViewController?.view)
             self?.reloadRecipes { result in
                 hud?.hide(animated: true)
 
@@ -160,10 +164,9 @@ class RecipesViewController: UITableViewController {
                     try? loginCredentials.updateStoredInformation()
                 case .failure:
                     self?.showNextcloudLogin()
-                    MBProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
-                                            message: NSLocalizedString("INVALID_LOGIN", comment: ""),
-                                            animated: true)?
-                                 .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
+                    ProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
+                                          message: NSLocalizedString("INVALID_LOGIN", comment: ""),
+                                          animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
                 }
             }
         }
@@ -195,32 +198,12 @@ class RecipesViewController: UITableViewController {
     }
 }
 
-// MARK: - Data loading + login
+// MARK: - Login
 extension RecipesViewController {
-    /**
-     Reload all recipes from the server and optinally provide a success/failure handler.
-     - Parameter completion: completion handler
-     */
-    func reloadRecipes(_ completion: @escaping ResultHandler = { _ in }) {
-        Recipe.loadRecipes(completionHandler: { recipes in
-            self.recipes = recipes
-            self.filteredRecipes = recipes
-            self.tableView.reloadData()
-            // Reload did work.
-            completion(Swift.Result.success(()))
-        }, errorHandler: { err in
-            self.recipes = []
-            self.filteredRecipes = []
-            self.tableView.reloadData()
-            // Reload failed
-            completion(Swift.Result.failure(err))
-        })
-    }
-
     /**
      Show the Nextcloud login view and update the credentials when required.
      */
-    private func showNextcloudLogin() {
+    func showNextcloudLogin() {
         // Some information is missing, present the login screen to the user with the partial information filled in.
         let nextCloudViewController = NextCloudLoginController()
         nextCloudViewController.server = loginCredentials.server
@@ -245,25 +228,46 @@ extension RecipesViewController {
 
 // MARK: - Segues
 extension RecipesViewController {
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        // Only perform a segue if the current recipe changed, otherwise we can keep the detailController.
+        guard let detailController = (self.splitViewController as? SplitViewController)?.recipeDetailController else {
+            return true
+        }
+
+        if let cell = sender as? UITableViewCell, let indexPath = self.tableView.indexPath(for: cell) {
+            return self.filteredRecipes[indexPath.row].recipeID != detailController.recipe?.recipeID
+        } else if let indexPath = sender as? IndexPath {
+            return self.filteredRecipes[indexPath.row].recipeID != detailController.recipe?.recipeID
+        }
+        return true
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow {
-                guard let navController = segue.destination as? UINavigationController,
-                    let controller = navController.topViewController as? RecipeDetailViewController else {
-                        return
-                }
+            guard let indexPath = self.tableView.indexPathForSelectedRow,
+                let navController = segue.destination as? UINavigationController,
+                let controller = navController.topViewController as? RecipeDetailViewController else { return }
+            let recipe = self.filteredRecipes[indexPath.row]
+            controller.recipe = recipe
+            controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+            controller.navigationItem.leftItemsSupplementBackButton = true
 
-                let recipe = self.filteredRecipes[indexPath.row]
-                controller.detailItem = recipe
-                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                controller.navigationItem.leftItemsSupplementBackButton = true
+            let shareButton = BarButtonItem.with(type: .share)
+            shareButton.target = controller
+            shareButton.action = #selector(controller.shareRecipe)
+            controller.navigationItem.rightBarButtonItem = shareButton
 
-                controller.navigationItem.rightBarButtonItem = self.barButtonForType(.share)
+            // Set this value, to open the currently selected row, if the search result is cleared, after an item
+            // was selected. We need to find the row of the selected item inside the unfiltered tableView.
+            self.firstSelectedRow = self.recipes.firstIndex(where: { $0.recipeID == recipe.recipeID }) ?? 0
 
-                // Set this value, to open the currently selected row, if the search result is cleared, after an item
-                // was selected. We need to find the row of the selected item inside the unfiltered tableView.
-                self.firstSelectedRow = self.recipes.firstIndex(where: { $0.recipeID == recipe.recipeID }) ?? 0
-            }
+            // Change the toolbar edit icon back to normal.
+            #if targetEnvironment(macCatalyst)
+            let editItem = self.view.window?.windowScene?.titlebar?.toolbar?.items.first(where: {
+                $0.itemIdentifier == BarButtonItemType.edit.identifier
+            })
+            editItem?.image = .toolbarImage(kEditToolbarImage)
+            #endif
         }
     }
 }
@@ -291,10 +295,14 @@ extension RecipesViewController {
         if isSplitViewControllerSeparated || self.isActivatedByNewWindowActivity {
             // Only when we display the last cell
             if indexPath.row == tableView.indexPathsForVisibleRows?.last?.row {
+                let indexPath = IndexPath(row: self.firstSelectedRow, section: 0)
                 self.tableView.becomeFirstResponder()
-                self.tableView.selectRow(at: IndexPath(row: self.firstSelectedRow, section: 0),
-                                         animated: false, scrollPosition: .none)
-                self.performSegue(withIdentifier: "showDetail", sender: nil)
+                self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+
+                let identifier = "showDetail"
+                if self.shouldPerformSegue(withIdentifier: identifier, sender: indexPath) {
+                    self.performSegue(withIdentifier: identifier, sender: nil)
+                }
             }
         }
     }
@@ -310,6 +318,9 @@ extension RecipesViewController {
             ImageDownloader.default.cancelRequest(with: receipt)
             recipeCell.imageLoadingRequestReceipt = nil
         }
+
+        // Reset the image
+        // cell.imageView?.image = #imageLiteral(resourceName: "placeholder_thumb")
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -328,14 +339,16 @@ extension RecipesViewController {
         cell.selectionStyle = .blue
 
         let height = tableView.rowHeight-10
-        cell.imageView?.image = #imageLiteral(resourceName: "placeholder_thumb").af_imageAspectScaled(toFill: CGSize(width: height, height: height))
+        let currentImage = cell.imageView?.image
+        cell.imageView?.image = currentImage?.af_imageAspectScaled(toFill: CGSize(width: height, height: height))
 
         guard let recipeCell = cell as? RecipesTableViewCell  else { return cell }
 
         // Load image asynchronous.
         recipeCell.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
             // Resize image to fill the height and redraw the UI.
-            recipeCell.imageView?.image = image?.af_imageAspectScaled(toFill: CGSize(width: height, height: height))
+            let newImage = image ?? #imageLiteral(resourceName: "placeholder_thumb")
+            recipeCell.imageView?.image = newImage.af_imageAspectScaled(toFill: CGSize(width: height, height: height))
             recipeCell.setNeedsLayout()
         })
         return recipeCell

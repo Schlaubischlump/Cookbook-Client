@@ -12,28 +12,50 @@ import UIKit
 extension SceneDelegate: NSToolbarDelegate {
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
                  willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-        guard let window = window else { return nil }
-        guard let splitViewController = window.rootViewController as? SplitViewController else { return nil }
-        guard let masterController = splitViewController.recipesMasterController else { return nil }
 
-        if let barType = BarButtonType(rawValue: itemIdentifier.rawValue),
-            let item = masterController.barButtonForType(barType) {
-            let toolbarItem = NSToolbarItem(itemIdentifier: itemIdentifier, barButtonItem: item)
-            toolbarItem.paletteLabel = barType.paletteLabel
-            toolbarItem.label = barType.paletteLabel
-            return toolbarItem
-        }
+        guard let barType = BarButtonItemType(rawValue: itemIdentifier.rawValue) else { return nil }
 
-        return nil
+        let item = BarButtonItem.with(type: barType)
+        item.target = self
+        item.action = #selector(self.toolbarItemClicked(_ :))
+        let toolbarItem = NSToolbarItem(itemIdentifier: itemIdentifier, barButtonItem: item)
+        toolbarItem.autovalidates = false
+        toolbarItem.paletteLabel = barType.paletteLabel
+        toolbarItem.label = barType.paletteLabel
+        return toolbarItem
     }
 
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-        return [BarButtonType.sidebar.identifier,
+        return [BarButtonItemType.sidebar.identifier,
+                BarButtonItemType.add.identifier,
+                BarButtonItemType.delete.identifier,
+                BarButtonItemType.edit.identifier,
                 NSToolbarItem.Identifier.flexibleSpace,
-                BarButtonType.share.identifier]
+                BarButtonItemType.share.identifier]
     }
 
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         return self.toolbarDefaultItemIdentifiers(toolbar)
+    }
+
+    // MARK: - Helper
+
+    // Callback function when a toolbar item is clicked.
+    @objc func toolbarItemClicked(_ sender: Any) {
+        guard let splitViewController = self.window?.rootViewController as? SplitViewController else { return }
+
+        switch (sender as? NSToolbarItem)?.itemIdentifier {
+        case BarButtonItemType.share.identifier:
+            splitViewController.recipeDetailController?.shareRecipe(item: sender)
+        case BarButtonItemType.edit.identifier:
+            splitViewController.recipeDetailController?.editRecipe(item: sender)
+        case BarButtonItemType.delete.identifier:
+            splitViewController.recipeDetailController?.deleteRecipe(item: sender)
+        case BarButtonItemType.add.identifier:
+            splitViewController.recipesMasterController?.addRecipe(item: sender)
+        case BarButtonItemType.sidebar.identifier:
+            splitViewController.toggleSidebar(item: sender)
+        default: break
+        }
     }
 }

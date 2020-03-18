@@ -9,30 +9,7 @@
 import Foundation
 import UIKit
 
-let urlRegex = "((?:http|https)://)?(?:www\\.)?[\\w\\d\\-_]+\\.\\w{2,3}(\\.\\w{2})?(/(?<=/)(?:[\\w\\d\\-./_]+)?)?"
-
 extension String {
-
-    /**
-     True if a string matches a regex, false otherwise.
-     */
-    static func ~= (lhs: String, rhs: String) -> NSTextCheckingResult? {
-        guard let regex = try? NSRegularExpression(pattern: rhs) else { return nil }
-        let range = NSRange(location: 0, length: lhs.utf16.count)
-        return regex.firstMatch(in: lhs, options: [], range: range)
-    }
-
-    /**
-     Return nil if no match is found, otherwise return the URL range inside the string.
-     */
-    func containedURL() -> NSRange? {
-        let textCheckingResult = self ~= urlRegex
-        if let result = textCheckingResult {
-            return result.range
-        }
-        return nil
-    }
-
     /**
     Convert a P[n]Y[n]M[n]DT[n]H[n]M[n]S or P[n]W string to a readable format with d:h:m:s. If the string is has an
     invalid format, an empty string is returned.
@@ -47,10 +24,32 @@ extension String {
         return ""
     }
 
+    /**
+     Convert a readable time string to iso8601String format.
+     - Return: iso8601String or empty string
+     */
+    func iso8601() -> String {
+        let formatter = DateFormatter()
+        var format = ""
+        for comp in ["ss", "mm", "HH", "dd"] {
+            format = comp+(format.isEmpty ? "" : ":"+format)
+            formatter.dateFormat = format
+            if let date = formatter.date(from: self) {
+                let refDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)!
+                let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second],
+                                                                     from: refDate, to: date)
+                return dateComponents.iso8601String()
+            }
+        }
+        return ""
+    }
+
+    /// Convert the string to an Int.
     var intValue: Int? {
         return Int(self)
     }
 
+    /// Convert the string to an Double.
     var doubleValue: Double? {
         return Double(self)
     }

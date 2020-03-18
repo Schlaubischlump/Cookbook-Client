@@ -11,22 +11,29 @@ import Alamofire
 import AlamofireImage
 import UIKit
 
-typealias HTMLComplectionHandler = (_ html: String) -> Void
 typealias ImageCompletionHandler = (_ image: Image?) -> Void
 typealias DetailsCompletionHandler = (_ json: [String: Any]?) -> Void
 typealias ErrorHandler = (_ error: Error) -> Void
 typealias RecipesCompletionHandler = (_ recipes: [Recipe]) -> Void
+typealias UpdateCompletionHandler = () -> Void
 
-enum RecipeLoadingError: Error {
+enum RecipeError: Error {
     case noData
     case invalidJson
 }
 
-struct Recipe {
+class Recipe {
     var imageURL: String
     var name: String
     var userID: String
     var recipeID: Int
+
+    static let descriptionKeys = [NSLocalizedString("DESCRIPTION", comment: ""),
+                                  NSLocalizedString("SOURCE", comment: ""),
+                                  NSLocalizedString("PREPARATION_TIME", comment: ""),
+                                  NSLocalizedString("COOKING_TIME", comment: ""),
+                                  NSLocalizedString("TOTAL_TIME", comment: ""),
+                                  NSLocalizedString("SERVINGS", comment: "")]
 
     var description: String {
         return "\(self.name)"
@@ -50,7 +57,10 @@ struct Recipe {
 
         // Download the image.
         return ImageDownloader.default.download([router], completion: { (response: DataResponse<Image>) in
-            guard let image = response.value else { return }
+            guard let image = response.value else {
+                completionHandler(nil)
+                return
+            }
             completionHandler(image)
         }).first
     }
@@ -58,12 +68,7 @@ struct Recipe {
     /// Parse the json dictionary and return the description data with corresponding keys as arrays.
     static func parseDescriptionValuesFor(jsonArray recipeDetails: [String: Any]) -> ([String], [String]) {
         let servings: Int? = (recipeDetails["recipeYield"] as? Int)
-        let descriptionKeys = [NSLocalizedString("DESCRIPTION", comment: ""),
-                               NSLocalizedString("SOURCE", comment: ""),
-                               NSLocalizedString("PREPARATION_TIME", comment: ""),
-                               NSLocalizedString("COOKING_TIME", comment: ""),
-                               NSLocalizedString("TOTAL_TIME", comment: ""),
-                               NSLocalizedString("SERVINGS", comment: "")]
+
         let descriptionData: [String] = [(recipeDetails["description"] as? String ?? ""),
                                          (recipeDetails["url"] as? String ?? ""),
                                          ((recipeDetails["prepTime"] as? String)?.readableTime() ?? ""),
@@ -71,7 +76,7 @@ struct Recipe {
                                          ((recipeDetails["totalTime"] as? String)?.readableTime() ?? ""),
                                          (servings != nil) ? String(servings!) : ""]
         let mask = descriptionData.map { !$0.isEmpty }
-        return (descriptionKeys.booleanMask(mask), descriptionData.booleanMask(mask))
+        return (Recipe.descriptionKeys.booleanMask(mask), descriptionData.booleanMask(mask))
     }
 
     /// Load the recipe details as json array. Use parseDescriptionValuesFor(jsonArray:) to parse the Data.
@@ -82,17 +87,17 @@ struct Recipe {
             .default
             .request(router)
             .validate(statusCode: 200..<300)
-            .responseData { (response) in
+            .responseData { response in
                 switch response.result {
                 case .success:
                     guard let data = response.data else {
-                        errorHandler(RecipeLoadingError.noData)
+                        errorHandler(RecipeError.noData)
                         return
                     }
                     let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: [])
 
                     guard let jsonArray = jsonResponse as? [String: Any] else {
-                        errorHandler(RecipeLoadingError.invalidJson)
+                        errorHandler(RecipeError.invalidJson)
                         return
                     }
 
@@ -116,14 +121,14 @@ struct Recipe {
                 case .success:
                     // Parse the json response.
                     guard let data = response.data else {
-                        errorHandler(RecipeLoadingError.noData)
+                        errorHandler(RecipeError.noData)
                         return
                     }
 
                     let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: [])
 
                     guard let jsonArray = jsonResponse as? [[String: Any]] else {
-                        errorHandler(RecipeLoadingError.invalidJson)
+                        errorHandler(RecipeError.invalidJson)
                         return
                     }
 
@@ -143,6 +148,51 @@ struct Recipe {
                 case .failure(let error):
                     errorHandler(error)
                 }
+        }
+    }
+
+    // MARK: - Add / update / delete
+    func update(_ recipeDetails: [String: Any], completionHandler: @escaping UpdateCompletionHandler,
+                errorHandler: @escaping ErrorHandler = { _ in }) {
+        let router = Router.update(rid: self.recipeID, recipeDetails: recipeDetails)
+        SessionManager
+            .default
+            .request(router)
+            .validate(statusCode: 200..<300)
+            .responseData { (response) in
+                switch response.result {
+                case .success:
+                    // Clean the currently stored images (full and thumb) for this recipe.
+                    if let request = router.urlRequest {
+                        let cache = ImageDownloader.default.imageCache as? AutoPurgingImageCache
+                        cache?.removeImages(matching: request)
+                    }
+                    completionHandler()
+                case .failure(let error):
+                    errorHandler(error)
+            }
+        }
+    }
+
+    func delete(_ completionHandler: @escaping UpdateCompletionHandler,
+                errorHandler: @escaping ErrorHandler = { _ in }) {
+        let router = Router.delete(rid: self.recipeID)
+        SessionManager
+            .default
+            .request(router)
+            .validate(statusCode: 200..<300)
+            .responseData { (response) in
+                switch response.result {
+                case .success:
+                    // Clean the currently stored images (full and thumb) for this recipe, we don't need them any more.
+                    if let request = router.urlRequest {
+                        let cache = ImageDownloader.default.imageCache as? AutoPurgingImageCache
+                        cache?.removeImages(matching: request)
+                    }
+                    completionHandler()
+                case .failure(let error):
+                    errorHandler(error)
+            }
         }
     }
 }

@@ -10,6 +10,17 @@ import Foundation
 import UIKit
 
 /**
+ Delegate to get informed if the EnumerationList height changes.
+ */
+protocol EnumerationListDelegate: AnyObject {
+    func enumerationList(_ list: EnumerationList, heightChanged: CGFloat)
+}
+
+extension EnumerationListDelegate {
+    func enumerationList(_ list: EnumerationList, heightChanged: CGFloat) {}
+}
+
+/**
  The enumeration style to use inside for the EnumerationList class.
  */
 enum EnumerationType {
@@ -30,7 +41,9 @@ enum EnumerationType {
 open class EnumerationCell: UITableViewCell {
     static let identifier = "EnumerationCell"
 
-    fileprivate var referencedURL: URL?
+    var textChanged: ((String) -> Void)?
+
+    var deleteAccessoryAction: (() -> Void)?
 
     lazy var textView: UITextView = {
         let textView = UITextView(frame: .zero)
@@ -38,6 +51,7 @@ open class EnumerationCell: UITableViewCell {
         textView.isEditable = false
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
+        textView.dataDetectorTypes = .link
         return textView
     }()
 
@@ -57,47 +71,37 @@ open class EnumerationCell: UITableViewCell {
         self.contentView.addSubview(self.detailLabel)
         self.contentView.addSubview(self.textView)
 
-        self.textView.translatesAutoresizingMaskIntoConstraints = false
-        let leadingConstraint = NSLayoutConstraint(item: self.textView,
-                                                   attribute: NSLayoutConstraint.Attribute.leading,
-                                                   relatedBy: NSLayoutConstraint.Relation.equal,
-                                                   toItem: self.detailLabel,
-                                                   attribute: NSLayoutConstraint.Attribute.trailing,
-                                                   multiplier: 1,
-                                                   constant: 5)
-        let trailingConstraint = NSLayoutConstraint(item: self.textView,
-                                                    attribute: NSLayoutConstraint.Attribute.trailing,
-                                                    relatedBy: NSLayoutConstraint.Relation.equal,
-                                                    toItem: self.contentView,
-                                                    attribute: NSLayoutConstraint.Attribute.trailing,
-                                                    multiplier: 1,
-                                                    constant: 0)
-        let bottomConstraint = NSLayoutConstraint(item: self.textView,
-                                                  attribute: NSLayoutConstraint.Attribute.bottom,
-                                                  relatedBy: NSLayoutConstraint.Relation.equal,
-                                                  toItem: self.contentView,
-                                                  attribute: NSLayoutConstraint.Attribute.bottom,
-                                                  multiplier: 1,
-                                                  constant: 0)
-        let topConstraint = NSLayoutConstraint(item: self.textView,
-                                               attribute: NSLayoutConstraint.Attribute.top,
-                                               relatedBy: NSLayoutConstraint.Relation.equal,
-                                               toItem: self.contentView,
-                                               attribute: NSLayoutConstraint.Attribute.top,
-                                               multiplier: 1,
-                                               constant: 0)
+        // Add a delete button to the right side of the view in edit mode.
+        let image = UIImage(systemName: "trash")!
+        let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
+        deleteButton.setImage(image, for: .normal)
+        deleteButton.addTarget(self, action: #selector(self.deleteAccessoryTapped), for: .touchUpInside)
+        self.editingAccessoryView = deleteButton
 
+        // Add the textView.
+        self.textView.delegate = self
+
+        self.textView.translatesAutoresizingMaskIntoConstraints = false
+        let leadingConstraint = NSLayoutConstraint(item: self.textView, attribute: .leading, relatedBy: .equal,
+                                                   toItem: self.detailLabel, attribute: .trailing, multiplier: 1,
+                                                   constant: 5)
+        let trailingConstraint = NSLayoutConstraint(item: self.textView, attribute: .trailing, relatedBy: .equal,
+                                                    toItem: self.contentView, attribute: .trailing, multiplier: 1,
+                                                    constant: 0)
+        let bottomConstraint = NSLayoutConstraint(item: self.textView, attribute: .bottom, relatedBy: .equal,
+                                                  toItem: self.contentView, attribute: .bottom, multiplier: 1,
+                                                  constant: 0)
+        let topConstraint = NSLayoutConstraint(item: self.textView, attribute: .top, relatedBy: .equal,
+                                               toItem: self.contentView, attribute: .top, multiplier: 1, constant: 0)
         self.contentView.addConstraints([leadingConstraint, trailingConstraint, bottomConstraint, topConstraint])
     }
 
     override open func layoutSubviews() {
         super.layoutSubviews()
 
-        //let width = self.contentView.frame.width
-
         self.detailLabel.sizeToFit()
-        var frame = detailLabel.frame
-        frame.size.width = self.detailLabel.frame.width //min(width*0.2, self.detailLabel.frame.width)
+        var frame = self.detailLabel.frame
+        frame.size.width = self.detailLabel.frame.width
         frame.origin.x = self.separatorInset.left
         frame.origin.y = self.textView.textContainerInset.top
         self.detailLabel.frame = frame
@@ -106,14 +110,34 @@ open class EnumerationCell: UITableViewCell {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    @objc func deleteAccessoryTapped(sender: Any) {
+        self.deleteAccessoryAction?()
+    }
+}
+
+// MARK: - TextView delegate
+extension EnumerationCell: UITextViewDelegate {
+    public func textViewDidChange(_ textView: UITextView) {
+        self.textChanged?(textView.attributedText.string)
+    }
 }
 
 /**
  This class implements a simplified list with different styles.
  */
 class EnumerationList: UITableView {
+    /// Delegate for enumeration List callbacks.
+    weak var listDelegate: EnumerationListDelegate?
+
     /// Enumeration display style.
     var enumerationStyle: EnumerationType = .none
+
+    /// Allow adding a new row in edit mode.
+    var allowsCellInsertion: Bool = false
+
+    /// Allow deleting rows in the list.
+    var allowsCellDeletion: Bool = false
 
     /// List title.
     var title: String? = nil {
@@ -122,10 +146,18 @@ class EnumerationList: UITableView {
         }
     }
 
+    /// Internal data array.
+    private var _data: [String] = []
+
     /// List data to display.
-    var data: [String] = [] {
-        didSet {
-            let numItems: Int = self.data.count
+    var data: [String] {
+        get {
+            return self._data
+        }
+
+        set (newValue) {
+
+            let numItems: Int = newValue.count
 
             // Make sure that the number of prefixes matches the number of data points.
             switch self.enumerationStyle {
@@ -137,8 +169,44 @@ class EnumerationList: UITableView {
                 break
             }
 
+            self._data = newValue
+
             self.reloadData()
             self.layoutIfNeeded()
+        }
+    }
+
+    var isEditable: Bool = false {
+        didSet {
+            // Apply the new data.
+            if !self.isEditable {
+                // We do not want to trigger the reload => store everything in a temp array.
+                var newData: [String] = Array(repeating: "", count: self._data.count)
+                // Stop editing and set the new string data.
+                zip(self.indexPathsForVisibleRows!, self.visibleCells).forEach { (indexPath, enumCell) in
+                    let cell = enumCell as? EnumerationCell
+                    // Update the backend data.
+                    cell?.textView.isEditable = false
+                    cell?.textView.spellCheckingType = .no
+                    newData[indexPath.row] = cell?.textView.attributedText.string ?? ""
+                }
+                // Trigger reload by setting the new data to make all cells visible.
+                self.data = newData
+            } else {
+                // Reload to make all cells visible.
+                self.reloadData()
+                self.visibleCells.forEach {
+                    let cell = $0 as? EnumerationCell
+                    // Start editing.
+                    cell?.textView.isEditable = true
+                    cell?.textView.spellCheckingType = .yes
+                }
+            }
+            self.isEditing = self.isEditable
+            // Reload to show / hide the footer view.
+            self.reloadData()
+            // Inform the delegate to update the frame.
+            self.listDelegate?.enumerationList(self, heightChanged: self.contentSize.height)
         }
     }
 
@@ -161,7 +229,6 @@ class EnumerationList: UITableView {
 
         // Configure the view.
         self.isScrollEnabled = false
-        //self.isUserInteractionEnabled = false
 
         self.dataSource = self
         self.delegate = self
@@ -180,6 +247,34 @@ class EnumerationList: UITableView {
         case .string(let keys):
             return "\(keys[row]): "
         }
+    }
+
+    @objc func deleteRowAtIndexPath(_ indexPath: IndexPath) {
+        self.performBatchUpdates({
+            self._data.remove(at: indexPath.row)
+            self.deleteRows(at: [indexPath], with: .fade)
+        }, completion: { _ in
+             // Update the numbers on the left side of the view.
+            switch self.enumerationStyle {
+            case .number:
+                for (row, cell) in self.visibleCells.enumerated() {
+                   (cell as? EnumerationCell)?.detailLabel.text = self.prefix(row)
+                }
+            case .string(var keys):
+                keys.remove(at: indexPath.row)
+            default: break
+            }
+             self.listDelegate?.enumerationList(self, heightChanged: self.contentSize.height)
+        })
+    }
+
+    @objc func appendRow(sender: Any) {
+        self.performBatchUpdates({
+            self._data.append("")
+            self.insertRows(at: [IndexPath(item: self._data.count-1, section: 0)], with: .fade)
+        }, completion: { _ in
+            self.listDelegate?.enumerationList(self, heightChanged: self.contentSize.height)
+        })
     }
 
     // MARK: - Autoheight
@@ -209,43 +304,72 @@ extension EnumerationList: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.data.count
+        return self._data.count
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard self.isEditable && self.allowsCellInsertion else { return nil }
+
+        let footerView = UIView()
+        let addButton = UIButton(type: .contactAdd)
+        addButton.frame.origin = CGPoint(x: self.separatorInset.left, y: 5)
+        addButton.addTarget(self, action: #selector(self.appendRow), for: .touchUpInside)
+        footerView.addSubview(addButton)
+        return footerView
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return (self.isEditable && self.allowsCellInsertion) ? 30 : 0
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return self.isEditable && self.allowsCellDeletion
+    }
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath)
+        -> UITableViewCell.EditingStyle {
+            return .none
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: EnumerationCell.identifier, for: indexPath)
 
-        let prefix = self.prefix(indexPath.row)
-        let data = self.data[indexPath.row]
-
         if let myCell = cell as? EnumerationCell {
-            myCell.detailLabel.text = prefix
-
-            // Add url support
-            if let nsrange = data.containedURL(), let range = Range(nsrange, in: data) {
-                let urlStr = String(data[range])
-
-                // Store the link for future use.
-                if let enumCell = cell as? EnumerationCell {
-                    enumCell.referencedURL = URL(string: urlStr)
-                }
-                // Underline the string.
-                let attrStr = NSMutableAttributedString(string: data)
-                let normalAttr: [NSAttributedString.Key: Any] = [ .font: myCell.textView.font! ]
-                let linkAttr: [NSAttributedString.Key: Any] = [ .underlineStyle: NSUnderlineStyle.single.rawValue ]
-                attrStr.addAttributes(normalAttr, range: NSRange(location: 0, length: data.count))
-                attrStr.addAttributes(linkAttr, range: nsrange)
-
-                myCell.textView.attributedText = attrStr
-                myCell.textView.textColor = .label
-                myCell.textView.isUserInteractionEnabled = false
-            } else {
-                myCell.textView.text = data
-                myCell.isUserInteractionEnabled = true
+            myCell.textView.isEditable = self.isEditable
+            myCell.textView.isSelectable = true
+            myCell.detailLabel.text = self.prefix(indexPath.row)
+            myCell.deleteAccessoryAction = {
+                guard let indexPath = self.indexPath(for: myCell) else { return }
+                self.deleteRowAtIndexPath(indexPath)
             }
-        }
 
+            myCell.textChanged = { [weak self] text in
+                UIView.animate(withDuration: 0, animations: {
+                    self?.beginUpdates()
+                    self?.endUpdates()
+                }, completion: { _ in
+                    guard let self = self else { return }
+                    self.listDelegate?.enumerationList(self, heightChanged: self.contentSize.height)
+                })
+            }
+
+            // Fill the textView with the corresponding data.
+            let data = self._data[indexPath.row]
+            let attrStr = NSMutableAttributedString(string: data)
+            attrStr.addAttributes([.font: myCell.textView.font!], range: NSRange(location: 0, length: data.count))
+
+            // Set the text property to resize the textView to have a height greater 0, even if the text is empty.
+            // textView.text will not be displayed, because we are settings the attributedText afterwards.
+            myCell.textView.text = " "
+            myCell.textView.attributedText = attrStr
+            myCell.textView.textColor = .label
+            myCell.textView.linkTextAttributes = [ .underlineStyle: NSUnderlineStyle.single.rawValue ]
+        }
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
 }
 
@@ -253,21 +377,12 @@ extension EnumerationList: UITableViewDataSource {
 
 extension EnumerationList: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        guard let headerView = view as? UITableViewHeaderFooterView else { return }
-        headerView.textLabel?.font = .systemFont(ofSize: 18)
+        (view as? UITableViewHeaderFooterView)?.textLabel?.font = .systemFont(ofSize: 18)
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard let myCell = cell as? EnumerationCell else { return }
         myCell.detailLabel.text = nil
-        myCell.textView.text = nil
         myCell.textView.attributedText = nil
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? EnumerationCell else { return }
-        if let url = cell.referencedURL {
-            UIApplication.shared.open(url)
-        }
     }
 }

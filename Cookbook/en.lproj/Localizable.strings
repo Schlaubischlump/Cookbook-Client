@@ -12,6 +12,7 @@
 "COOKING_TIME"="Cooking time";
 "TOTAL_TIME"="Total time";
 "SERVINGS"="Servings";
+"IMAGE"="Image";
 "TOOLS"="Tools";
 "INGREDIENTS"="Ingredients";
 "INSTRUCTIONS"="Instructions";
@@ -23,11 +24,20 @@
 "INVALID_LOGIN"="Invalid login data!";
 "ERROR_LOADING_RECIPES"="Error loading recipes!";
 "ERROR_LOADING_RECIPE_DETAILS"="Error loading recipe details!";
+"ERROR_UPDATING"="Error updating recipe details!";
+"ERROR_DELETING"="Error deleting the recipe!";
 "PREFERENCES"="Preferences";
 "SERVER_CONFIGURATION"="Server configuration";
 "SETTINGS"="Settings";
 "SEARCH_RECIPES"="Search recipes";
+"EDIT"="Edit";
+"DELETE"="Delete";
+"ADD"="Add";
+"NAME"="Name";
 // Used on macOS only
+"DELETE_PALETTE_LABEL"="Delete";
+"ADD_PALETTE_LABEL"="Add";
+"EDIT_PALETTE_LABEL"="Edit";
 "SHARE_PALETTE_LABEL"="Share";
 "SETTINGS_PALETTE_LABEL"="Settings"; // unused
 "TOGGLE_SIDEBAR_PALETTE_LABEL"="Toggle Sidebar";

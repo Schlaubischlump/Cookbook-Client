@@ -12,6 +12,7 @@
 "COOKING_TIME"="Kochzeit";
 "TOTAL_TIME"="Gesamtzeit";
 "SERVINGS"="Portionen";
+"IMAGE"="Image";
 "TOOLS"="Küchenutensilien";
 "INGREDIENTS"="Zutaten";
 "INSTRUCTIONS"="Anleitung";
@@ -23,11 +24,20 @@
 "INVALID_LOGIN"="Falsche Anmeldedaten!";
 "ERROR_LOADING_RECIPES"="Fehler beim Laden der Rezepte!";
 "ERROR_LOADING_RECIPE_DETAILS"="Fehler beim Laden der Rezeptdetails!";
+"ERROR_UPDATING"="Fehler beim Aktualisieren der Rezeptdetails!";
+"ERROR_DELETING"="Fehler beim Löschen des Rezepts!";
 "PREFERENCES"="Einstellungen";
 "SERVER_CONFIGURATION"="Servereinstellungen";
 "SETTINGS"="Einstellungen";
 "SEARCH_RECIPES"="Rezepte suchen";
+"EDIT"="Bearbeiten";
+"DELETE"="Löschen";
+"ADD"="Hinzufügen";
+"NAME"="Name";
 // Used on macOS only
+"DELETE_PALETTE_LABEL"="Löschen";
+"ADD_PALETTE_LABEL"="Hinzufügen";
+"EDIT_PALETTE_LABEL"="Bearbeiten";
 "SHARE_PALETTE_LABEL"="Teilen";
 "SETTINGS_PALETTE_LABEL"="Einstellungen"; // unused
 "TOGGLE_SIDEBAR_PALETTE_LABEL"="Sidebar ein-/ausblenden";

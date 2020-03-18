@@ -83,4 +83,24 @@ extension DateComponents {
 
         throw InvalidFormatError(str: string)
     }
+
+    /**
+     Convert the datecomponents to P[n]Y[n]M[n]DT[n]H[n]M[n]S.
+     */
+    func iso8601String() -> String {
+        //P2Y4M3DT8H30M3S
+        var str = "P"
+        for (comp, letter)  in [(self.year, "Y"), (self.month, "M"), (self.day, "D")] {
+            if let comp = comp {
+                str += "\(comp)\(letter)"
+            }
+        }
+        str += "T"
+        for (comp, letter)  in [(self.hour, "H"), (self.minute, "M"), (self.second, "S")] {
+            if let comp = comp {
+                str += "\(comp)\(letter)"
+            }
+        }
+        return str
+    }
 }

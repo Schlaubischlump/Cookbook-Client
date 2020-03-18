@@ -45,12 +45,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         splitViewController.view.backgroundColor = .lightGray
         #endif
 
+        // Register notification center events for ProgressHUD.
+        #if targetEnvironment(macCatalyst)
+        let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(showHUD), name: .showsHud, object: nil)
+        center.addObserver(self, selector: #selector(hideHUD), name: .hidesHud, object: nil)
+        center.addObserver(self, selector: #selector(willLoadRecipeDetails), name: .willLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(didLoadRecipeDetails), name: .didLoadRecipeDetails, object: nil)
+        #endif
+
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
             if !self.configure(window: window, with: userActivity) {
                 print("Failed to restore from \(userActivity)")
             }
         }
     }
+
+    #if targetEnvironment(macCatalyst)
+    func sceneDidDisconnect(_ scene: UIScene) {
+        // Stop listening for HUD changes.
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: .showsHud, object: nil)
+        center.removeObserver(self, name: .hidesHud, object: nil)
+        center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
+    }
+    #endif
 
     func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
         return scene.userActivity
@@ -78,7 +98,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
                              collapseSecondary secondaryViewController: UIViewController,
                              onto primaryViewController: UIViewController) -> Bool {
 
-        if (splitViewController as? SplitViewController)?.recipeDetailController?.detailItem == nil {
+        if (splitViewController as? SplitViewController)?.recipeDetailController?.recipe == nil {
             // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will
             // be discarded.
             return true
