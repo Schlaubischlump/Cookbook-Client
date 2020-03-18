@@ -69,4 +69,22 @@ extension SceneDelegate {
         }
         #endif
     }
+
+    /// Called when the nextcloud login is presented.
+    @objc func showLogin(_ notification: Notification) {
+        guard let scene = self.window?.windowScene else { return }
+
+        #if targetEnvironment(macCatalyst)
+        scene.titlebar?.toolbar?.items.forEach { $0.isEnabled = false }
+        #endif
+    }
+
+    /// Called when the nextcloud login is dismissed.
+    @objc func hideLogin(_ notification: Notification) {
+        guard let scene = self.window?.windowScene else { return }
+
+        #if targetEnvironment(macCatalyst)
+        scene.titlebar?.toolbar?.items.forEach { $0.isEnabled = true }
+        #endif
+    }
 }

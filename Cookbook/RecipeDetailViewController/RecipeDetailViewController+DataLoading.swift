@@ -12,6 +12,8 @@ import UIKit
 extension RecipeDetailViewController {
     /// Remove all recipe information from the UI.
     private func resetData() {
+        self.recipeDetails = [:]
+
         self.title = ""
         self.descriptionList?.title = ""
         self.parallaxHeaderImageView.image = #imageLiteral(resourceName: "placeholder")
@@ -27,7 +29,8 @@ extension RecipeDetailViewController {
     private func reloadDataFromCache() {
         guard !self.recipeDetails.isEmpty else { return }
 
-        self.descriptionList?.title = recipe?.name
+        self.title = recipe?.name ?? ""
+        self.descriptionList?.title = recipe?.name ?? ""
 
         let (descriptionKeys, descriptionData) = Recipe.parseDescriptionValuesFor(jsonArray: self.recipeDetails)
         self.descriptionList.enumerationStyle = .string(descriptionKeys)

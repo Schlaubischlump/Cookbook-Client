@@ -11,6 +11,12 @@
 import Foundation
 import UIKit
 
+// MARK: - NotificationCenter
+extension Notification.Name {
+    static let beginNextCloudModalSheet = Notification.Name("com.nextcloud.beginModalSheet.notification")
+    static let endNextCloudModalSheet = Notification.Name("com.nextcloud.endModalSheet.notification")
+}
+
 // MARK: - Constants
 typealias NextCloudModalCompletionType = (NextCloudModalResponse) -> Void
 
@@ -260,12 +266,19 @@ class NextCloudLoginController: UIViewController {
                          completionHandler: @escaping NextCloudModalCompletionType) {
         guard !self.isBeingPresented else { return }
 
+        NotificationCenter.default.post(name: .beginNextCloudModalSheet, object: nil)
+
         let nextCloudNavController = UINavigationController(rootViewController: self)
         nextCloudNavController.modalPresentationStyle = .formSheet
         nextCloudNavController.isModalInPresentation = true
 
         self.modalCompletionHandler = completionHandler
         viewController.present(nextCloudNavController, animated: true)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: .endNextCloudModalSheet, object: nil)
     }
 }
 

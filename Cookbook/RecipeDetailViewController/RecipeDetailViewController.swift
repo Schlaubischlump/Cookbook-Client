@@ -62,7 +62,6 @@ class RecipeDetailViewController: UIViewController {
     var recipe: Recipe? {
         didSet (newRecipe) {
             if self.recipe?.recipeID != newRecipe?.recipeID {
-                print("[Info:] Recipe changed: ", self.recipe?.name)
                 self.reloadData(useCachedData: false)
             }
         }

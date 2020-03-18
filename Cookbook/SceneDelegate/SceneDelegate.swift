@@ -50,6 +50,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(showHUD), name: .showsHud, object: nil)
         center.addObserver(self, selector: #selector(hideHUD), name: .hidesHud, object: nil)
+        center.addObserver(self, selector: #selector(showLogin), name: .beginNextCloudModalSheet, object: nil)
+        center.addObserver(self, selector: #selector(hideLogin), name: .endNextCloudModalSheet, object: nil)
         center.addObserver(self, selector: #selector(willLoadRecipeDetails), name: .willLoadRecipeDetails, object: nil)
         center.addObserver(self, selector: #selector(didLoadRecipeDetails), name: .didLoadRecipeDetails, object: nil)
         #endif
@@ -69,6 +71,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         center.removeObserver(self, name: .hidesHud, object: nil)
         center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
         center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .beginNextCloudModalSheet, object: nil)
+        center.removeObserver(self, name: .endNextCloudModalSheet, object: nil)
     }
     #endif
 
