@@ -180,18 +180,12 @@ class EnumerationList: UITableView {
         didSet {
             // Apply the new data.
             if !self.isEditable {
-                // We do not want to trigger the reload => store everything in a temp array.
-                var newData: [String] = Array(repeating: "", count: self._data.count)
-                // Stop editing and set the new string data.
-                zip(self.indexPathsForVisibleRows!, self.visibleCells).forEach { (indexPath, enumCell) in
+                // Stop editing every textView.
+                self.visibleCells.forEach { enumCell in
                     let cell = enumCell as? EnumerationCell
-                    // Update the backend data.
                     cell?.textView.isEditable = false
                     cell?.textView.spellCheckingType = .no
-                    newData[indexPath.row] = cell?.textView.attributedText.string ?? ""
                 }
-                // Trigger reload by setting the new data to make all cells visible.
-                self.data = newData
             } else {
                 // Reload to make all cells visible.
                 self.reloadData()
@@ -300,7 +294,10 @@ class EnumerationList: UITableView {
 
 extension EnumerationList: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.title
+        if let title = self.title, !title.isEmpty {
+            return title
+        }
+        return nil
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -346,6 +343,7 @@ extension EnumerationList: UITableViewDataSource {
             myCell.textChanged = { [weak self] text in
                 UIView.animate(withDuration: 0, animations: {
                     self?.beginUpdates()
+                    self?._data[indexPath.row] = myCell.textView.attributedText.string
                     self?.endUpdates()
                 }, completion: { _ in
                     guard let self = self else { return }

@@ -48,12 +48,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         // Register notification center events for ProgressHUD.
         #if targetEnvironment(macCatalyst)
         let center = NotificationCenter.default
-        center.addObserver(self, selector: #selector(showHUD), name: .showsHud, object: nil)
-        center.addObserver(self, selector: #selector(hideHUD), name: .hidesHud, object: nil)
-        center.addObserver(self, selector: #selector(showLogin), name: .beginNextCloudModalSheet, object: nil)
-        center.addObserver(self, selector: #selector(hideLogin), name: .endNextCloudModalSheet, object: nil)
+        center.addObserver(self, selector: #selector(willLoadRecipes), name: .willLoadRecipes, object: nil)
+        center.addObserver(self, selector: #selector(didLoadRecipes), name: .didLoadRecipes, object: nil)
+        center.addObserver(self, selector: #selector(didLogout), name: .logout, object: nil)
+        center.addObserver(self, selector: #selector(didLogin), name: .login, object: nil)
         center.addObserver(self, selector: #selector(willLoadRecipeDetails), name: .willLoadRecipeDetails, object: nil)
         center.addObserver(self, selector: #selector(didLoadRecipeDetails), name: .didLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(willEditRecipe), name: .willEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(didEditRecipe), name: .didEditRecipe, object: nil)
         #endif
 
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
@@ -67,12 +69,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
     func sceneDidDisconnect(_ scene: UIScene) {
         // Stop listening for HUD changes.
         let center = NotificationCenter.default
-        center.removeObserver(self, name: .showsHud, object: nil)
-        center.removeObserver(self, name: .hidesHud, object: nil)
+        center.removeObserver(self, name: .willLoadRecipes, object: nil)
+        center.removeObserver(self, name: .didLoadRecipes, object: nil)
+        center.removeObserver(self, name: .logout, object: nil)
+        center.removeObserver(self, name: .login, object: nil)
         center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
         center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
-        center.removeObserver(self, name: .beginNextCloudModalSheet, object: nil)
-        center.removeObserver(self, name: .endNextCloudModalSheet, object: nil)
+        center.removeObserver(self, name: .willEditRecipe, object: nil)
+        center.removeObserver(self, name: .didEditRecipe, object: nil)
     }
     #endif
 

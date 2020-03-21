@@ -28,6 +28,17 @@ class SplitViewController: UISplitViewController {
         super.init(coder: coder)
     }
 
+    // MARK: - View handling
+
+    #if targetEnvironment(macCatalyst)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // The detailed View inside the splitViewController should never display a navigationBar on macOS.
+        // This prevents the navigationBar on the initial startup, before a recipe is loaded.
+        self.recipeDetailController?.navigationController?.navigationBar.isHidden = true
+    }
+    #endif
+
     // MARK: - Catalyst Helper
     @objc func toggleSidebar(item: Any) {
         // Make sure to make the master view controller the new fist responder.

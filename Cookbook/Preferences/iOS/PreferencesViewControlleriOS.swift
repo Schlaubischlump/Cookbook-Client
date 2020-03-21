@@ -214,8 +214,8 @@ class PreferencesViewControlleriOS: UITableViewController {
 
         // Reset the login credentials before we try the next api request.
         SessionManager.default.session.reset {
-            NotificationCenter.default.post(name: .reload, object: nil)
             DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .reload, object: nil)
                 if let completion = self.modalCompletionHandler {
                     completion(.save)
                 }

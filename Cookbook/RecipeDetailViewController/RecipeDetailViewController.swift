@@ -70,9 +70,54 @@ class RecipeDetailViewController: UIViewController {
     /// Recipe details for this detailItem.
     var recipeDetails: [String: Any] = [:]
 
-    /// Edit the view.
+    /**
+      The current recipe details as represented in the UI. These values must not represent the actual recipeDetails
+      stored on the server.
+    */
+    var proposedRecipeDetails: [String: Any] {
+        // Because dictionary and array are both structs, this should copy the recipeDetails.
+        var details: [String: Any] = self.recipeDetails
+        if self.descriptionList.data.count == 8 {
+            details["name"] = self.descriptionList.data[0]
+            details["description"] = self.descriptionList.data[1]
+            details["url"] = self.descriptionList.data[2]
+            details["image"] = self.descriptionList.data[3]
+            details["prepTime"] = self.descriptionList.data[4].iso8601()
+            details["cookTime"] = self.descriptionList.data[5].iso8601()
+            details["totalTime"] = self.descriptionList.data[6].iso8601()
+            details["recipeYield"] = self.descriptionList.data[7].intValue
+        } else {
+            details["description"] = self.descriptionList.data[0]
+            details["url"] = self.descriptionList.data[1]
+            details["prepTime"] = self.descriptionList.data[2].iso8601()
+            details["cookTime"] = self.descriptionList.data[3].iso8601()
+            details["totalTime"] = self.descriptionList.data[4].iso8601()
+            details["recipeYield"] = self.descriptionList.data[5].intValue
+        }
+        // Copy the remaining lists.
+        details["tool"] = self.toolsList.data
+        details["recipeIngredient"] = self.ingredientsList.data
+        details["recipeInstructions"] = self.instructionsList.data
+        return details
+     }
+
+    /// Include the parallax header view.
+    var includeParallaxHeaderView: Bool = true {
+        didSet {
+            if self.isViewLoaded {
+                self.parallaxHeaderImageView.isHidden = !self.includeParallaxHeaderView
+                self.parallaxHeightConstraint.constant = self.includeParallaxHeaderView ? 320 : 0
+            }
+        }
+    }
+
+    /**
+     Toggle edit mode on and off. This method does not change any data.
+     */
     var isEditable: Bool = false {
         didSet {
+            guard isViewLoaded else { return }
+
             if self.isEditable {
                 // Show all available description fields.
                 self.reloadRecipeDescriptionList(includeAllFields: true)
@@ -89,49 +134,14 @@ class RecipeDetailViewController: UIViewController {
                 self.instructionsList.isEditable = false
                 self.toolsList.isEditable = false
 
-                // Update the recipeDetails to represent the new data.
-                self.updateRecipeDetailsFromUI()
-
-                // Change the name according to newly entered values.
-                self.title = self.recipe?.name
-                self.descriptionList?.title = self.recipe?.name
-
-                let recipesController = (self.splitViewController as? SplitViewController)?.recipesMasterController
-                recipesController?.reloadVisibleTitles()
-
-                // Update the server information and reload the corresponding full size and thumb image for this recipe.
-                self.recipe?.update(self.recipeDetails, completionHandler: {
-                    // Update the full size image.
-                    self.recipe?.loadImage(completionHandler: {[weak self] image in
-                        guard let view = self?.parallaxHeaderImageView else { return }
-                        UIView.transition(with: view, duration: 0.25, options: .transitionCrossDissolve, animations: {
-                            view.image = image
-                        })
-                    }, thumb: false)
-
-                    // Update the thumb image in the sidebar.
-                    recipesController?.reloadVisibleThumbImages()
-                }, errorHandler: { _ in
-                    // Inform the user that the update operation did not work.
-                    ProgressHUD.showError(attachedTo: self.view,
-                                          message: NSLocalizedString("ERROR_UPDATING", comment: ""),
-                                          animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
-                })
-
-                // Load the new recipeDetails.
+                // Hide all not requiered fields.
                 self.reloadRecipeDescriptionList(includeAllFields: false)
             }
-
         }
     }
 
     private var logoutObserver: NSObjectProtocol?
     private var reloadObserver: NSObjectProtocol?
-
-    #if !targetEnvironment(macCatalyst)
-    private var keyboardShowObserver: NSObjectProtocol?
-    private var keyboardHideObserver: NSObjectProtocol?
-    #endif
 
     // MARK: - Helper
 
@@ -140,7 +150,7 @@ class RecipeDetailViewController: UIViewController {
      with an empty value as well as an additional field for `image` and `name`.
      - Parameter includeAllFields: show all avaiable fields
      */
-    func reloadRecipeDescriptionList(includeAllFields: Bool = false) {
+    private func reloadRecipeDescriptionList(includeAllFields: Bool = false) {
         var (descKeys, descData) = Recipe.parseDescriptionValuesFor(jsonArray: self.recipeDetails)
 
         if includeAllFields {
@@ -167,28 +177,8 @@ class RecipeDetailViewController: UIViewController {
         self.updateContentSize()
     }
 
-    /// The recipeDetails will be updated to match the currently displayed values.
-    func updateRecipeDetailsFromUI() {
-        let name = self.descriptionList.data[0]
-        self.recipeDetails["name"] = name
-        self.recipeDetails["description"] = self.descriptionList.data[1]
-        self.recipeDetails["url"] = self.descriptionList.data[2]
-        self.recipeDetails["image"] = self.descriptionList.data[3]
-        self.recipeDetails["prepTime"] = self.descriptionList.data[4].iso8601()
-        self.recipeDetails["cookTime"] = self.descriptionList.data[5].iso8601()
-        self.recipeDetails["totalTime"] = self.descriptionList.data[6].iso8601()
-        self.recipeDetails["recipeYield"] = self.descriptionList.data[7].intValue
-
-        self.recipeDetails["tool"] = self.toolsList.data
-        self.recipeDetails["recipeIngredient"] = self.ingredientsList.data
-        self.recipeDetails["recipeInstructions"] = self.instructionsList.data
-
-        // Update the recipe name.
-        self.recipe?.name = name
-    }
-
     /// Update the scrollView contentSize to display all the content.
-    func updateContentSize() {
+    @objc func updateContentSize() {
         self.toolsListHeight.constant = self.toolsList.contentSize.height
         self.descriptionListHeight.constant = self.descriptionList.contentSize.height
         self.ingredientsListHeight.constant = self.ingredientsList.contentSize.height
@@ -224,23 +214,16 @@ class RecipeDetailViewController: UIViewController {
         self.scrollView.delegate = self
         self.scrollView.keyboardDismissMode = .interactive
 
-        #if targetEnvironment(macCatalyst)
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
-        #else
-
-        // Setup the toolbar to add/edit/delte items.
-        self.navigationController?.isToolbarHidden = false
-        let editButton = BarButtonItem.with(type: .edit)
-        editButton.target = self
-        editButton.action = #selector(self.editRecipe)
-        let deleteButton = BarButtonItem.with(type: .delete)
-        deleteButton.target = self
-        deleteButton.action = #selector(self.deleteRecipe)
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        self.toolbarItems = [deleteButton, flexibleSpace, editButton]
-        #endif
-
         self.configureLists()
+
+        // Force and update just in case the variables were set before the view was loaded.
+        if !self.includeParallaxHeaderView {
+            self.includeParallaxHeaderView = false
+        }
+
+        if self.isEditable {
+            self.isEditable = true
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -263,6 +246,8 @@ class RecipeDetailViewController: UIViewController {
         self.updateContentSize()
     }
 
+    // MARK: - NotificationCenter Callbacks
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -275,27 +260,17 @@ class RecipeDetailViewController: UIViewController {
             self?.recipe = nil
         }
 
+        // After all data is loaded we need to relayout the UI.
+        center.addObserver(self, selector: #selector(self.updateContentSize), name: .didLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
+
         #if !targetEnvironment(macCatalyst)
-        // Add a contentInset to the bottom on iOS device when the keyboard appears.
-        self.keyboardShowObserver = center.addObserver(forName: UIResponder.keyboardDidShowNotification, object: nil,
-                                                       queue: .main, using: { notification in
-            if let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?
-                .cgRectValue.height {
-                self.scrollView.contentInset.bottom = keyboardHeight
-            }
-        })
-
-        // Add a contentInset to the bottom on iOS device when the keyboard appears.
-        self.keyboardHideObserver = center.addObserver(forName: UIResponder.keyboardDidHideNotification, object: nil,
-                                                       queue: .main, using: { _ in
-            self.scrollView.contentInset.bottom = 0
-        })
+        // Add observers for the keyboard show / hide events.
+        center.addObserver(self, selector: #selector(self.keyboardDidShow),
+                           name: UIResponder.keyboardDidShowNotification, object: nil)
+        center.addObserver(self, selector: #selector(self.keyboardDidHide),
+                           name: UIResponder.keyboardDidHideNotification, object: nil)
         #endif
-
-        // Fixme: Reload the ui after a small delay... I have no idea why this must be done.
-        if self.recipe != nil {
-            self.perform( #selector(self.reloadData), with: true, afterDelay: 0.5)
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -305,17 +280,19 @@ class RecipeDetailViewController: UIViewController {
         let center = NotificationCenter.default
         if let observer = self.logoutObserver { center.removeObserver(observer) }
         if let observer = self.reloadObserver { center.removeObserver(observer) }
+        center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
 
         #if !targetEnvironment(macCatalyst)
-        if let observer = self.keyboardShowObserver { center.removeObserver(observer) }
-        if let observer = self.keyboardHideObserver { center.removeObserver(observer) }
+        center.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        center.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+        center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .didEditRecipe, object: nil)
         #endif
     }
 }
 
 // MARK: - UIScrollViewDelegate
 extension RecipeDetailViewController: UIScrollViewDelegate {
-
     /// Add a parallax effect when scrolling
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOff = scrollView.contentOffset.y + scrollView.adjustedContentInset.top

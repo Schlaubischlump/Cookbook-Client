@@ -26,6 +26,8 @@
 "ERROR_LOADING_RECIPE_DETAILS"="Fehler beim Laden der Rezeptdetails!";
 "ERROR_UPDATING"="Fehler beim Aktualisieren der Rezeptdetails!";
 "ERROR_DELETING"="Fehler beim Löschen des Rezepts!";
+"ERROR_MISSING_NAME"="Rezeptname fehlt!";
+"ERROR_CREATE_RECIPE"="Fehler beim Erstellen des Rezeptes!";
 "PREFERENCES"="Einstellungen";
 "SERVER_CONFIGURATION"="Servereinstellungen";
 "SETTINGS"="Einstellungen";
@@ -33,8 +35,17 @@
 "EDIT"="Bearbeiten";
 "DELETE"="Löschen";
 "ADD"="Hinzufügen";
+"DONE"="Fertig";
+"SAVE"="Speichern";
 "NAME"="Name";
+"CONFIRM_DELETE_TITLE"="Rezept löschen";
+"CONFIRM_DELETE_MESSAGE"="Möchten sie dieses Rezept wirklich löschen?";
+"OK"="OK";
+"CANCEL"="Abbrechen";
 // Used on macOS only
+"CANCEL_PALETTE_LABEL"="Abbrechen";
+"DONE_PALETTE_LABEL"="Fertig";
+"SAVE_PALETTE_LABEL"="Speichern";
 "DELETE_PALETTE_LABEL"="Löschen";
 "ADD_PALETTE_LABEL"="Hinzufügen";
 "EDIT_PALETTE_LABEL"="Bearbeiten";

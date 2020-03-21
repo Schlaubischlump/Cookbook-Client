@@ -22,6 +22,11 @@
 	<string>public.app-category.healthcare-fitness</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>nextcloud.cookbook.preferences</string>

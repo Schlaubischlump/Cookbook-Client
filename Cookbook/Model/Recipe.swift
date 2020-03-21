@@ -16,6 +16,7 @@ typealias DetailsCompletionHandler = (_ json: [String: Any]?) -> Void
 typealias ErrorHandler = (_ error: Error) -> Void
 typealias RecipesCompletionHandler = (_ recipes: [Recipe]) -> Void
 typealias UpdateCompletionHandler = () -> Void
+typealias CreateCompletionHandler = (Int) -> Void
 
 enum RecipeError: Error {
     case noData
@@ -137,12 +138,17 @@ class Recipe {
                         let img = (entry["image_url"] as? String) ?? ""
                         let name = entry["name"] as? String
                         let user = entry["user_id"] as? String
-                        let rid = entry["recipe_id"] as? Int
+                        let rid = (entry["recipe_id"] as? String)?.intValue
+
                         if let name = name, let user = user, let rid = rid {
                             let recipe = Recipe(imageURL: img, name: name, userID: user, recipeID: rid)
                             recipes.append(recipe)
                         }
                     }
+                    // Sort the recipes by name.
+                    recipes.sort(by: {
+                        $0.name.localizedCaseInsensitiveCompare($1.name) == ComparisonResult.orderedAscending
+                    })
 
                     completionHandler(recipes)
                 case .failure(let error):
@@ -152,6 +158,8 @@ class Recipe {
     }
 
     // MARK: - Add / update / delete
+
+    /// Update an existing recipe with new recipe details.
     func update(_ recipeDetails: [String: Any], completionHandler: @escaping UpdateCompletionHandler,
                 errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.update(rid: self.recipeID, recipeDetails: recipeDetails)
@@ -174,6 +182,7 @@ class Recipe {
         }
     }
 
+    /// Delete an existing recipe from the server.
     func delete(_ completionHandler: @escaping UpdateCompletionHandler,
                 errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.delete(rid: self.recipeID)
@@ -195,4 +204,25 @@ class Recipe {
             }
         }
     }
+
+    /// Create a new recipe.
+    static func create(_ recipeDetails: [String: Any], completionHandler: @escaping CreateCompletionHandler,
+                       errorHandler: @escaping ErrorHandler = { _ in }) {
+        let router = Router.create(recipeDetails: recipeDetails)
+        SessionManager
+            .default
+            .request(router)
+            .validate(statusCode: 200..<300)
+            .responseData { (response) in
+                switch response.result {
+                case .success:
+                    if let data = response.data, let recipeID = String(bytes: data, encoding: .utf8)?.intValue {
+                        completionHandler(recipeID)
+                    }
+                case .failure(let error):
+                    errorHandler(error)
+            }
+        }
+    }
+
 }

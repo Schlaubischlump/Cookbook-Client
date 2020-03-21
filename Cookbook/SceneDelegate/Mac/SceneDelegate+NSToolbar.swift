@@ -13,25 +13,26 @@ extension SceneDelegate: NSToolbarDelegate {
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
                  willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
 
-        guard let barType = BarButtonItemType(rawValue: itemIdentifier.rawValue) else { return nil }
+        guard let barType = UIBarButtonItem.Kind(value: itemIdentifier.rawValue) else { return nil }
 
-        let item = BarButtonItem.with(type: barType)
+        let item = UIBarButtonItem.with(kind: barType)
         item.target = self
         item.action = #selector(self.toolbarItemClicked(_ :))
         let toolbarItem = NSToolbarItem(itemIdentifier: itemIdentifier, barButtonItem: item)
         toolbarItem.autovalidates = false
+        toolbarItem.isEnabled = false
         toolbarItem.paletteLabel = barType.paletteLabel
         toolbarItem.label = barType.paletteLabel
         return toolbarItem
     }
 
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-        return [BarButtonItemType.sidebar.identifier,
-                BarButtonItemType.add.identifier,
-                BarButtonItemType.delete.identifier,
-                BarButtonItemType.edit.identifier,
+        return [UIBarButtonItem.Kind.sidebar.identifier,
+                UIBarButtonItem.Kind.add.identifier,
+                UIBarButtonItem.Kind.delete.identifier,
+                UIBarButtonItem.Kind.edit.identifier,
                 NSToolbarItem.Identifier.flexibleSpace,
-                BarButtonItemType.share.identifier]
+                UIBarButtonItem.Kind.share.identifier]
     }
 
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
@@ -45,15 +46,15 @@ extension SceneDelegate: NSToolbarDelegate {
         guard let splitViewController = self.window?.rootViewController as? SplitViewController else { return }
 
         switch (sender as? NSToolbarItem)?.itemIdentifier {
-        case BarButtonItemType.share.identifier:
+        case UIBarButtonItem.Kind.share.identifier:
             splitViewController.recipeDetailController?.shareRecipe(item: sender)
-        case BarButtonItemType.edit.identifier:
+        case UIBarButtonItem.Kind.edit.identifier:
             splitViewController.recipeDetailController?.editRecipe(item: sender)
-        case BarButtonItemType.delete.identifier:
+        case UIBarButtonItem.Kind.delete.identifier:
             splitViewController.recipeDetailController?.deleteRecipe(item: sender)
-        case BarButtonItemType.add.identifier:
+        case UIBarButtonItem.Kind.add.identifier:
             splitViewController.recipesMasterController?.addRecipe(item: sender)
-        case BarButtonItemType.sidebar.identifier:
+        case UIBarButtonItem.Kind.sidebar.identifier:
             splitViewController.toggleSidebar(item: sender)
         default: break
         }

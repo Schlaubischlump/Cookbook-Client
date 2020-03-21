@@ -26,6 +26,8 @@
 "ERROR_LOADING_RECIPE_DETAILS"="Error loading recipe details!";
 "ERROR_UPDATING"="Error updating recipe details!";
 "ERROR_DELETING"="Error deleting the recipe!";
+"ERROR_MISSING_NAME"="Missing recipe name!";
+"ERROR_CREATE_RECIPE"="Could not create new recipe!";
 "PREFERENCES"="Preferences";
 "SERVER_CONFIGURATION"="Server configuration";
 "SETTINGS"="Settings";
@@ -33,8 +35,17 @@
 "EDIT"="Edit";
 "DELETE"="Delete";
 "ADD"="Add";
+"DONE"="Done";
+"SAVE"="Save";
 "NAME"="Name";
+"CONFIRM_DELETE_TITLE"="Delete recipe";
+"CONFIRM_DELETE_MESSAGE"="Do you really want to delete this recipe?";
+"OK"="Ok";
+"CANCEL"="Cancel";
 // Used on macOS only
+"CANCEL_PALETTE_LABEL"="Cancel";
+"DONE_PALETTE_LABEL"="Done";
+"SAVE_PALETTE_LABEL"="Save";
 "DELETE_PALETTE_LABEL"="Delete";
 "ADD_PALETTE_LABEL"="Add";
 "EDIT_PALETTE_LABEL"="Edit";

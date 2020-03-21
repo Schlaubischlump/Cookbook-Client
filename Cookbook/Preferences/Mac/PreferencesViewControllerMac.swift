@@ -19,6 +19,8 @@ class PreferencesViewControllerMac: UIViewController {
     @IBOutlet var passwordField: UITextField!
     @IBOutlet var logoutButton: UIButton!
 
+    private var didPerformLogout: Bool = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = NSLocalizedString("PREFERENCES", comment: "")
@@ -73,6 +75,8 @@ class PreferencesViewControllerMac: UIViewController {
 
         NotificationCenter.default.post(name: .logout, object: nil)
 
+        self.didPerformLogout = true
+
         /*
          // If you want to close the window after a logout.
          if let session = self.view.window?.windowScene?.session {
@@ -86,8 +90,12 @@ class PreferencesViewControllerMac: UIViewController {
         try? loginCredentials.updateStoredInformation()
 
         // Reset the login credentials before we try the next api request.
+        if self.didPerformLogout && !loginCredentials.informationIsSet() { return }
+
         SessionManager.default.session.reset {
-            NotificationCenter.default.post(name: .reload, object: nil)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .reload, object: nil)
+            }
         }
     }
 }

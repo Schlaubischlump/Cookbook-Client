@@ -5,54 +5,43 @@
 //  Created by David Klopp on 22.12.19.
 //  Copyright © 2019 David Klopp. All rights reserved.
 //
-
 import UIKit
 import Alamofire
 import AlamofireImage
-import MBProgressHUD
 
 // MARK: - Helper
 let kErrorHudDisplayDuration = 1.5
 let kMaxWidth: CGFloat = 300
 
-typealias ResultHandler = (Swift.Result<Void, Error>) -> Void
-
 // MARK: - RecipesViewController
 
-class RecipesTableViewCell: UITableViewCell {
-    var imageLoadingRequestReceipt: RequestReceipt?
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.setup()
-    }
-
-    func setup() {
-        self.imageView?.image = #imageLiteral(resourceName: "placeholder_thumb")
-    }
-}
-
 class RecipesViewController: UITableViewController {
+    // Temporary presented viewController.
+    var newRecipeController: RecipeDetailViewController?
+    var loginViewController: NextCloudLoginController?
 
-    // NotificationCenter observer.
-    private var logoutObserver: NSObjectProtocol?
-    private var reloadObserver: NSObjectProtocol?
-    private var loginObserver: NSObjectProtocol?
+    let searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.placeholder = NSLocalizedString("SEARCH_RECIPES", comment: "")
+        return searchController
+    }()
 
-    let searchController = UISearchController(searchResultsController: nil)
+    /// All unfiltered recipes.
+    var recipes: [Recipe] = []
+    /// Filtered data which is displayed inside the tableView.
     var filteredRecipes: [Recipe] = []
 
-    var recipes: [Recipe] = []
-    /// First row to select when the tableView appears
-    var firstSelectedRow: Int = 0
+    /// First row to select when the tableView appears. Set this to a nil, to not select any cell.
+    var firstSelectedRow: Int? = 0
+
     /// Set this flag to true when opening a new window with drag and drop.
-    /// In this case we want to open the detailViewController.
+    /// In this case we want to open the detailViewController directly.
     var isActivatedByNewWindowActivity: Bool = false
+
+    /// Reload the recipe data on viewWillAppear.
+    var reloadRecipesOnViewWillAppear: Bool = false
 
     // MARK: - View handling
     override func viewDidLoad() {
@@ -65,49 +54,40 @@ class RecipesViewController: UITableViewController {
         // Customize appearance.
         self.view.backgroundColor = .systemBackground
 
-        // Add a searchbar.
-        self.searchController.searchResultsUpdater = self
-        self.searchController.obscuresBackgroundDuringPresentation = false
-        self.searchController.hidesNavigationBarDuringPresentation = false
-        self.searchController.searchBar.placeholder = NSLocalizedString("SEARCH_RECIPES", comment: "")
-        self.navigationItem.searchController = searchController
+        // Add a searchController with the corresponding searchbar.
         self.definesPresentationContext = true
+        self.searchController.searchResultsUpdater = self
+        self.navigationItem.searchController = self.searchController
 
         #if targetEnvironment(macCatalyst)
+
         self.tableView.contentInset.top = 15.0
         self.tableView.rowHeight = 30.0
 
-        // Add a fake title.
-        self.title = ""
+        // The viewController title.
+        let title = NSLocalizedString("RECIPES", comment: "")
 
-        let label = UILabel()
-        label.text = NSLocalizedString("RECIPES", comment: "")
-        label.textColor = .gray
-        label.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .semibold)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: label)
+        // Add a fake title to make the UI look a little bit nicer on macOS.
+        self.title = ""
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem.with(kind: .fakeTitle(title))
 
         #else
 
         // Set the navigationbar title.
-        self.title = NSLocalizedString("RECIPES", comment: "")
+        self.title = title
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.tableView.rowHeight = 80.0
 
-        // Add a toolbar item to create new reciped.
+        // Add a toolbar item to create new recipe.
         self.navigationController?.isToolbarHidden = false
-        let addButton = BarButtonItem.with(type: .add)
-        addButton.target = self
-        addButton.action = #selector(self.addRecipe)
-        self.toolbarItems = [addButton]
+        self.toolbarItems = [UIBarButtonItem.with(kind: .add, target: self, action: #selector(self.addRecipe))]
 
         // Add a settings button on the right hand side on iOS.
-        let settingsButton = BarButtonItem.with(type: .settings)
-        settingsButton.target = self
-        settingsButton.action = #selector(self.showPreferencesiOS)
-        navigationItem.rightBarButtonItem = settingsButton
+        navigationItem.rightBarButtonItem = UIBarButtonItem.with(kind: .settings, target: self,
+                                                                 action: #selector(self.showPreferencesiOS))
         #endif
 
-        self.loadDataIfLoginCredentialsAreSet()
+        self.reloadRecipesOnViewWillAppear = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -119,65 +99,18 @@ class RecipesViewController: UITableViewController {
 
         // Register NotificationCenter callbacks.
         let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didAddRecipe), name: .didAddRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didAttemptLogin), name: .login, object: nil)
+        center.addObserver(self, selector: #selector(self.requestReload), name: .reload, object: nil)
+        center.addObserver(self, selector: #selector(self.didLogout), name: .logout, object: nil)
 
-        // Called after a successfull login.
-        self.loginObserver = center.addObserver(forName: .login, object: nil, queue: .main, using: { [weak self] _ in
-            // Show progress spinner.
-            let hud = ProgressHUD.showSpinner(attachedTo: self?.presentedViewController?.view)
-            self?.reloadRecipes { result in
-                hud?.hide(animated: true)
-
-                switch result {
-                case .success:
-                    // Save the login information for the next time and dismiss the login screen.
-                    try? loginCredentials.updateStoredInformation()
-                    self?.presentedViewController?.dismiss(animated: true)
-
-                case .failure:
-                    // Show an error message
-                    ProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
-                                          message: NSLocalizedString("INVALID_LOGIN", comment: ""),
-                                          animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
-                }
-            }
-        })
-
-        // Called after a successfull logout.
-        self.logoutObserver = center.addObserver(forName: .logout, object: nil, queue: .main) { [weak self] _ in
-            self?.recipes = []
-            self?.filteredRecipes = []
-            self?.tableView.reloadData()
-            self?.showNextcloudLogin()
-        }
-
-        // Called to force a reload.
-        self.reloadObserver = center.addObserver(forName: .reload, object: nil, queue: .main) { [weak self] _ in
-            guard loginCredentials.informationIsSet() else { return }
-            // Reload data and show an error if required.
-            let hud = ProgressHUD.showSpinner(attachedTo: self?.splitViewController?.view)
-            self?.reloadRecipes { result in
-                hud?.hide(animated: true)
-
-                switch result {
-                case .success:
-                    // Apply the changes only on success.
-                    try? loginCredentials.updateStoredInformation()
-                case .failure:
-                    self?.showNextcloudLogin()
-                    ProgressHUD.showError(attachedTo: self?.presentedViewController?.view,
-                                          message: NSLocalizedString("INVALID_LOGIN", comment: ""),
-                                          animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
-                }
-            }
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        // Present the login screen if no login information is available
-        if !loginCredentials.informationIsSet() {
-            self.showNextcloudLogin()
+        // Try to load the data.
+        if self.reloadRecipesOnViewWillAppear {
+            self.reloadRecipes()
+            // Prevent a reload each time the toggle button is clicked.
+            self.reloadRecipesOnViewWillAppear = false
         }
     }
 
@@ -186,41 +119,39 @@ class RecipesViewController: UITableViewController {
         // Do not remove these on viewWillDisappear. Otherwise collapsing the sidebar follwed by a logout will not
         // clear the tableView recipes.
         let center = NotificationCenter.default
-        if let observer = self.loginObserver {
-            center.removeObserver(observer)
-        }
-        if let observer = self.logoutObserver {
-            center.removeObserver(observer)
-        }
-        if let observer = self.reloadObserver {
-            center.removeObserver(observer)
-        }
+        center.removeObserver(self, name: .didRemoveRecipe, object: nil)
+        center.removeObserver(self, name: .didEditRecipe, object: nil)
+        center.removeObserver(self, name: .didAddRecipe, object: nil)
+        center.removeObserver(self, name: .login, object: nil)
+        center.removeObserver(self, name: .logout, object: nil)
+        center.removeObserver(self, name: .reload, object: nil)
     }
 }
 
-// MARK: - Login
+// MARK: - NextCloudLogin
 extension RecipesViewController {
     /**
      Show the Nextcloud login view and update the credentials when required.
      */
     func showNextcloudLogin() {
-        // Some information is missing, present the login screen to the user with the partial information filled in.
-        let nextCloudViewController = NextCloudLoginController()
-        nextCloudViewController.server = loginCredentials.server
-        nextCloudViewController.username = loginCredentials.username
-        nextCloudViewController.password = loginCredentials.password
+        guard self.loginViewController == nil else { return }
 
-        nextCloudViewController.beginSheetModal(self) { [weak nextCloudViewController] response in
+        // Some information is missing, present the login screen to the user with the partial information filled in.
+        self.loginViewController = NextCloudLoginController()
+        self.loginViewController?.server = loginCredentials.server
+        self.loginViewController?.username = loginCredentials.username
+        self.loginViewController?.password = loginCredentials.password
+
+        self.loginViewController?.beginSheetModal(self) { [weak self] response in
             switch response {
             case .login:
-                loginCredentials.server = nextCloudViewController?.server
-                loginCredentials.username = nextCloudViewController?.username
-                loginCredentials.password = nextCloudViewController?.password
+                loginCredentials.server = self?.loginViewController?.server
+                loginCredentials.username = self?.loginViewController?.username
+                loginCredentials.password = self?.loginViewController?.password
 
-                // Update all open windows.
+                // Attempt to login on all open windows.
                 NotificationCenter.default.post(name: .login, object: nil)
-            default:
-                break
+            default: break
             }
         }
     }
@@ -247,15 +178,9 @@ extension RecipesViewController {
             guard let indexPath = self.tableView.indexPathForSelectedRow,
                 let navController = segue.destination as? UINavigationController,
                 let controller = navController.topViewController as? RecipeDetailViewController else { return }
+            // Update the detail controller with the recipe info.
             let recipe = self.filteredRecipes[indexPath.row]
             controller.recipe = recipe
-            controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-            controller.navigationItem.leftItemsSupplementBackButton = true
-
-            let shareButton = BarButtonItem.with(type: .share)
-            shareButton.target = controller
-            shareButton.action = #selector(controller.shareRecipe)
-            controller.navigationItem.rightBarButtonItem = shareButton
 
             // Set this value, to open the currently selected row, if the search result is cleared, after an item
             // was selected. We need to find the row of the selected item inside the unfiltered tableView.
@@ -263,10 +188,15 @@ extension RecipesViewController {
 
             // Change the toolbar edit icon back to normal.
             #if targetEnvironment(macCatalyst)
+            navController.navigationBar.isHidden = true
+
             let editItem = self.view.window?.windowScene?.titlebar?.toolbar?.items.first(where: {
-                $0.itemIdentifier == BarButtonItemType.edit.identifier
+                $0.itemIdentifier == UIBarButtonItem.Kind.edit.identifier
             })
             editItem?.image = .toolbarImage(kEditToolbarImage)
+            #else
+            // Setup the navigation and toolbar buttons on iOS.
+            controller.setupNavigationAndToolbar()
             #endif
         }
     }
@@ -295,7 +225,9 @@ extension RecipesViewController {
         if isSplitViewControllerSeparated || self.isActivatedByNewWindowActivity {
             // Only when we display the last cell
             if indexPath.row == tableView.indexPathsForVisibleRows?.last?.row {
-                let indexPath = IndexPath(row: self.firstSelectedRow, section: 0)
+                guard self.firstSelectedRow != nil else { return }
+
+                let indexPath = IndexPath(row: self.firstSelectedRow!, section: 0)
                 self.tableView.becomeFirstResponder()
                 self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 

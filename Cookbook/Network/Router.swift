@@ -34,25 +34,24 @@ enum Router: URLRequestConvertible {
     case recipe(rid: Int)
     case delete(rid: Int)
     case update(rid: Int, recipeDetails: [String: Any])
+    case create(recipeDetails: [String: Any])
 
     var method: HTTPMethod {
         switch self {
-        case .allRecipes:
-            return .get
-        case .image:
-            return .get
-        case .recipe:
+        case .allRecipes, .image, .recipe:
             return .get
         case .update:
             return .put
         case .delete:
             return .delete
+        case .create:
+            return .post
         }
     }
 
     var path: String {
         switch self {
-        case .allRecipes:
+        case .allRecipes, .create:
             return "/recipes"
         case .image(let rid, _):
             return "/recipes/\(rid)/image"
@@ -86,7 +85,7 @@ enum Router: URLRequestConvertible {
         case .recipe:
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
-        case .update(_, let recipeDetails):
+        case .update(_, let recipeDetails), .create(let recipeDetails):
             urlRequest.setValue("application/x-www-form-urlencoded; charset=UTF-8", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             urlRequest = try URLEncoding.default.encode(urlRequest, with: recipeDetails)

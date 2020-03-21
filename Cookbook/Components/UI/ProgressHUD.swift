@@ -52,32 +52,4 @@ class ProgressHUD: MBProgressHUD {
         hud?.show(animated: animated)
         return hud
     }
-
-    override func show(animated: Bool) {
-        NotificationCenter.default.post(name: .showsHud, object: nil)
-        super.show(animated: animated)
-    }
-
-    // MARK: - Constructor
-    override init(view: UIView) {
-        super.init(view: view)
-        self.delegate = self
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.delegate = self
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.delegate = self
-    }
-}
-
-// MARK: - MBProgressHUDDelegate
-extension ProgressHUD: MBProgressHUDDelegate {
-    func hudWasHidden(_ hud: MBProgressHUD) {
-        NotificationCenter.default.post(name: .hidesHud, object: nil)
-    }
 }

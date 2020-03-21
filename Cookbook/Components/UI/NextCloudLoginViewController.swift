@@ -6,31 +6,22 @@
 //  Copyright © 2020 David Klopp. All rights reserved.
 //
 // This file is ment to be portable. Do not relay on any Interface Builder .xib files or similar.
-// Do all layout inside the code.
+// Do all layout inside the code and include all extensions in this file.
 
 import Foundation
 import UIKit
-
-// MARK: - NotificationCenter
-extension Notification.Name {
-    static let beginNextCloudModalSheet = Notification.Name("com.nextcloud.beginModalSheet.notification")
-    static let endNextCloudModalSheet = Notification.Name("com.nextcloud.endModalSheet.notification")
-}
-
-// MARK: - Constants
-typealias NextCloudModalCompletionType = (NextCloudModalResponse) -> Void
 
 // MARK: - Default Extensions
 extension UIImage {
     static func imageFrom(color: UIColor) -> UIImage? {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        UIGraphicsBeginImageContext(rect.size)
-        let context = UIGraphicsGetCurrentContext()
-        context?.setFillColor(color.cgColor)
-        context?.fill(rect)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image
+        let renderFormat = UIGraphicsImageRendererFormat.default()
+        renderFormat.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: rect.size, format: renderFormat)
+        return renderer.image { context in
+            color.setFill()
+            context.fill(rect)
+        }
     }
 }
 
@@ -39,6 +30,9 @@ extension UIColor {
         return UIColor(displayP3Red: 0, green: 130/255, blue: 201/255, alpha: 1)
     }
 }
+
+// MARK: - Constants
+typealias NextCloudModalCompletionType = (NextCloudModalResponse) -> Void
 
 // MARK: - Enums
 enum EntryType: Int {
@@ -76,6 +70,7 @@ class NextCloudTextfieldCell: UITableViewCell {
         self.backgroundColor = .clear
         self.contentView.backgroundColor = .clear
 
+        self.textField.returnKeyType = .done
         self.textField.backgroundColor = .clear
         self.contentView.addSubview(self.textField)
 
@@ -86,10 +81,9 @@ class NextCloudTextfieldCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let xOff = self.separatorInset.left
         var contentFrame = self.contentView.bounds
-        contentFrame.size.width -= xOff
-        contentFrame.origin.x += xOff
+        contentFrame.size.width -= self.separatorInset.left
+        contentFrame.origin.x += self.separatorInset.left
 
         self.textField.frame = contentFrame
         self.separator.frame = CGRect(x: contentFrame.minX, y: contentFrame.height-1,
@@ -104,21 +98,38 @@ class NextCloudTextfieldCell: UITableViewCell {
 
 // MARK: - View Controller
 class NextCloudLoginController: UIViewController {
-    private var tableView = UITableView(frame: .zero, style: .insetGrouped)
-    private var loginButton = UIButton(type: .custom)
+    private var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.backgroundColor = .systemBackground
+        tableView.separatorStyle = .none
+        tableView.keyboardDismissMode = .interactive
+        return tableView
+    }()
+
+    private lazy var loginButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle(NSLocalizedString("LOGIN", comment: ""), for: .normal)
+        button.titleLabel?.textColor = .white
+        button.setBackgroundImage(.imageFrom(color: .nextCloudBlue), for: .normal)
+        button.addTarget(self, action: #selector(login), for: .touchUpInside)
+        button.clipsToBounds = true
+        return button
+    }()
+
     private var modalCompletionHandler: NextCloudModalCompletionType?
 
     var server: String?
     var username: String?
     var password: String?
 
+    private var originalBottomInset: CGFloat = 0
+
     // MARK: - Button visibility
     var showsCancelButton: Bool = false {
         didSet {
             if self.showsCancelButton {
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self,
-                                                   action: #selector(cancel))
-                self.navigationItem.leftBarButtonItem = cancelButton
+                self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self,
+                                                                        action: #selector(cancel))
             } else {
                 self.navigationItem.leftBarButtonItem = nil
             }
@@ -128,8 +139,8 @@ class NextCloudLoginController: UIViewController {
     var showsSaveButton: Bool = false {
         didSet {
             if self.showsSaveButton {
-                let saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
-                self.navigationItem.rightBarButtonItem = saveButton
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self,
+                                                                         action: #selector(save))
             } else {
                 self.navigationItem.rightBarButtonItem = nil
             }
@@ -162,11 +173,7 @@ class NextCloudLoginController: UIViewController {
     // MARK: - View Handling
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.view.backgroundColor = .systemBackground
-        self.tableView.backgroundColor = .systemBackground
-        self.tableView.separatorStyle = .none
-        self.tableView.keyboardDismissMode = .interactive
 
         // Configure the navigationbar if it is available.
         if let navbar = self.navigationController?.navigationBar {
@@ -182,83 +189,67 @@ class NextCloudLoginController: UIViewController {
             self.navigationItem.titleView = logoView
         }
 
+        // Setup the login button.
         self.view.addSubview(self.tableView)
+        self.view.addSubview(self.loginButton)
 
         // Configure the tableView.
         self.tableView.dataSource = self
         self.tableView.delegate = self
-
-        // Setup the login button.
-        self.loginButton.setTitle(NSLocalizedString("LOGIN", comment: ""), for: .normal)
-        self.loginButton.titleLabel?.textColor = .white
-        self.loginButton.setBackgroundImage(.imageFrom(color: .nextCloudBlue), for: .normal)
-        self.loginButton.addTarget(self, action: #selector(login), for: .touchUpInside)
-        self.loginButton.clipsToBounds = true
-        self.view.addSubview(self.loginButton)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)),
-                                               name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)),
-                                               name: UIResponder.keyboardDidHideNotification, object: nil)
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)),
+                                               name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)),
+                                               name: UIResponder.keyboardDidHideNotification, object: nil)
 
         // Start the logo animation.
-        guard animated else { return }
-        if let logoView = self.navigationItem.titleView as? UIImageView {
+        if animated, let logoView = self.navigationItem.titleView as? UIImageView {
             logoView.startAnimating()
             logoView.image = logoView.animationImages?.last
         }
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        let frame = self.view.bounds
         let padY: CGFloat = 20
         let buttonHeight: CGFloat = 60
+        let buttonWidth = frame.width*0.33
 
         // Layout the tableView.
-        var frame = self.view.bounds
-        if !self.loginButton.isHidden {
-            frame.size.height -= buttonHeight + 2*padY
-        }
         self.tableView.frame = frame
+        if !self.loginButton.isHidden {
+            self.tableView.contentInset.bottom = buttonHeight + 2*padY
+            self.tableView.verticalScrollIndicatorInsets.bottom = buttonHeight + 2*padY
+        }
 
         // Layout the login button.
-        frame.size.height = buttonHeight
-        frame.origin.y = self.tableView.frame.maxY+padY
-        frame.size.width = frame.width*0.33
-        frame.origin.x = (self.tableView.frame.width - frame.width)/2
-        self.loginButton.frame = frame
         self.loginButton.layer.cornerRadius = buttonHeight/2
+        self.loginButton.frame = CGRect(x: (frame.width-buttonWidth)/2, y: frame.height-padY-buttonHeight,
+                                        width: buttonWidth, height: buttonHeight)
     }
 
     // MARK: - Save / Cancel / Login dialog
     @objc func cancel() {
-        if let completion = self.modalCompletionHandler {
-            completion(.cancel)
-        }
-        self.modalCompletionHandler = nil
+        if let completion = self.modalCompletionHandler { completion(.cancel) }
     }
 
     @objc func save() {
-        if let completion = self.modalCompletionHandler {
-            completion(.save)
-        }
-        self.modalCompletionHandler = nil
+        if let completion = self.modalCompletionHandler { completion(.save) }
     }
 
     @objc func login() {
-        if let completion = self.modalCompletionHandler {
-            completion(.login)
-        }
-        //self.dismiss(animated: true)
+        if let completion = self.modalCompletionHandler { completion(.login) }
     }
 
     // MARK: - Sheet presentation
@@ -266,19 +257,12 @@ class NextCloudLoginController: UIViewController {
                          completionHandler: @escaping NextCloudModalCompletionType) {
         guard !self.isBeingPresented else { return }
 
-        NotificationCenter.default.post(name: .beginNextCloudModalSheet, object: nil)
-
         let nextCloudNavController = UINavigationController(rootViewController: self)
         nextCloudNavController.modalPresentationStyle = .formSheet
         nextCloudNavController.isModalInPresentation = true
 
         self.modalCompletionHandler = completionHandler
         viewController.present(nextCloudNavController, animated: true)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.post(name: .endNextCloudModalSheet, object: nil)
     }
 }
 
@@ -325,8 +309,7 @@ extension NextCloudLoginController: UITableViewDataSource {
             cell.textField.placeholder = "••••••••"
             cell.textField.text = self.password
             cell.textField.entryType = .passwd
-        default:
-            break
+        default: break
         }
 
         return cell
@@ -336,14 +319,10 @@ extension NextCloudLoginController: UITableViewDataSource {
         guard let entryField = textField as? NextCloudTextField else { return }
 
         switch entryField.entryType {
-        case .server:
-            self.server = entryField.text
-        case .user:
-            self.username = entryField.text
-        case .passwd:
-            self.password = entryField.text
-        case .none:
-            break
+        case .server: self.server = entryField.text
+        case .user:   self.username = entryField.text
+        case .passwd: self.password = entryField.text
+        case .none:   break
         }
     }
 }
@@ -353,22 +332,43 @@ extension NextCloudLoginController: UITextFieldDelegate {
 
     /// User presses return key.
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+        return textField.resignFirstResponder()
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?
-            .cgRectValue.height {
-            self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+        let keyboardFrameInfo = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
+        guard let keyboardFrame = (keyboardFrameInfo as? NSValue)?.cgRectValue else { return }
+        // Idea: Calculate the y value from the bottom of the screen to the bottom of the tableView in screen
+        // coordinates and intersect this frame with the keyboard frame.
+        // 1. Convert the tableView frame to absolut screen coordintes.
+        let tableViewFrame = self.view.convert(self.tableView.frame, to: nil)
+        // 2. Calculate the intersection with the keyboardFrame.
+        self.originalBottomInset = self.tableView.contentInset.bottom
+        let keyboardBottomInset = tableViewFrame.intersection(keyboardFrame).height //+ heightDelta
+        // 3. Adjust the content inset.
+        UIView.animate(withDuration: 0.25, animations: {
+            self.tableView.contentInset.bottom = keyboardBottomInset
+            self.tableView.verticalScrollIndicatorInsets.bottom = keyboardBottomInset
+        })
+        // Scroll to make the firstResponder textField visible.
+        // 1. Find the cell which contains the firstResponder.
+        let firstResponderCell = self.tableView.visibleCells.first(where: {
+            ($0 as? NextCloudTextfieldCell)?.textField.isFirstResponder ?? false
+        })
+        if let cell = firstResponderCell as? NextCloudTextfieldCell {
+            // 2. Convert the frame of the cell to absolut screen
+            let cellFrame = cell.superview?.convert(cell.frame, to: nil)
+            if cellFrame?.intersects(keyboardFrame) ?? false {
+                // 3. Scroll the cell to be visible
+                self.tableView.scrollRectToVisible(cell.frame, animated: true)
+            }
         }
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
         UIView.animate(withDuration: 0.25, animations: {
-            // For some reason adding inset in keyboardWillShow is animated by itself but removing is not, that's why we
-            // have to use animateWithDuration here
-            self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            self.tableView.contentInset.bottom = self.originalBottomInset
+            self.tableView.verticalScrollIndicatorInsets.bottom = self.originalBottomInset
         })
     }
 }
