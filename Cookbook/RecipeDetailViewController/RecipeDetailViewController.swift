@@ -263,6 +263,7 @@ class RecipeDetailViewController: UIViewController {
         // After all data is loaded we need to relayout the UI.
         center.addObserver(self, selector: #selector(self.updateContentSize), name: .didLoadRecipeDetails, object: nil)
         center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
 
         #if !targetEnvironment(macCatalyst)
         // Add observers for the keyboard show / hide events.
@@ -281,12 +282,13 @@ class RecipeDetailViewController: UIViewController {
         if let observer = self.logoutObserver { center.removeObserver(observer) }
         if let observer = self.reloadObserver { center.removeObserver(observer) }
         center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .didEditRecipe, object: nil)
+        center.removeObserver(self, name: .didRemoveRecipe, object: nil)
 
         #if !targetEnvironment(macCatalyst)
         center.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
         center.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
-        center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
-        center.removeObserver(self, name: .didEditRecipe, object: nil)
         #endif
     }
 }

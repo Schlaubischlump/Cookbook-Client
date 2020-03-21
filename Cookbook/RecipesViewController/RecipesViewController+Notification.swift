@@ -37,8 +37,6 @@ extension RecipesViewController {
         // Find the index of the recipe to delete
         if let index = self.recipes.firstIndex(where: { $0.recipeID == recipeID }) {
             self.recipes.remove(at: index)
-            // use max to prevent an index -1 error when deleting the first row
-            self.firstSelectedRow = max((self.tableView.indexPathForSelectedRow?.row ?? 0) - 1, 0)
             self.updateSearchResults()
         }
     }

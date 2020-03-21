@@ -86,6 +86,18 @@ extension RecipeDetailViewController {
                 })
             }, thumb: false)
         }
+    }
 
+    /**
+     Called when a recipe was deleted.
+     */
+    @objc func didRemoveRecipe(_ notification: Notification) {
+        if let recipeID = notification.userInfo?["recipeID"] as? Int {
+            // If this recipe is the current recipe.
+            guard recipeID == self.recipe?.recipeID else { return }
+            // Clear this view. This is important e.g when we delete the last recipe in the filteredList.
+            self.recipe = nil
+            self.reloadData()
+        }
     }
 }
