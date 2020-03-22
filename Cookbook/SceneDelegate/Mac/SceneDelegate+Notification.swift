@@ -73,11 +73,19 @@ extension SceneDelegate {
 
     /// Called when the recipe details finished loading from the server.
     @objc func didLoadRecipeDetails(_ notification: Notification) {
-        let window = (notification.object as? RecipeDetailViewController)?.view.window
+        let detailController = (notification.object as? RecipeDetailViewController)
+        let window = detailController?.view.window
         guard self == window?.windowScene?.delegate as? SceneDelegate else {
             return
         }
         self.setToolbarItemsEnabled(true)
+
+        // Just in case if we are in edit mode.
+        if detailController?.isEditable ?? false {
+            self.setToolbarItemsEnabled(false, buttonKind: [UIBarButtonItem.Kind.add, UIBarButtonItem.Kind.share,
+                                                            UIBarButtonItem.Kind.delete])
+        }
+
     }
 
     /// Called after a successfull logout.

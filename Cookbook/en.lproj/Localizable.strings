@@ -44,6 +44,10 @@
 "OK"="Ok";
 "CANCEL"="Cancel";
 "NEW_RECIPE"="New recipe";
+"ACTION"="Action";
+"CREATE_NEW_RECIPE"="Create new recipe";
+"EDIT_RECIPE"="Edit recipe";
+"DELETE_RECIPE"="Delete recipe";
 // Used on macOS only
 "CANCEL_PALETTE_LABEL"="Cancel";
 "DONE_PALETTE_LABEL"="Done";

@@ -9,7 +9,8 @@ At the moment this application is a macOS / iOS / iPadOS viewer for your recipes
 - [x] Support autolayout / size classes  
 - [x] Support search function    
 - [x] Allow text selection    
-- [ ] Support Add / edit / delete recipe    
+- [x] Support Add / edit / delete recipe   
+- [ ] Cookbook v.0.6 support 
 - [ ] Custom recipe folder    
 - [ ] Keyboard shortcuts iOS    
 - [ ] Offline support / Caching   

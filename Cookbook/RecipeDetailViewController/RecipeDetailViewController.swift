@@ -72,9 +72,10 @@ class RecipeDetailViewController: UIViewController {
 
     /**
       The current recipe details as represented in the UI. These values must not represent the actual recipeDetails
-      stored on the server.
+      stored on the server. Thus property is nil when not in edit mode.
     */
-    var proposedRecipeDetails: [String: Any] {
+    var proposedRecipeDetails: [String: Any]? {
+        guard self.isEditable else { return nil }
         // Because dictionary and array are both structs, this should copy the recipeDetails.
         var details: [String: Any] = self.recipeDetails
         if self.descriptionList.data.count == 8 {
@@ -86,13 +87,6 @@ class RecipeDetailViewController: UIViewController {
             details["cookTime"] = self.descriptionList.data[5].iso8601()
             details["totalTime"] = self.descriptionList.data[6].iso8601()
             details["recipeYield"] = self.descriptionList.data[7].intValue
-        } else {
-            details["description"] = self.descriptionList.data[0]
-            details["url"] = self.descriptionList.data[1]
-            details["prepTime"] = self.descriptionList.data[2].iso8601()
-            details["cookTime"] = self.descriptionList.data[3].iso8601()
-            details["totalTime"] = self.descriptionList.data[4].iso8601()
-            details["recipeYield"] = self.descriptionList.data[5].intValue
         }
         // Copy the remaining lists.
         details["tool"] = self.toolsList.data

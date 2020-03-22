@@ -12,7 +12,7 @@ import MBProgressHUD
 
 extension RecipeDetailViewController {
     /// Show the share sheet for a recipe.
-    @objc func shareRecipe(item: Any) {
+    @objc func shareRecipe(item: Any?) {
         if let data = self.pdfRepresentation() {
             let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("Recipe.pdf")
             try? data.write(to: url)
@@ -24,7 +24,7 @@ extension RecipeDetailViewController {
     }
 
     /// Edit the current recipe.
-    @objc func editRecipe(item: Any) {
+    @objc func editRecipe(item: Any?) {
         let edit = !self.isEditable
 
         /**
@@ -44,7 +44,7 @@ extension RecipeDetailViewController {
         }
 
         // Just update the UI to represent the edit state.
-        guard !edit else {
+        if edit {
             toggleEditDoneButton()
 
             UIView.animate(withDuration: 0.25, animations: {
@@ -57,10 +57,12 @@ extension RecipeDetailViewController {
 
         // Update the information on the server.
         let hud = ProgressHUD.showSpinner(attachedTo: self.view, animated: true)
-        self.recipe?.update(self.proposedRecipeDetails, completionHandler: {
+        guard let details = self.proposedRecipeDetails else { return }
+
+        self.recipe?.update(details, completionHandler: {
             toggleEditDoneButton()
             // Inform all listeners, that the recipe was changed.
-            var userInfo: [String: Any] = ["details": self.proposedRecipeDetails]
+            var userInfo: [String: Any] = ["details": details]
             if let recipeID = self.recipe?.recipeID {
                 userInfo["recipeID"] = recipeID
             }
@@ -77,7 +79,7 @@ extension RecipeDetailViewController {
     }
 
     /// Delete the current recipe.
-    @objc func deleteRecipe(item: Any) {
+    @objc func deleteRecipe(item: Any?) {
         guard let recipe = self.recipe else { return }
 
         // Let the user confirm the deletion.

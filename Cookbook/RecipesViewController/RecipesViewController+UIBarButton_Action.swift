@@ -34,7 +34,7 @@ extension RecipesViewController {
     #endif
 
     // MARK: - Create a new recipe.
-    @objc func addRecipe(item: Any) {
+    @objc func addRecipe(item: Any?) {
         let storyBoard =  UIStoryboard(name: "Main", bundle: nil)
         let viewCon = storyBoard.instantiateViewController(withIdentifier: "RecipeDetailViewController")
         guard let newRecipeController = viewCon as? RecipeDetailViewController else { return }
@@ -60,8 +60,7 @@ extension RecipesViewController {
         navController.navigationBar.isHidden = false
 
         #if targetEnvironment(macCatalyst)
-        navController.navigationBar.barTintColor = .white
-        //navController.navigationBar.tintColor = .white
+        navController.navigationBar.barTintColor = .systemBackground
         #endif
 
         NotificationCenter.default.post(name: .willAddRecipe, object: self)
