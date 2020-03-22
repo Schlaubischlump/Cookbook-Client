@@ -54,6 +54,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         center.addObserver(self, selector: #selector(didLogin), name: .login, object: nil)
         center.addObserver(self, selector: #selector(willLoadRecipeDetails), name: .willLoadRecipeDetails, object: nil)
         center.addObserver(self, selector: #selector(didLoadRecipeDetails), name: .didLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(willAddRecipe), name: .willAddRecipe, object: nil)
+        center.addObserver(self, selector: #selector(didAddRecipe), name: .didAddRecipe, object: nil)
         center.addObserver(self, selector: #selector(willEditRecipe), name: .willEditRecipe, object: nil)
         center.addObserver(self, selector: #selector(didEditRecipe), name: .didEditRecipe, object: nil)
         #endif
@@ -77,6 +79,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
         center.removeObserver(self, name: .willEditRecipe, object: nil)
         center.removeObserver(self, name: .didEditRecipe, object: nil)
+        center.removeObserver(self, name: .willAddRecipe, object: nil)
+        center.removeObserver(self, name: .didAddRecipe, object: nil)
     }
     #endif
 

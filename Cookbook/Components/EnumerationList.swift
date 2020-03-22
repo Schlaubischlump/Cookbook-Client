@@ -16,10 +16,6 @@ protocol EnumerationListDelegate: AnyObject {
     func enumerationList(_ list: EnumerationList, heightChanged: CGFloat)
 }
 
-extension EnumerationListDelegate {
-    func enumerationList(_ list: EnumerationList, heightChanged: CGFloat) {}
-}
-
 /**
  The enumeration style to use inside for the EnumerationList class.
  */
@@ -263,10 +259,14 @@ class EnumerationList: UITableView {
     }
 
     @objc func appendRow(sender: Any) {
+        let newIndexPath = IndexPath(item: self._data.count, section: 0)
         self.performBatchUpdates({
             self._data.append("")
-            self.insertRows(at: [IndexPath(item: self._data.count-1, section: 0)], with: .fade)
+            self.insertRows(at: [newIndexPath], with: .fade)
         }, completion: { _ in
+            if let cell = self.cellForRow(at: newIndexPath) as? EnumerationCell {
+                cell.textView.becomeFirstResponder()
+            }
             self.listDelegate?.enumerationList(self, heightChanged: self.contentSize.height)
         })
     }

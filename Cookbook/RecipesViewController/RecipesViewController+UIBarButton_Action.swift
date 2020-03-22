@@ -23,17 +23,17 @@ extension RecipesViewController {
             settingsViewController?.dismiss(animated: true)
             switch response {
             case .save:
-                NotificationCenter.default.post(name: .reload, object: nil)
+                NotificationCenter.default.post(name: .reload, object: self)
             case .cancel:
                 break
             case .logout:
-                NotificationCenter.default.post(name: .logout, object: nil)
+                NotificationCenter.default.post(name: .logout, object: self)
             }
         }
     }
     #endif
 
-    /// Create a new recipe.
+    // MARK: - Create a new recipe.
     @objc func addRecipe(item: Any) {
         let storyBoard =  UIStoryboard(name: "Main", bundle: nil)
         let viewCon = storyBoard.instantiateViewController(withIdentifier: "RecipeDetailViewController")
@@ -42,7 +42,7 @@ extension RecipesViewController {
         newRecipeController.isEditable = true
 
         // Setup the navigationBar items.
-        newRecipeController.title = ""
+        newRecipeController.title = NSLocalizedString("NEW_RECIPE", comment: "")
 
         let saveButton = UIBarButtonItem.with(kind: .save)
         newRecipeController.navigationItem.rightBarButtonItem = saveButton
@@ -60,9 +60,11 @@ extension RecipesViewController {
         navController.navigationBar.isHidden = false
 
         #if targetEnvironment(macCatalyst)
-        navController.navigationBar.barTintColor = self.view.tintColor
-        navController.navigationBar.tintColor = .white
+        navController.navigationBar.barTintColor = .white
+        //navController.navigationBar.tintColor = .white
         #endif
+
+        NotificationCenter.default.post(name: .willAddRecipe, object: self)
 
         self.newRecipeController = newRecipeController
         self.present(navController, animated: true)
@@ -70,42 +72,44 @@ extension RecipesViewController {
 
     @objc private func cancelClicked(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(name: .didAddRecipe, object: self, userInfo: nil)
     }
 
     @objc private func saveClicked(_ sender: Any) {
-        // TODO: Fix this function.
-        // Update the recipeDetails from the ui values.
-        /*self.newRecipeController?.updateRecipeDetailsFromUI()
+        // Read the user entered recip details.
+        guard let details = self.newRecipeController?.proposedRecipeDetails else { return }
+        // The user must at least enter a recipe name.
+        if let name = details["name"] as? String, !name.isEmpty {
+            // We can not create a recipe with the same name. (FIXME: Cookbook v.0.5.7 only)
+            guard !self.recipes.contains(where: { $0.name == name }) else {
+                ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
+                                      message: NSLocalizedString("ERROR_RECIPE_EXISTS", comment: ""), animated: true)?
+                    .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
+                return
+            }
 
-        if let details = self.newRecipeController?.recipeDetails, let name = details["name"] as? String, !name.isEmpty {
             // Create a new recipe with the given data.
+            let hud = ProgressHUD.showSpinner(attachedTo: self.newRecipeController?.view, animated: true)
             Recipe.create(details, completionHandler: { recipeID in
-                // Reload the sidebar.
-                self.reloadRecipes({ recipes in
-                    // Open the newly created recipe.
-                    if let newIndexRow = recipes.firstIndex(where: { $0.recipeID == recipeID }) {
-                        self.firstSelectedRow = newIndexRow
-                    }
-                    self.updateSearchResults(for: self.searchController)
-
-                    // Dismiss the created popup.
-                    self.dismiss(animated: true, completion: {
-                        self.newRecipeController = nil
-                    })
-                })
-            }, errorHandler: { error in
-                print(error)
+                hud?.hide(animated: true)
+                // Inform all listener about the change.
+                let userInfo: [String: Any] = ["recipeID": recipeID, "details": details]
+                NotificationCenter.default.post(name: .didAddRecipe, object: self, userInfo: userInfo)
+            }, errorHandler: { _ in
+                hud?.hide(animated: false)
+                // Inform all listeners that the oparation was canceled by sending the didAddRecipe message with
+                // an empty userInfo dictionary.
+                NotificationCenter.default.post(name: .didAddRecipe, object: self, userInfo: nil)
                 // Unknown error while creating a recipe.
                 ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
-                                  message: NSLocalizedString("ERROR_CREATE_RECIPE", comment: ""), animated: true)?
+                                      message: NSLocalizedString("ERROR_CREATE_RECIPE", comment: ""), animated: true)?
                     .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
             })
-
         } else {
             // User forgot to enter a recipe name.
             ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
                                   message: NSLocalizedString("ERROR_MISSING_NAME", comment: ""), animated: true)?
                 .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
-        }*/
+        }
     }
 }

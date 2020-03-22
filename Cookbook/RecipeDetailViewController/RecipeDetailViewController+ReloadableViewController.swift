@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-extension RecipeDetailViewController {
+extension RecipeDetailViewController: ReloadableViewController {
     /// Remove all recipe information from the UI.
     private func resetData() {
         self.recipeDetails = [:]
@@ -26,7 +26,7 @@ extension RecipeDetailViewController {
     }
 
     /// Reload all data from the currently stored recipe details.
-    private func reloadDataFromCache() {
+    func reloadDataFromCache() {
         guard !self.recipeDetails.isEmpty else { return }
 
         self.title = recipe?.name ?? ""
@@ -49,7 +49,7 @@ extension RecipeDetailViewController {
     }
 
     /// Load the new recipe details from the server and apply the new data.
-    private func reloadDataFromServer() {
+    func reloadDataFromServer() {
         guard let recipe = self.recipe else { return }
 
         let center = NotificationCenter.default

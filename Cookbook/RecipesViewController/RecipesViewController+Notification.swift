@@ -13,22 +13,22 @@ import UIKit
 
 // MARK: - Notification handling
 extension RecipesViewController {
-    /// Callback when a reload a forced with a notification.
+    /// Callback when a reload is forced with a notification.
     @objc func requestReload(_ notification: Notification) {
-        self.reloadRecipes()
+        self.reloadData(useCachedData: false)
     }
 
     /// Called after a successfull logout.
     @objc func didLogout(_ notification: Notification) {
         self.recipes = []
         self.filteredRecipes = []
-        self.tableView.reloadData()
+        self.reloadData(useCachedData: true)
         self.showNextcloudLogin()
     }
 
     /// Called after a login attempt.
     @objc func didAttemptLogin(_ notification: Notification) {
-        self.reloadRecipes()
+        self.reloadData(useCachedData: false)
     }
 
     /// Called when a recipe is deleted.
@@ -101,6 +101,24 @@ extension RecipesViewController {
 
     /// Called when a new recipe was added.
     @objc func didAddRecipe(_ notification: Notification) {
-        guard let recipeID = notification.userInfo?["recipeID"] as? Int else { return }
+        // We only want to reload if we successfully added the recipe.
+        guard notification.userInfo?["recipeID"] != nil else { return }
+        // Reload the data from the server.
+        self.reloadData(useCachedData: false)
+    }
+
+    /// Called when a reload operation finishes.
+    @objc func didLoadRecipes(_ notification: Notification) {
+        // If we just created a new recipe
+        guard let sender = notification.object as? RecipesViewController, sender.newRecipeController != nil else {
+            return
+        }
+
+        // In case of the active window, dismiss the newRecipeController.
+        if self == sender {
+            self.dismiss(animated: true, completion: {
+                self.newRecipeController = nil
+            })
+        }
     }
 }

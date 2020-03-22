@@ -10,14 +10,24 @@ import Foundation
 import UIKit
 import MBProgressHUD
 
-extension RecipesViewController {
+extension RecipesViewController: ReloadableViewController {
+    /**
+     Reload the tableview.
+     */
+    func reloadDataFromCache() {
+        let searchText = self.searchController.searchBar.text ?? ""
+        if !searchText.isEmpty {
+            self.updateSearchResults()
+        } else {
+            self.tableView.reloadData()
+        }
+    }
 
     /**
      Reload all recipes from the server. If an error occurs we assume the user entered the wrong login credentials and
      display the login window.
      */
-    func reloadRecipes(_ completionHandler: @escaping ([Recipe]) -> Void = { _ in },
-                       errorHandler: @escaping (Error) -> Void = { _ in }) {
+    func reloadDataFromServer() {
         // If we are currently showing the login view we want to attach all ProgressHUDs to this view.
         var attachedView: UIView?
         if let view = self.loginViewController?.view {
@@ -26,28 +36,37 @@ extension RecipesViewController {
             attachedView = view
         }
 
-        NotificationCenter.default.post(name: .willLoadRecipes, object: nil)
+        NotificationCenter.default.post(name: .willLoadRecipes, object: self)
 
         // Show a loading spinner.
         let hud = ProgressHUD.showSpinner(attachedTo: attachedView)
         Recipe.loadRecipes(completionHandler: { recipes in
             self.recipes = recipes
             self.filteredRecipes = recipes
-            self.tableView.reloadData()
+
+            let searchText = self.searchController.searchBar.text ?? ""
+            if !searchText.isEmpty {
+                self.updateSearchResults()
+            } else {
+                self.tableView.reloadData()
+            }
 
             hud?.hide(animated: true)
 
             // Save the login information for the next time and dismiss the login screen if it exists.
             try? loginCredentials.updateStoredInformation()
+
             // Dismiss the login view if it is currently visible.
-            self.dismiss(animated: true, completion: {
-                self.loginViewController = nil
-                // Start to generate Notifications for progress HUDs.
-                completionHandler(self.recipes)
-                // Inform all observers about the new recipes.
-                NotificationCenter.default.post(name: .didLoadRecipes, object: nil)
-            })
-        }, errorHandler: { error in
+            if self.loginViewController != nil {
+                self.dismiss(animated: true, completion: {
+                    self.loginViewController = nil
+                    // Inform all observers about the new recipes.
+                    NotificationCenter.default.post(name: .didLoadRecipes, object: self)
+                })
+            } else {
+                NotificationCenter.default.post(name: .didLoadRecipes, object: self)
+            }
+        }, errorHandler: { _ in
             self.recipes = []
             self.filteredRecipes = []
             self.tableView.reloadData()
@@ -65,8 +84,17 @@ extension RecipesViewController {
                                       message: NSLocalizedString("INVALID_LOGIN", comment: ""),
                                       animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
             }
-
-            errorHandler(error)
         })
+    }
+
+    /**
+     Reload the recipes either from the cache or the server
+     */
+    func reloadData(useCachedData: Bool=true) {
+        if useCachedData {
+            self.reloadDataFromCache()
+        } else {
+            self.reloadDataFromServer()
+        }
     }
 }

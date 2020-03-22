@@ -28,6 +28,7 @@
 "ERROR_DELETING"="Fehler beim Löschen des Rezepts!";
 "ERROR_MISSING_NAME"="Rezeptname fehlt!";
 "ERROR_CREATE_RECIPE"="Fehler beim Erstellen des Rezeptes!";
+"ERROR_RECIPE_EXISTS"="Rezept existiert bereits!";
 "PREFERENCES"="Einstellungen";
 "SERVER_CONFIGURATION"="Servereinstellungen";
 "SETTINGS"="Einstellungen";
@@ -42,6 +43,7 @@
 "CONFIRM_DELETE_MESSAGE"="Möchten sie dieses Rezept wirklich löschen?";
 "OK"="OK";
 "CANCEL"="Abbrechen";
+"NEW_RECIPE"="Neues Rezept";
 // Used on macOS only
 "CANCEL_PALETTE_LABEL"="Abbrechen";
 "DONE_PALETTE_LABEL"="Fertig";

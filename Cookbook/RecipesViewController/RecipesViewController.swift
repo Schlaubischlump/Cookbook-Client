@@ -30,6 +30,7 @@ class RecipesViewController: UITableViewController {
 
     /// All unfiltered recipes.
     var recipes: [Recipe] = []
+
     /// Filtered data which is displayed inside the tableView.
     var filteredRecipes: [Recipe] = []
 
@@ -100,6 +101,7 @@ class RecipesViewController: UITableViewController {
         // Register NotificationCenter callbacks.
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didLoadRecipes), name: .didLoadRecipes, object: nil)
         center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
         center.addObserver(self, selector: #selector(self.didAddRecipe), name: .didAddRecipe, object: nil)
         center.addObserver(self, selector: #selector(self.didAttemptLogin), name: .login, object: nil)
@@ -108,7 +110,7 @@ class RecipesViewController: UITableViewController {
 
         // Try to load the data.
         if self.reloadRecipesOnViewWillAppear {
-            self.reloadRecipes()
+            self.reloadData(useCachedData: false)
             // Prevent a reload each time the toggle button is clicked.
             self.reloadRecipesOnViewWillAppear = false
         }
@@ -120,6 +122,7 @@ class RecipesViewController: UITableViewController {
         // clear the tableView recipes.
         let center = NotificationCenter.default
         center.removeObserver(self, name: .didRemoveRecipe, object: nil)
+        center.removeObserver(self, name: .didLoadRecipes, object: nil)
         center.removeObserver(self, name: .didEditRecipe, object: nil)
         center.removeObserver(self, name: .didAddRecipe, object: nil)
         center.removeObserver(self, name: .login, object: nil)
@@ -150,15 +153,13 @@ extension RecipesViewController {
                 loginCredentials.password = self?.loginViewController?.password
 
                 // Attempt to login on all open windows.
-                NotificationCenter.default.post(name: .login, object: nil)
+                NotificationCenter.default.post(name: .login, object: self)
             default: break
             }
         }
     }
-}
 
-// MARK: - Segues
-extension RecipesViewController {
+    // MARK: - Segues
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         // Only perform a segue if the current recipe changed, otherwise we can keep the detailController.
         guard let detailController = (self.splitViewController as? SplitViewController)?.recipeDetailController else {
@@ -200,10 +201,8 @@ extension RecipesViewController {
             #endif
         }
     }
-}
 
-// MARK: - Table View
-extension RecipesViewController {
+    // MARK: - Table View
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell,
                             forRowAt indexPath: IndexPath) {
         #if targetEnvironment(macCatalyst)

@@ -43,6 +43,7 @@
 		63D8CA62241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA61241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift */; };
 		63D8CA64241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA63241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift */; };
 		63D8CA66241D456F004A7F9C /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA65241D456F004A7F9C /* SplitViewController.swift */; };
+		63D94DC92426AF56009F980E /* ReloadableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D94DC82426AF56009F980E /* ReloadableViewController.swift */; };
 		63DA2E7624172B0800DC3A4A /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA2E7424172B0800DC3A4A /* Recipe.swift */; };
 		63DA2E7724172B0800DC3A4A /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA2E7524172B0800DC3A4A /* Credential.swift */; };
 		63DC16C0241E590900CF9F96 /* RecipeDetailViewController+PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */; };
@@ -50,10 +51,10 @@
 		63DC16CC241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */; };
 		63DC16CD241EDB1100CF9F96 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63DC16CF241EDB1100CF9F96 /* Localizable.strings */; };
 		63DC16D524201F4900CF9F96 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC16D424201F4900CF9F96 /* UIImage+Extension.swift */; platformFilter = maccatalyst; };
-		63E3288B2421ABD5008F51A9 /* RecipesViewController+DataLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3288A2421ABD5008F51A9 /* RecipesViewController+DataLoading.swift */; };
+		63E3288B2421ABD5008F51A9 /* RecipesViewController+ReloadableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3288A2421ABD5008F51A9 /* RecipesViewController+ReloadableViewController.swift */; };
 		63E3288D242236C9008F51A9 /* ProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3288C242236C9008F51A9 /* ProgressHUD.swift */; };
 		63E3288F24223BCC008F51A9 /* SceneDelegate+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3288E24223BCC008F51A9 /* SceneDelegate+Notification.swift */; platformFilter = maccatalyst; };
-		63E3289124224C2A008F51A9 /* RecipeDetailViewController+DataLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289024224C29008F51A9 /* RecipeDetailViewController+DataLoading.swift */; };
+		63E3289124224C2A008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289024224C29008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift */; };
 		63E3289424238B5A008F51A9 /* RecipeDetailViewController+UIBarButton_Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289324238B5A008F51A9 /* RecipeDetailViewController+UIBarButton_Setup.swift */; platformFilter = ios; };
 		63E3289624238E54008F51A9 /* RecipeDetailViewController+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289524238E54008F51A9 /* RecipeDetailViewController+Notification.swift */; };
 /* End PBXBuildFile section */
@@ -116,6 +117,7 @@
 		63D8CA61241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UIBarButton_Action.swift"; sourceTree = "<group>"; };
 		63D8CA63241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UITableViewDragDelegate.swift"; sourceTree = "<group>"; };
 		63D8CA65241D456F004A7F9C /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		63D94DC82426AF56009F980E /* ReloadableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReloadableViewController.swift; sourceTree = "<group>"; };
 		63DA2E7424172B0800DC3A4A /* Recipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		63DA2E7524172B0800DC3A4A /* Credential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credential.swift; sourceTree = "<group>"; };
 		63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+PDF.swift"; sourceTree = "<group>"; };
@@ -126,10 +128,10 @@
 		63DC16D1241EDB3E00CF9F96 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		63DC16D2241EDB3F00CF9F96 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		63DC16D424201F4900CF9F96 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
-		63E3288A2421ABD5008F51A9 /* RecipesViewController+DataLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+DataLoading.swift"; sourceTree = "<group>"; };
+		63E3288A2421ABD5008F51A9 /* RecipesViewController+ReloadableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+ReloadableViewController.swift"; sourceTree = "<group>"; };
 		63E3288C242236C9008F51A9 /* ProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressHUD.swift; sourceTree = "<group>"; };
 		63E3288E24223BCC008F51A9 /* SceneDelegate+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+Notification.swift"; sourceTree = "<group>"; };
-		63E3289024224C29008F51A9 /* RecipeDetailViewController+DataLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+DataLoading.swift"; sourceTree = "<group>"; };
+		63E3289024224C29008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+ReloadableViewController.swift"; sourceTree = "<group>"; };
 		63E3289324238B5A008F51A9 /* RecipeDetailViewController+UIBarButton_Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+UIBarButton_Setup.swift"; sourceTree = "<group>"; };
 		63E3289524238E54008F51A9 /* RecipeDetailViewController+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailViewController+Notification.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -162,16 +164,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		631521942424CF1600F72B60 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				63E3288C242236C9008F51A9 /* ProgressHUD.swift */,
-				639AE6BA23B0FEBE008244BA /* EnumerationList.swift */,
-				638BA66E240EEDC9007F6B74 /* NextCloudLoginViewController.swift */,
-			);
-			path = UI;
-			sourceTree = "<group>";
-		};
 		6338231A240B3B3A002DA167 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -193,7 +185,7 @@
 				631521922424CEE100F72B60 /* RecipesTableViewCell.swift */,
 				639AE67823AF7588008244BA /* RecipesViewController.swift */,
 				631521982424E2F200F72B60 /* RecipesViewController+Notification.swift */,
-				63E3288A2421ABD5008F51A9 /* RecipesViewController+DataLoading.swift */,
+				63E3288A2421ABD5008F51A9 /* RecipesViewController+ReloadableViewController.swift */,
 				63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */,
 				63DC16CB241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift */,
 				63D8CA61241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift */,
@@ -214,7 +206,9 @@
 		638BA66D240EEDA6007F6B74 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				631521942424CF1600F72B60 /* UI */,
+				63E3288C242236C9008F51A9 /* ProgressHUD.swift */,
+				639AE6BA23B0FEBE008244BA /* EnumerationList.swift */,
+				638BA66E240EEDC9007F6B74 /* NextCloudLoginViewController.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -292,6 +286,7 @@
 				63DA2E7324172B0800DC3A4A /* Model */,
 				639AE6A723AF7630008244BA /* Network */,
 				638BA66D240EEDA6007F6B74 /* Components */,
+				63D94DC72426AF20009F980E /* Protocols */,
 				6338231A240B3B3A002DA167 /* Extensions */,
 				638BA67F24110E7E007F6B74 /* Supporting files */,
 			);
@@ -324,6 +319,14 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		63D94DC72426AF20009F980E /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				63D94DC82426AF56009F980E /* ReloadableViewController.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		63DA2E7324172B0800DC3A4A /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -340,7 +343,7 @@
 				639AE67A23AF7588008244BA /* RecipeDetailViewController.swift */,
 				63DC16BF241E590900CF9F96 /* RecipeDetailViewController+PDF.swift */,
 				63E3289524238E54008F51A9 /* RecipeDetailViewController+Notification.swift */,
-				63E3289024224C29008F51A9 /* RecipeDetailViewController+DataLoading.swift */,
+				63E3289024224C29008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift */,
 				6326629524216B2400B1F973 /* RecipeDetailViewController+UIBarButton_Action.swift */,
 			);
 			path = RecipeDetailViewController;
@@ -587,14 +590,14 @@
 				63E3288D242236C9008F51A9 /* ProgressHUD.swift in Sources */,
 				63DC16CC241E7B7600CF9F96 /* RecipesViewController+UISearchController.swift in Sources */,
 				63D8CA64241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift in Sources */,
-				63E3288B2421ABD5008F51A9 /* RecipesViewController+DataLoading.swift in Sources */,
+				63E3288B2421ABD5008F51A9 /* RecipesViewController+ReloadableViewController.swift in Sources */,
 				63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */,
 				6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */,
 				638BA668240C6ABF007F6B74 /* UIView+Extension.swift in Sources */,
 				639AE67523AF7588008244BA /* AppDelegate.swift in Sources */,
 				638BA66F240EEDC9007F6B74 /* NextCloudLoginViewController.swift in Sources */,
 				631521932424CEE100F72B60 /* RecipesTableViewCell.swift in Sources */,
-				63E3289124224C2A008F51A9 /* RecipeDetailViewController+DataLoading.swift in Sources */,
+				63E3289124224C2A008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift in Sources */,
 				6326629624216B2400B1F973 /* RecipeDetailViewController+UIBarButton_Action.swift in Sources */,
 				63E3288F24223BCC008F51A9 /* SceneDelegate+Notification.swift in Sources */,
 				638BA68A241189EB007F6B74 /* UserDefaults+Extension.swift in Sources */,
@@ -613,6 +616,7 @@
 				63E3289624238E54008F51A9 /* RecipeDetailViewController+Notification.swift in Sources */,
 				63DC16C0241E590900CF9F96 /* RecipeDetailViewController+PDF.swift in Sources */,
 				638BA6A02414616D007F6B74 /* PreferencesViewControlleriOS.swift in Sources */,
+				63D94DC92426AF56009F980E /* ReloadableViewController.swift in Sources */,
 				63D8CA62241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift in Sources */,
 				63266294242164BF00B1F973 /* UIBarButtonItem+Extension.swift in Sources */,
 				63DA2E7624172B0800DC3A4A /* Recipe.swift in Sources */,

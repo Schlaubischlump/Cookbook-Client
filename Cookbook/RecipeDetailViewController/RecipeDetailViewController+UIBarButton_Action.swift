@@ -48,10 +48,11 @@ extension RecipeDetailViewController {
             UIView.animate(withDuration: 0.25, animations: {
                 self.isEditable = true
             })
+
+            NotificationCenter.default.post(name: .willEditRecipe, object: self, userInfo: nil)
             return
         }
 
-        NotificationCenter.default.post(name: .willEditRecipe, object: self, userInfo: nil)
         // Update the information on the server.
         let hud = ProgressHUD.showSpinner(attachedTo: self.view, animated: true)
         self.recipe?.update(self.proposedRecipeDetails, completionHandler: {
@@ -83,12 +84,13 @@ extension RecipeDetailViewController {
                                       preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: { _ in
+            let center = NotificationCenter.default
             // Delete the recipe from the server.
             recipe.delete({
                 // Inform all listeners, that the recipe was deleted.
-                let center = NotificationCenter.default
                 center.post(name: .didRemoveRecipe, object: nil, userInfo: ["recipeID": recipe.recipeID])
             }, errorHandler: { _ in
+                center.post(name: .didRemoveRecipe, object: nil, userInfo: nil)
                 // Inform the user that something went wrong.
                 ProgressHUD.showError(attachedTo: self.view, message: NSLocalizedString("ERROR_DELETING", comment: ""),
                                       animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)

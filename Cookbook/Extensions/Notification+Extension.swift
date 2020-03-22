@@ -26,14 +26,21 @@ extension Notification.Name {
     /// Called when the recipe detail view finished loading.
     static let didLoadRecipeDetails = Notification.Name("com.cookbook.didLoadRecipeDetails.notification")
 
-    /// Called when after the user finished editing the recipe, but before the data is send to the server.
+    /// Called when the user starts to create a new recipe.
+    static let willAddRecipe = Notification.Name("com.cookbook.willAddRecipe.notification")
+    /// Called when a recipe should be added. This includes the cases:
+    /// 1. Sucessfully added the recipe on the server: userInfo = [recipeID: Int, details: [String: Any]]
+    /// 2. Error while changing the recipe data on the server: userInfo = nil
+    /// 3. User canceled the recipe creation: userInfo = nil
+    static let didAddRecipe = Notification.Name("com.cookbook.didAddRecipe.notification")
+    /// Called when the user starts editing a recipe.
     static let willEditRecipe = Notification.Name("com.cookbook.willEditRecipe.notification")
     /// Called when a recipe was edited. This includes the cases:
     /// 1. Sucessfully edited the recipe on the server: userInfo = [recipeID: Int, details: [String: Any]]
     /// 2. Error while changing the recipe data on the server: userInfo = nil
     static let didEditRecipe = Notification.Name("com.cookbook.didEditRecipe.notification")
-    /// Called when a recipe is successfully deleted: userInfo = [recipeID: Int]
+    /// Called when a recipe was deleted. This includes the cases:
+    /// 1. Sucessfully deleted the recipe on the server: userInfo = [recipeID: Int]
+    /// 2. Error while changing the recipe data on the server: userInfo = nil
     static let didRemoveRecipe = Notification.Name("com.cookbook.didRemoveRecipe.notification")
-    /// Called when a recipe is successfully added: userInfo = [recipeID: Int]
-    static let didAddRecipe = Notification.Name("com.cookbook.didAddRecipe.notification")
 }
