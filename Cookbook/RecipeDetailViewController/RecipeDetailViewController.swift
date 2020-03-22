@@ -305,5 +305,9 @@ extension RecipeDetailViewController: EnumerationListDelegate {
         self.updateContentSize()
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
+
+        #if !targetEnvironment(macCatalyst)
+        self.makeFirstResponderVisible(keyboardFrame: nil)
+        #endif
     }
 }

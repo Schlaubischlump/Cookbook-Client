@@ -198,6 +198,10 @@ extension RecipesViewController {
             #else
             // Setup the navigation and toolbar buttons on iOS.
             controller.setupNavigationAndToolbar()
+
+            // Add the display mode button
+            controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+            controller.navigationItem.leftItemsSupplementBackButton = true
             #endif
         }
     }

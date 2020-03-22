@@ -39,10 +39,6 @@ extension RecipeDetailViewController {
         editButton.action = #selector(self.editRecipe)
         self.navigationItem.rightBarButtonItem = editButton
 
-        // Add the display mode button
-        self.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
-        self.navigationItem.leftItemsSupplementBackButton = true
-
         // Add a observers to disable / enable the UIBarButtonItems while loading the recipe.
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(self.disableNavigationAndToolbarItems),

@@ -21,7 +21,7 @@ extension RecipesViewController: UITableViewDragDelegate {
         itemProvider.registerObject(userActivity, visibility: .all)
 
         let dragItem = UIDragItem(itemProvider: itemProvider)
-        //dragItem.localObject = recipe
+        //dragItem.localObject = self.filteredRecipes[indexPath.row]
 
         return [dragItem]
     }

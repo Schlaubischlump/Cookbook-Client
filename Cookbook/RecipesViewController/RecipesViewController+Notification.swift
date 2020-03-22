@@ -13,8 +13,8 @@ import UIKit
 
 // MARK: - Notification handling
 extension RecipesViewController {
-    /// Callback when a reload is forced with a notification.
-    @objc func requestReload(_ notification: Notification) {
+    /// Called after a login attempt.
+    @objc func didAttemptLogin(_ notification: Notification) {
         self.reloadData(useCachedData: false)
     }
 
@@ -26,19 +26,30 @@ extension RecipesViewController {
         self.showNextcloudLogin()
     }
 
-    /// Called after a login attempt.
-    @objc func didAttemptLogin(_ notification: Notification) {
+    /// Callback when a reload is forced with a notification.
+    @objc func requestReload(_ notification: Notification) {
         self.reloadData(useCachedData: false)
     }
 
-    /// Called when a recipe is deleted.
-    @objc func didRemoveRecipe(_ notification: Notification) {
-        guard let recipeID = notification.userInfo?["recipeID"] as? Int else { return }
-        // Find the index of the recipe to delete
-        if let index = self.recipes.firstIndex(where: { $0.recipeID == recipeID }) {
-            self.recipes.remove(at: index)
-            self.updateSearchResults()
+    /// Called when a reload operation finishes.
+    @objc func didLoadRecipes(_ notification: Notification) {
+        // If we just created a new recipe
+        guard let sender = notification.object as? RecipesViewController, sender.newRecipeController != nil else {
+            return
         }
+
+        // In case of the active window, dismiss the newRecipeController.
+        if self == sender {
+            self.dismiss(animated: true)
+        }
+    }
+
+    /// Called when a new recipe was added.
+    @objc func didAddRecipe(_ notification: Notification) {
+        // We only want to reload if we successfully added the recipe.
+        guard notification.userInfo?["recipeID"] != nil else { return }
+        // Reload the data from the server.
+        self.reloadData(useCachedData: false)
     }
 
     /// Called when a recipe was sucessfully edited.
@@ -99,24 +110,13 @@ extension RecipesViewController {
         }
     }
 
-    /// Called when a new recipe was added.
-    @objc func didAddRecipe(_ notification: Notification) {
-        // We only want to reload if we successfully added the recipe.
-        guard notification.userInfo?["recipeID"] != nil else { return }
-        // Reload the data from the server.
-        self.reloadData(useCachedData: false)
-    }
-
-    /// Called when a reload operation finishes.
-    @objc func didLoadRecipes(_ notification: Notification) {
-        // If we just created a new recipe
-        guard let sender = notification.object as? RecipesViewController, sender.newRecipeController != nil else {
-            return
-        }
-
-        // In case of the active window, dismiss the newRecipeController.
-        if self == sender {
-            self.dismiss(animated: true)
+    /// Called when a recipe is deleted.
+    @objc func didRemoveRecipe(_ notification: Notification) {
+        guard let recipeID = notification.userInfo?["recipeID"] as? Int else { return }
+        // Find the index of the recipe to delete
+        if let index = self.recipes.firstIndex(where: { $0.recipeID == recipeID }) {
+            self.recipes.remove(at: index)
+            self.updateSearchResults()
         }
     }
 }

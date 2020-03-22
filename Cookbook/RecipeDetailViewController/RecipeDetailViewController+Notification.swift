@@ -12,21 +12,6 @@ import UIKit
 extension RecipeDetailViewController {
     #if !targetEnvironment(macCatalyst)
     /**
-     Extend the scrollView contentInset bottom when the keyboard is visible.
-     */
-    @objc func keyboardDidShow(_ notification: Notification) {
-        let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
-        self.scrollView.contentInset.bottom = keyboardRect?.height ?? 0
-    }
-
-    /**
-     Remove the additional scrollView contentInset bottom when the keyboard is hidden.
-     */
-    @objc func keyboardDidHide(_ notification: Notification) {
-        self.scrollView.contentInset.bottom = 0
-    }
-
-    /**
      Disable all navigation and toolbar items.
     */
     @objc func disableNavigationAndToolbarItems(_ notification: Notification) {

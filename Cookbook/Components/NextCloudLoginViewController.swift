@@ -344,7 +344,7 @@ extension NextCloudLoginController: UITextFieldDelegate {
         let tableViewFrame = self.view.convert(self.tableView.frame, to: nil)
         // 2. Calculate the intersection with the keyboardFrame.
         self.originalBottomInset = self.tableView.contentInset.bottom
-        let keyboardBottomInset = tableViewFrame.intersection(keyboardFrame).height //+ heightDelta
+        let keyboardBottomInset = tableViewFrame.intersection(keyboardFrame).height
         // 3. Adjust the content inset.
         UIView.animate(withDuration: 0.25, animations: {
             self.tableView.contentInset.bottom = keyboardBottomInset
