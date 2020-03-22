@@ -38,6 +38,8 @@ extension RecipeDetailViewController {
             let editButton = UIBarButtonItem.with(kind: edit ? .done : .edit, target: self,
                                                   action: #selector(self.editRecipe))
             self.navigationItem.rightBarButtonItem = editButton
+            // Disable the share button.
+            self.toolbarItems?.last?.isEnabled = !edit
             #endif
         }
 
@@ -88,9 +90,10 @@ extension RecipeDetailViewController {
             // Delete the recipe from the server.
             recipe.delete({
                 // Inform all listeners, that the recipe was deleted.
-                center.post(name: .didRemoveRecipe, object: nil, userInfo: ["recipeID": recipe.recipeID])
+                center.post(name: .didRemoveRecipe, object: self, userInfo: ["recipeID": recipe.recipeID])
             }, errorHandler: { _ in
-                center.post(name: .didRemoveRecipe, object: nil, userInfo: nil)
+                // Inform all listeners, that the recipe deletion failed.
+                center.post(name: .didRemoveRecipe, object: self, userInfo: nil)
                 // Inform the user that something went wrong.
                 ProgressHUD.showError(attachedTo: self.view, message: NSLocalizedString("ERROR_DELETING", comment: ""),
                                       animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)

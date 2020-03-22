@@ -67,6 +67,10 @@ extension RecipesViewController {
         NotificationCenter.default.post(name: .willAddRecipe, object: self)
 
         self.newRecipeController = newRecipeController
+        // We might need to dismiss the searchController before we present the newRecipeController.
+        if self.presentedViewController == self.searchController {
+            self.dismiss(animated: false)
+        }
         self.present(navController, animated: true)
     }
 

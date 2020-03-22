@@ -116,9 +116,7 @@ extension RecipesViewController {
 
         // In case of the active window, dismiss the newRecipeController.
         if self == sender {
-            self.dismiss(animated: true, completion: {
-                self.newRecipeController = nil
-            })
+            self.dismiss(animated: true)
         }
     }
 }

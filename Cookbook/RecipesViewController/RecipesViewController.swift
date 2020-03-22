@@ -60,13 +60,13 @@ class RecipesViewController: UITableViewController {
         self.searchController.searchResultsUpdater = self
         self.navigationItem.searchController = self.searchController
 
+        // The viewController title.
+        let title = NSLocalizedString("RECIPES", comment: "")
+
         #if targetEnvironment(macCatalyst)
 
         self.tableView.contentInset.top = 15.0
         self.tableView.rowHeight = 30.0
-
-        // The viewController title.
-        let title = NSLocalizedString("RECIPES", comment: "")
 
         // Add a fake title to make the UI look a little bit nicer on macOS.
         self.title = ""

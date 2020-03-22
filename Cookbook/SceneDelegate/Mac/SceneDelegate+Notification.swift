@@ -5,6 +5,9 @@
 //  Created by David Klopp on 18.03.20.
 //  Copyright © 2020 David Klopp. All rights reserved.
 //
+// This file extension responsible for enabling and disabling the toolbar items when different event occur.
+// Sometimes the changes should only be applied to the currently active window. In this case you have to compare
+// the notification senders delegate to this delegate and only apply the changes if both match.
 
 import Foundation
 import UIKit
@@ -42,10 +45,18 @@ extension SceneDelegate {
         }
         self.setToolbarItemsEnabled(true)
 
+        // We might need to disable a couple of buttons if we are currently in edit mode.
         let splitViewController = recipesMaster?.splitViewController as? SplitViewController
         let isEditing = splitViewController?.recipeDetailController?.isEditable
         if isEditing ?? false {
             self.setToolbarItemsEnabled(false, buttonKind: [UIBarButtonItem.Kind.add, UIBarButtonItem.Kind.share,
+                                                            UIBarButtonItem.Kind.delete])
+        }
+
+        // If we deleted the last recipe or we start without a recipe we need to disable the edit, delete and
+        // share button.
+        if recipesMaster?.recipes.isEmpty ?? true {
+            self.setToolbarItemsEnabled(false, buttonKind: [UIBarButtonItem.Kind.edit, UIBarButtonItem.Kind.share,
                                                             UIBarButtonItem.Kind.delete])
         }
     }
@@ -115,5 +126,21 @@ extension SceneDelegate {
             return
         }
         self.setToolbarItemsEnabled(true)
+    }
+
+    /// Called after an item is deleted.
+    @objc func didRemoveRecipe(_ notification: Notification) {
+        // We need to perform this action for all windows. That means we don't need to compare the sender.
+        guard notification.userInfo?["recipeID"] != nil else { return }
+        guard let splitViewController = self.window?.rootViewController as? SplitViewController else { return }
+
+        // Disable all toolbar items when we delete the last recipe.
+        // We can not guarantee that this method is called before the RecipesViewController deletes the recipe entry
+        // from its list, but we can guarantee that the list is empty, if a recipe was deleted (`recipeID` != nil)
+        // and the recipe list contained less than 2 elements.
+        if splitViewController.recipesMasterController?.recipes.count ?? 0 <= 1 {
+            self.setToolbarItemsEnabled(false)
+            self.setToolbarItemsEnabled(true, buttonKind: [UIBarButtonItem.Kind.sidebar, UIBarButtonItem.Kind.add])
+        }
     }
 }

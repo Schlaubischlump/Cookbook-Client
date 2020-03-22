@@ -98,6 +98,8 @@ extension RecipeDetailViewController {
             // Clear this view. This is important e.g when we delete the last recipe in the filteredList.
             self.recipe = nil
             self.reloadData()
+            // If the master controller is hidden (size class compact) then we need to dismiss the detail controller.
+            self.navigationController?.navigationController?.popToRootViewController(animated: true)
         }
     }
 }

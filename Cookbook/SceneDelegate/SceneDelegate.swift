@@ -58,6 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         center.addObserver(self, selector: #selector(didAddRecipe), name: .didAddRecipe, object: nil)
         center.addObserver(self, selector: #selector(willEditRecipe), name: .willEditRecipe, object: nil)
         center.addObserver(self, selector: #selector(didEditRecipe), name: .didEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(didRemoveRecipe), name: .didRemoveRecipe, object: nil)
         #endif
 
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
@@ -81,6 +82,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         center.removeObserver(self, name: .didEditRecipe, object: nil)
         center.removeObserver(self, name: .willAddRecipe, object: nil)
         center.removeObserver(self, name: .didAddRecipe, object: nil)
+        center.removeObserver(self, name: .didRemoveRecipe, object: nil)
     }
     #endif
 
