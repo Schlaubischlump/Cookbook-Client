@@ -183,10 +183,6 @@ extension RecipesViewController {
             let recipe = self.filteredRecipes[indexPath.row]
             controller.recipe = recipe
 
-            // Set this value, to open the currently selected row, if the search result is cleared, after an item
-            // was selected. We need to find the row of the selected item inside the unfiltered tableView.
-            self.firstSelectedRow = self.recipes.firstIndex(where: { $0.recipeID == recipe.recipeID }) ?? 0
-
             // Change the toolbar edit icon back to normal.
             #if targetEnvironment(macCatalyst)
             navController.navigationBar.isHidden = true

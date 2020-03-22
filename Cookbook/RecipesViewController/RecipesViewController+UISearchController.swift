@@ -37,11 +37,21 @@ extension RecipesViewController: UISearchResultsUpdating {
         // Calculate the new index of the same recipe. If it does not exist (e.g. during a search) we do not want to
         // select any cell. That means we need to set `firstSelectedRow` to nil.
         self.firstSelectedRow = self.filteredRecipes.firstIndex(where: { $0.recipeID == recipeID })
+
         // In case that we deleted the recipe, we need to select the previous row.
         // Use max to prevent an index -1 error when deleting the first row.
-        if !self.recipes.contains(where: { $0.recipeID == recipeID }) {
+        if recipeID != nil && !self.recipes.contains(where: { $0.recipeID == recipeID }) {
             self.firstSelectedRow = max((selectedRow ?? 0) - 1, 0)
         }
+
+        // If the search result was cleared, we need to find the index of the currently opened recipe inside the
+        // detailed view. The tableView selection will be nil, although a recipe is open.
+        if searchText.isEmpty {
+            let splitViewController = self.splitViewController as? SplitViewController
+            let recipe = splitViewController?.recipeDetailController?.recipe
+            self.firstSelectedRow = self.recipes.firstIndex(where: { $0.recipeID == recipe?.recipeID }) ?? 0
+        }
+
         self.tableView.reloadData()
     }
 }
