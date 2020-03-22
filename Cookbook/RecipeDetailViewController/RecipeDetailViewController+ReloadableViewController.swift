@@ -53,7 +53,7 @@ extension RecipeDetailViewController: ReloadableViewController {
         guard let recipe = self.recipe else { return }
 
         let center = NotificationCenter.default
-        center.post(name: .willLoadRecipeDetails, object: nil)
+        center.post(name: .willLoadRecipeDetails, object: self)
 
         self.title = recipe.name
         self.descriptionList?.title = recipe.name
@@ -83,7 +83,7 @@ extension RecipeDetailViewController: ReloadableViewController {
 
         // When all recipe details are loaded.
         group.notify(queue: .main) {
-            center.post(name: .didLoadRecipeDetails, object: nil)
+            center.post(name: .didLoadRecipeDetails, object: self)
         }
     }
 

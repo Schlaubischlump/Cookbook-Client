@@ -30,6 +30,22 @@ extension RecipeDetailViewController {
     #endif
 
     /**
+     Called after the recipe details finished loading. Make sure to resize the UI to display all cells.
+     */
+    @objc func didLoadRecipeDetails(_ notification: Notification) {
+        guard self == notification.object as? RecipeDetailViewController else { return }
+
+        self.descriptionList.reloadData()
+        self.toolsList.reloadData()
+        self.ingredientsList.reloadData()
+        self.instructionsList.reloadData()
+
+        self.updateContentSize()
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded()
+    }
+
+    /**
      Called when a recipe was successfully updated.
      */
     @objc func didEditRecipe(_ notification: Notification) {

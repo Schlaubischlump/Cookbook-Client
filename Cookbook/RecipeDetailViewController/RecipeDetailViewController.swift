@@ -189,6 +189,10 @@ class RecipeDetailViewController: UIViewController {
         self.ingredientsList?.title = NSLocalizedString("INGREDIENTS", comment: "")
         self.instructionsList?.title = NSLocalizedString("INSTRUCTIONS", comment: "")
 
+        self.toolsList.enumerationStyle = .bullet()
+        self.instructionsList.enumerationStyle = .number
+        self.ingredientsList.enumerationStyle = .bullet()
+
         self.toolsList?.allowsCellInsertion = true
         self.ingredientsList?.allowsCellInsertion = true
         self.instructionsList?.allowsCellInsertion = true
@@ -255,7 +259,8 @@ class RecipeDetailViewController: UIViewController {
         }
 
         // After all data is loaded we need to relayout the UI.
-        center.addObserver(self, selector: #selector(self.updateContentSize), name: .didLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(self.didLoadRecipeDetails),
+                           name: .didLoadRecipeDetails, object: nil)
         center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
         center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
 
@@ -306,6 +311,7 @@ extension RecipeDetailViewController: EnumerationListDelegate {
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
 
+        // If the entered text changed or a tool / instruction / ingredient was added resize the scrollView.
         #if !targetEnvironment(macCatalyst)
         self.makeFirstResponderVisible(keyboardFrame: nil)
         #endif
