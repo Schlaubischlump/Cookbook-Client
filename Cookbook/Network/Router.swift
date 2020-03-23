@@ -13,11 +13,11 @@
  +-----------------------------------------+-----------+-----------------------------+------------------------+--------+
  |               Description               |  Method   |             Path            |        Parameters      | Format |
  +-----------------------------------------+-----------+-----------------------------+------------------------+--------+
- | List all recipes                        |    get    |      /recipes               |        keywords        |  json  |
- | Get an image for a recipe               |    get    |      /recipes/{id}/image    |   size (thumb, full)   | binary |
- | List all recipe information             |    get    |      /recipe/{id}           |                        |  json  |
- | Delete a recipe                         |   delete  |      /recipe/{id}           |                        |        |
- | Change the recipe information           |    put    |      /recipe/{id}           |      recipe details    |        |
+ | List all recipes                        |    get    |   api/recipes               |        keywords        |  json  |
+ | Get an image for a recipe               |    get    |   /recipes/{id}/image       |   size (thumb, full)   | binary |
+ | List all recipe information             |    get    |   api/recipe/{id}           |                        |  json  |
+ | Delete a recipe                         |   delete  |   api/recipe/{id}           |                        |        |
+ | Change the recipe information           |    put    |   api/recipe/{id}           |      recipe details    |        |
  +-----------------------------------------+-----------+-----------------------------+------------------------+--------+
  
  */
@@ -52,11 +52,11 @@ enum Router: URLRequestConvertible {
     var path: String {
         switch self {
         case .allRecipes, .create:
-            return "/recipes"
+            return "api/recipes"
         case .image(let rid, _):
             return "/recipes/\(rid)/image"
         case .recipe(let rid), .delete(let rid), .update(let rid, _):
-            return "/recipes/\(rid)"
+            return "api/recipes/\(rid)"
         }
     }
 
