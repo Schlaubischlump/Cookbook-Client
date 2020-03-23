@@ -16,6 +16,7 @@ This is a Cookbook client application to manage your recipes stored in your Next
 - [x] Cookbook v.0.6 support 
 
 **More enhancement ideas:**   
+- [ ] Pull to refresh / refresh toolbar item
 - [ ] Tooltips on macOS  
 - [ ] Support Cookbook v0.6 categories   
 - [ ] Custom recipe folder   
