@@ -16,7 +16,10 @@ extension RecipesViewController {
                                        image: UIImage(systemName: "uiwindow.split.2x1")) { _ in
             let userActivity = NSUserActivity(activityType: ActivityType.main)
             userActivity.title = ActivityTitle.newWindow
-            userActivity.userInfo = ["row": indexPath.row]
+            // We need to find the real indexPath for this row, not the one in the filtered list.
+            let recipeID = self.filteredRecipes[indexPath.row].recipeID
+            let trueIndexPath = self.recipes.firstIndex(where: { $0.recipeID == recipeID} )
+            userActivity.userInfo = ["row": trueIndexPath]
             UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil)
         }
         return newWindowAction

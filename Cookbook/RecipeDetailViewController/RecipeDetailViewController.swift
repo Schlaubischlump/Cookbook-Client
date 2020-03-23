@@ -209,6 +209,8 @@ class RecipeDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.title = ""
+
         self.scrollView?.delegate = self
         self.scrollView?.keyboardDismissMode = .interactive
 
