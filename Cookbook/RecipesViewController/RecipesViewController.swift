@@ -215,15 +215,18 @@ extension RecipesViewController {
         // Do not auto select an item if we are searching.
         guard !self.searchController.searchBar.isFirstResponder else { return }
 
-        // If both views are visible select the first item if possible and none is currently selected.
-        // This prevents opening the first item when the app launches on an iPhone.
-        let isSplitViewControllerSeparated = self.splitViewController?.displayMode == .allVisible
-            && !self.splitViewController!.isCollapsed
+        // Only when we display the last cell. viewDidAppear is not called often enough for this, so we use
+        // `willDisplayCell`. We want to execute this function only once. In this case we just choose the last cell.
+        if indexPath.row == tableView.indexPathsForVisibleRows?.last?.row {
+            // If both views are visible select the first item if possible and none is currently selected.
+            // This prevents opening the first item when the app launches on an iPhone.
+            let isSplitViewControllerSeparated = self.splitViewController?.displayMode == .allVisible
+                && !self.splitViewController!.isCollapsed
 
-        // Nevertheless we want this to be executed when we open a new window on iPad.
-        if isSplitViewControllerSeparated || self.isActivatedByNewWindowActivity {
-            // Only when we display the last cell
-            if indexPath.row == tableView.indexPathsForVisibleRows?.last?.row {
+            // Nevertheless we want this to be executed when we open a new window on iPad.
+            if isSplitViewControllerSeparated || self.isActivatedByNewWindowActivity {
+                self.isActivatedByNewWindowActivity = false
+
                 guard self.firstSelectedRow != nil else { return }
 
                 let indexPath = IndexPath(row: self.firstSelectedRow!, section: 0)

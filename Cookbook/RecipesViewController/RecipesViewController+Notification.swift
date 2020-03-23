@@ -41,6 +41,10 @@ extension RecipesViewController {
         // In case of the active window, dismiss the newRecipeController.
         if self == sender {
             self.dismiss(animated: true)
+            // We might need to reactivate the searchController.
+            if !(self.searchController.searchBar.text?.isEmpty ?? true) {
+                self.present(self.searchController, animated: false)
+            }
         }
     }
 

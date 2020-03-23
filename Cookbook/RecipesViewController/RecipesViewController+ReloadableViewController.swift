@@ -15,12 +15,7 @@ extension RecipesViewController: ReloadableViewController {
      Reload the tableview.
      */
     func reloadDataFromCache() {
-        let searchText = self.searchController.searchBar.text ?? ""
-        if !searchText.isEmpty {
-            self.updateSearchResults()
-        } else {
-            self.tableView.reloadData()
-        }
+        self.updateSearchResults()
     }
 
     /**
@@ -43,13 +38,7 @@ extension RecipesViewController: ReloadableViewController {
         Recipe.loadRecipes(completionHandler: { recipes in
             self.recipes = recipes
             self.filteredRecipes = recipes
-
-            let searchText = self.searchController.searchBar.text ?? ""
-            if !searchText.isEmpty {
-                self.updateSearchResults()
-            } else {
-                self.tableView.reloadData()
-            }
+            self.updateSearchResults()
 
             hud?.hide(animated: true)
 

@@ -16,35 +16,35 @@ class RecipeDetailViewController: UIViewController {
     // MARK: - Properties
 
     /// main scrollview container
-    @IBOutlet var scrollView: UIScrollView!
-    @IBOutlet var contentView: UIView!
+    @IBOutlet var scrollView: UIScrollView?
+    @IBOutlet var contentView: UIView?
 
     /// parallax header image view
-    @IBOutlet var parallaxHeaderImageView: UIImageView!
+    @IBOutlet var parallaxHeaderImageView: UIImageView?
 
     /// header image view top / height constraint
-    @IBOutlet var parallaxHeightConstraint: NSLayoutConstraint!
-    @IBOutlet var parallaxTopConstraint: NSLayoutConstraint!
+    @IBOutlet var parallaxHeightConstraint: NSLayoutConstraint?
+    @IBOutlet var parallaxTopConstraint: NSLayoutConstraint?
 
     /// List with general information about the recipe
-    @IBOutlet var descriptionList: EnumerationList!
-    @IBOutlet var descriptionListHeight: NSLayoutConstraint!
+    @IBOutlet var descriptionList: EnumerationList?
+    @IBOutlet var descriptionListHeight: NSLayoutConstraint?
 
     /// List with all tools required.
-    @IBOutlet var toolsList: EnumerationList!
-    @IBOutlet var toolsListHeight: NSLayoutConstraint!
+    @IBOutlet var toolsList: EnumerationList?
+    @IBOutlet var toolsListHeight: NSLayoutConstraint?
 
     /// List with all ingredients.
-    @IBOutlet var ingredientsList: EnumerationList!
-    @IBOutlet var ingredientsListHeight: NSLayoutConstraint!
+    @IBOutlet var ingredientsList: EnumerationList?
+    @IBOutlet var ingredientsListHeight: NSLayoutConstraint?
 
     /// List with all instructions.
-    @IBOutlet var instructionsList: EnumerationList!
-    @IBOutlet var instructionsListHeight: NSLayoutConstraint!
+    @IBOutlet var instructionsList: EnumerationList?
+    @IBOutlet var instructionsListHeight: NSLayoutConstraint?
 
     /// Initital height of the parallax image view.
     lazy var initialParallaxHeight: CGFloat = {
-        return self.parallaxHeightConstraint.constant
+        return self.parallaxHeightConstraint?.constant ?? 0
     }()
 
     /// Compact and Regular constraints.
@@ -78,20 +78,20 @@ class RecipeDetailViewController: UIViewController {
         guard self.isEditable else { return nil }
         // Because dictionary and array are both structs, this should copy the recipeDetails.
         var details: [String: Any] = self.recipeDetails
-        if self.descriptionList.data.count == 8 {
-            details["name"] = self.descriptionList.data[0]
-            details["description"] = self.descriptionList.data[1]
-            details["url"] = self.descriptionList.data[2]
-            details["image"] = self.descriptionList.data[3]
-            details["prepTime"] = self.descriptionList.data[4].iso8601()
-            details["cookTime"] = self.descriptionList.data[5].iso8601()
-            details["totalTime"] = self.descriptionList.data[6].iso8601()
-            details["recipeYield"] = self.descriptionList.data[7].intValue
+        if let descriptionList = self.descriptionList, descriptionList.data.count == 8 {
+            details["name"] = descriptionList.data[0]
+            details["description"] = descriptionList.data[1]
+            details["url"] = descriptionList.data[2]
+            details["image"] = descriptionList.data[3]
+            details["prepTime"] = descriptionList.data[4].iso8601()
+            details["cookTime"] = descriptionList.data[5].iso8601()
+            details["totalTime"] = descriptionList.data[6].iso8601()
+            details["recipeYield"] = descriptionList.data[7].intValue
         }
         // Copy the remaining lists.
-        details["tool"] = self.toolsList.data
-        details["recipeIngredient"] = self.ingredientsList.data
-        details["recipeInstructions"] = self.instructionsList.data
+        details["tool"] = self.toolsList?.data ?? []
+        details["recipeIngredient"] = self.ingredientsList?.data ?? []
+        details["recipeInstructions"] = self.instructionsList?.data ?? []
         return details
      }
 
@@ -99,8 +99,8 @@ class RecipeDetailViewController: UIViewController {
     var includeParallaxHeaderView: Bool = true {
         didSet {
             if self.isViewLoaded {
-                self.parallaxHeaderImageView.isHidden = !self.includeParallaxHeaderView
-                self.parallaxHeightConstraint.constant = self.includeParallaxHeaderView ? 320 : 0
+                self.parallaxHeaderImageView?.isHidden = !self.includeParallaxHeaderView
+                self.parallaxHeightConstraint?.constant = self.includeParallaxHeaderView ? 320 : 0
             }
         }
     }
@@ -117,16 +117,16 @@ class RecipeDetailViewController: UIViewController {
                 self.reloadRecipeDescriptionList(includeAllFields: true)
 
                 // Start editing the view.
-                self.descriptionList.isEditable = true
-                self.ingredientsList.isEditable = true
-                self.instructionsList.isEditable = true
-                self.toolsList.isEditable = true
+                self.descriptionList?.isEditable = true
+                self.ingredientsList?.isEditable = true
+                self.instructionsList?.isEditable = true
+                self.toolsList?.isEditable = true
             } else {
                 // Write all the data entered in the UI back to the datastructure.
-                self.descriptionList.isEditable = false
-                self.ingredientsList.isEditable = false
-                self.instructionsList.isEditable = false
-                self.toolsList.isEditable = false
+                self.descriptionList?.isEditable = false
+                self.ingredientsList?.isEditable = false
+                self.instructionsList?.isEditable = false
+                self.toolsList?.isEditable = false
 
                 // Hide all not requiered fields.
                 self.reloadRecipeDescriptionList(includeAllFields: false)
@@ -161,22 +161,22 @@ class RecipeDetailViewController: UIViewController {
         }
 
         // Update the descriptionList with the new data.
-        self.descriptionList.enumerationStyle = .string(descKeys)
-        self.descriptionList.data = descData
+        self.descriptionList?.enumerationStyle = .string(descKeys)
+        self.descriptionList?.data = descData
 
         // Reload the UI, so that all cells are visible before changing the edit mode.
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
-        self.descriptionList.reloadData()
+        self.descriptionList?.reloadData()
         self.updateContentSize()
     }
 
     /// Update the scrollView contentSize to display all the content.
     @objc func updateContentSize() {
-        self.toolsListHeight.constant = self.toolsList.contentSize.height
-        self.descriptionListHeight.constant = self.descriptionList.contentSize.height
-        self.ingredientsListHeight.constant = self.ingredientsList.contentSize.height
-        self.instructionsListHeight.constant = self.instructionsList.contentSize.height
+        self.toolsListHeight?.constant = self.toolsList?.contentSize.height ?? 0
+        self.descriptionListHeight?.constant = self.descriptionList?.contentSize.height ?? 0
+        self.ingredientsListHeight?.constant = self.ingredientsList?.contentSize.height ?? 0
+        self.instructionsListHeight?.constant = self.instructionsList?.contentSize.height ?? 0
 
         self.updateViewConstraints()
     }
@@ -189,9 +189,9 @@ class RecipeDetailViewController: UIViewController {
         self.ingredientsList?.title = NSLocalizedString("INGREDIENTS", comment: "")
         self.instructionsList?.title = NSLocalizedString("INSTRUCTIONS", comment: "")
 
-        self.toolsList.enumerationStyle = .bullet()
-        self.instructionsList.enumerationStyle = .number
-        self.ingredientsList.enumerationStyle = .bullet()
+        self.toolsList?.enumerationStyle = .bullet()
+        self.instructionsList?.enumerationStyle = .number
+        self.ingredientsList?.enumerationStyle = .bullet()
 
         self.toolsList?.allowsCellInsertion = true
         self.ingredientsList?.allowsCellInsertion = true
@@ -209,8 +209,8 @@ class RecipeDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.scrollView.delegate = self
-        self.scrollView.keyboardDismissMode = .interactive
+        self.scrollView?.delegate = self
+        self.scrollView?.keyboardDismissMode = .interactive
 
         self.configureLists()
 
@@ -297,10 +297,11 @@ extension RecipeDetailViewController: UIScrollViewDelegate {
     /// Add a parallax effect when scrolling
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOff = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
-        var frame = self.parallaxHeaderImageView.layer.frame
-        frame.origin.y = min(yOff, 0)
-        frame.size.height = self.initialParallaxHeight + max(-yOff, 0)
-        self.parallaxHeaderImageView.layer.frame = frame
+        if var frame = self.parallaxHeaderImageView?.layer.frame {
+            frame.origin.y = min(yOff, 0)
+            frame.size.height = self.initialParallaxHeight + max(-yOff, 0)
+            self.parallaxHeaderImageView?.layer.frame = frame
+        }
     }
 }
 

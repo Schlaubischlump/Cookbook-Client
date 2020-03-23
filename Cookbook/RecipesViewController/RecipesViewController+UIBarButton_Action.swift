@@ -87,7 +87,7 @@ extension RecipesViewController {
             guard !self.recipes.contains(where: { $0.name == name }) else {
                 ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
                                       message: NSLocalizedString("ERROR_RECIPE_EXISTS", comment: ""), animated: true)?
-                    .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
+                           .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
                 return
             }
 
@@ -116,13 +116,13 @@ extension RecipesViewController {
                 // Unknown error while creating a recipe.
                 ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
                                       message: NSLocalizedString("ERROR_CREATE_RECIPE", comment: ""), animated: true)?
-                    .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
+                           .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
             })
         } else {
             // User forgot to enter a recipe name.
             ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
                                   message: NSLocalizedString("ERROR_MISSING_NAME", comment: ""), animated: true)?
-                .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
+                       .hide(animated: true, afterDelay: kErrorHudDisplayDuration)
         }
     }
 }

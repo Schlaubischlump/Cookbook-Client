@@ -35,10 +35,10 @@ extension RecipeDetailViewController {
     @objc func didLoadRecipeDetails(_ notification: Notification) {
         guard self == notification.object as? RecipeDetailViewController else { return }
 
-        self.descriptionList.reloadData()
-        self.toolsList.reloadData()
-        self.ingredientsList.reloadData()
-        self.instructionsList.reloadData()
+        self.descriptionList?.reloadData()
+        self.toolsList?.reloadData()
+        self.ingredientsList?.reloadData()
+        self.instructionsList?.reloadData()
 
         self.updateContentSize()
         self.view.setNeedsLayout()

@@ -20,11 +20,11 @@ extension RecipeDetailViewController {
         // Create a dummy container to add all the relevant subviews.
         let container = UIView(frame: .zero)
         container.backgroundColor = .white
-        var height: CGFloat = parallaxHeaderImageView.bounds.height
+        var height: CGFloat = parallaxHeaderImageView?.bounds.height ?? 0
 
         // Add our lists and our image to the container view.
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: a4PageWidth, height: height))
-        imageView.image = parallaxHeaderImageView.image?.af_imageAspectScaled(toFill: imageView.bounds.size)
+        imageView.image = parallaxHeaderImageView?.image?.af_imageAspectScaled(toFill: imageView.bounds.size)
         container.addSubview(imageView)
 
         for list in [self.descriptionList, self.toolsList, self.ingredientsList, self.instructionsList] {

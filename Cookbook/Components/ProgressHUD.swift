@@ -20,7 +20,7 @@ class ProgressHUD: MBProgressHUD {
 
         let hud = ProgressHUD(view: view)
         hud.removeFromSuperViewOnHide = true
-        hud.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        //hud.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         hud.animationType = .zoomIn
         view.addSubview(hud)
         return hud

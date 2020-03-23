@@ -16,11 +16,11 @@ extension RecipeDetailViewController: ReloadableViewController {
 
         self.title = ""
         self.descriptionList?.title = ""
-        self.parallaxHeaderImageView.image = #imageLiteral(resourceName: "placeholder")
-        self.descriptionList.data = []
-        self.toolsList.data = []
-        self.ingredientsList.data = []
-        self.instructionsList.data = []
+        self.parallaxHeaderImageView?.image = #imageLiteral(resourceName: "placeholder")
+        self.descriptionList?.data = []
+        self.toolsList?.data = []
+        self.ingredientsList?.data = []
+        self.instructionsList?.data = []
 
         self.updateContentSize()
     }
@@ -33,17 +33,17 @@ extension RecipeDetailViewController: ReloadableViewController {
         self.descriptionList?.title = recipe?.name ?? ""
 
         let (descriptionKeys, descriptionData) = Recipe.parseDescriptionValuesFor(jsonArray: self.recipeDetails)
-        self.descriptionList.enumerationStyle = .string(descriptionKeys)
-        self.descriptionList.data = descriptionData
+        self.descriptionList?.enumerationStyle = .string(descriptionKeys)
+        self.descriptionList?.data = descriptionData
 
-        self.toolsList.enumerationStyle = .bullet()
-        self.toolsList.data = self.recipeDetails["tool"] as? [String] ?? []
+        self.toolsList?.enumerationStyle = .bullet()
+        self.toolsList?.data = self.recipeDetails["tool"] as? [String] ?? []
 
-        self.ingredientsList.enumerationStyle = .bullet()
-        self.ingredientsList.data = self.recipeDetails["recipeIngredient"]  as? [String] ?? []
+        self.ingredientsList?.enumerationStyle = .bullet()
+        self.ingredientsList?.data = self.recipeDetails["recipeIngredient"]  as? [String] ?? []
 
-        self.instructionsList.enumerationStyle = .number
-        self.instructionsList.data = self.recipeDetails["recipeInstructions"]  as? [String] ?? []
+        self.instructionsList?.enumerationStyle = .number
+        self.instructionsList?.data = self.recipeDetails["recipeInstructions"]  as? [String] ?? []
 
         self.updateContentSize()
     }
@@ -62,7 +62,7 @@ extension RecipeDetailViewController: ReloadableViewController {
         let group = DispatchGroup()
 
         group.enter()
-        recipe.loadRecipeDetails(completionHandler: { prop in
+        recipe.loadRecipeDetails(completionHandler: { [weak self] prop in
             // v0.6 Migration fix. Check if we can restore the original time values.
             var details = prop
             for timeKey in ["prepTime", "cookTime", "totalTime"] where "PT0H0M" == prop?[timeKey] as? String {
@@ -71,21 +71,21 @@ extension RecipeDetailViewController: ReloadableViewController {
                 }
             }
 
-            self.recipeDetails = details ?? [:]
-            self.reloadDataFromCache()
+            self?.recipeDetails = details ?? [:]
+            self?.reloadDataFromCache()
             group.leave()
-        }, errorHandler: { _ in
+        }, errorHandler: { [weak self] _ in
             // Show loading recipe details error.
             group.leave()
-            ProgressHUD.showError(attachedTo: self.view,
+            ProgressHUD.showError(attachedTo: self?.view,
                                   message: NSLocalizedString("ERROR_LOADING_RECIPE_DETAILS", comment: ""),
                                   animated: true)?.hide(animated: true, afterDelay: kErrorHudDisplayDuration)
         })
 
         // Load the actual image.
         group.enter()
-        recipe.loadImage(completionHandler: {image in
-            self.parallaxHeaderImageView.image = image
+        recipe.loadImage(completionHandler: { [weak self] image in
+            self?.parallaxHeaderImageView?.image = image
             group.leave()
         }, thumb: false)
 

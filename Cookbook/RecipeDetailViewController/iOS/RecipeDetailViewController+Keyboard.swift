@@ -25,24 +25,24 @@ extension RecipeDetailViewController {
                 ($0 as? EnumerationCell)?.textView.isFirstResponder ?? false
             })
             // We found a first responder.
-            if let cell = firstResponderCell {
+            if let cell = firstResponderCell, let scrollView = self.scrollView {
                 // Cell frame inside the scrollView.
-                let cellFrameInsideScrollView = self.scrollView.convert(cell.frame, from: cell.superview)
+                let cellFrameInsideScrollView = scrollView.convert(cell.frame, from: cell.superview)
 
                 if keyboardFrame != nil {
                     // Cell frame converted to absolut screen coodinates.
                     var cellFrameAbsolut = cellFrameInsideScrollView
-                    cellFrameAbsolut.origin.y -= self.scrollView.contentOffset.y
-                    cellFrameAbsolut.origin.x -= self.scrollView.contentOffset.x
+                    cellFrameAbsolut.origin.y -= scrollView.contentOffset.y
+                    cellFrameAbsolut.origin.x -= scrollView.contentOffset.x
                     cellFrameAbsolut = self.view.convert(cellFrameAbsolut, to: nil)
                     // If the keyboard intersects with the absolut cell frame then scroll the cell to be visible.
                     if cellFrameAbsolut.intersects(keyboardFrame!) {
-                        self.scrollView.scrollRectToVisible(cellFrameInsideScrollView, animated: true)
+                        scrollView.scrollRectToVisible(cellFrameInsideScrollView, animated: true)
                     }
                     // We do not need to look any further.
                     break
                 } else {
-                    self.scrollView.scrollRectToVisible(cellFrameInsideScrollView, animated: true)
+                    scrollView.scrollRectToVisible(cellFrameInsideScrollView, animated: true)
                 }
             }
         }
@@ -53,16 +53,17 @@ extension RecipeDetailViewController {
      */
     @objc func keyboardDidShow(_ notification: Notification) {
         let keyboardFrameInfo = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
-        guard let keyboardFrame = (keyboardFrameInfo as? NSValue)?.cgRectValue else { return }
+        guard let keyboardFrame = (keyboardFrameInfo as? NSValue)?.cgRectValue,
+              let scrollView = self.scrollView else { return }
 
         // Calculate the intersection between the keyboard and the srollView. Therefore transform the scrollView frame
         // to absolut screen coordinates.
-        let scrollViewFrame = self.view.convert(self.scrollView.frame, to: nil)
+        let scrollViewFrame = self.view.convert(scrollView.frame, to: nil)
         let keyboardBottomInset = scrollViewFrame.intersection(keyboardFrame).height
 
         UIView.animate(withDuration: 0.25, animations: {
-            self.scrollView.contentInset.bottom = keyboardBottomInset
-            self.scrollView.verticalScrollIndicatorInsets.bottom = keyboardBottomInset
+            scrollView.contentInset.bottom = keyboardBottomInset
+            scrollView.verticalScrollIndicatorInsets.bottom = keyboardBottomInset
         })
 
         self.makeFirstResponderVisible(keyboardFrame: keyboardFrame)
@@ -72,9 +73,10 @@ extension RecipeDetailViewController {
      Remove the additional scrollView contentInset bottom when the keyboard is hidden.
      */
     @objc func keyboardDidHide(_ notification: Notification) {
+        guard let scrollView = self.scrollView else { return }
         UIView.animate(withDuration: 0.25, animations: {
-            self.scrollView.contentInset.bottom = 0
-            self.scrollView.verticalScrollIndicatorInsets.bottom = 0
+            scrollView.contentInset.bottom = 0
+            scrollView.verticalScrollIndicatorInsets.bottom = 0
         })
     }
 }
