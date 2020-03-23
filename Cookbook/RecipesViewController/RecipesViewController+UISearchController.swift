@@ -17,7 +17,6 @@ extension RecipesViewController: UISearchResultsUpdating {
 
     /// Update the search results when the searchField query changes.
     func updateSearchResults(for searchController: UISearchController) {
-        print("Update search results")
         guard let searchText = searchController.searchBar.text else { return }
 
         // If an item is selected, make sure to keep the selection intact. This is for example important if you edit

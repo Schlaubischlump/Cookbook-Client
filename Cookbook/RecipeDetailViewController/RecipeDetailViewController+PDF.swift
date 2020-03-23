@@ -34,13 +34,12 @@ extension RecipeDetailViewController {
             let enumListCopy = EnumerationList(frame: frame, style: .insetGrouped)
             container.addSubview(enumListCopy)
 
+            enumListCopy.overrideUserInterfaceStyle = .light
             enumListCopy.separatorStyle = .none
             enumListCopy.title = enumList.title
             enumListCopy.backgroundColor = .white
             enumListCopy.enumerationStyle = enumList.enumerationStyle
             enumListCopy.data = enumList.data
-
-            enumListCopy.visibleCells.forEach { $0.textLabel?.textColor = .darkText }
 
             frame.size.height = enumListCopy.contentSize.height
             enumListCopy.frame = frame
@@ -50,6 +49,9 @@ extension RecipeDetailViewController {
 
         // Layout the view.
         container.frame = CGRect(x: 0, y: 0, width: a4PageWidth, height: height)
+        for list in [self.descriptionList, self.toolsList, self.ingredientsList, self.instructionsList] {
+            list?.visibleCells.forEach { $0.textLabel?.textColor = .blue }
+        }
 
         // Return the pdfData of the view.
         return container.pdfData()

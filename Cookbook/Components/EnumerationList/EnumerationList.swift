@@ -274,7 +274,9 @@ extension EnumerationList: UITableViewDataSource {
             // textView.text will not be displayed, because we are settings the attributedText afterwards.
             myCell.textView.text = " "
             myCell.textView.attributedText = attrStr
-            myCell.textView.textColor = .label
+            let textColor: UIColor = (self.overrideUserInterfaceStyle == .light) ? .black : .label
+            myCell.textView.textColor = textColor
+            myCell.detailLabel.textColor = textColor
             myCell.textView.linkTextAttributes = [ .underlineStyle: NSUnderlineStyle.single.rawValue ]
         }
         return cell
