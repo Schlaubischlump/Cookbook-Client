@@ -80,10 +80,10 @@ extension RecipesViewController {
 
     @objc private func saveClicked(_ sender: Any) {
         // Read the user entered recip details.
-        guard let details = self.newRecipeController?.proposedRecipeDetails else { return }
+        guard var details = self.newRecipeController?.proposedRecipeDetails else { return }
         // The user must at least enter a recipe name.
         if let name = details["name"] as? String, !name.isEmpty {
-            // We can not create a recipe with the same name. (FIXME: Cookbook v.0.5.7 only)
+            // We can not create a recipe with the same name. (Cookbook v.0.5.7 only? Better keep it in.)
             guard !self.recipes.contains(where: { $0.name == name }) else {
                 ProgressHUD.showError(attachedTo: self.newRecipeController?.view,
                                       message: NSLocalizedString("ERROR_RECIPE_EXISTS", comment: ""), animated: true)?
@@ -91,12 +91,22 @@ extension RecipesViewController {
                 return
             }
 
+            // Convert the time values to an array to before sending them to the server.
+            for timeKey in ["prepTime", "cookTime", "totalTime"] {
+                if let time = details[timeKey] as? String, let comp = try? DateComponents.from(iso8601String: time) {
+                    details[timeKey] = [comp.hour ?? 0, comp.minute ?? 0]
+                }
+            }
+
             // Create a new recipe with the given data.
             let hud = ProgressHUD.showSpinner(attachedTo: self.newRecipeController?.view, animated: true)
             Recipe.create(details, completionHandler: { recipeID in
                 hud?.hide(animated: true)
                 // Inform all listener about the change.
-                let userInfo: [String: Any] = ["recipeID": recipeID, "details": details]
+                var userInfo: [String: Any] = ["recipeID": recipeID]
+                if let proposedDetails = self.newRecipeController?.proposedRecipeDetails {
+                    userInfo["details"] = proposedDetails
+                }
                 NotificationCenter.default.post(name: .didAddRecipe, object: self, userInfo: userInfo)
             }, errorHandler: { _ in
                 hud?.hide(animated: false)

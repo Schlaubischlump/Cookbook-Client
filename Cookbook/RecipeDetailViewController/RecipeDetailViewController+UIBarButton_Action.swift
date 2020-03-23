@@ -57,12 +57,22 @@ extension RecipeDetailViewController {
 
         // Update the information on the server.
         let hud = ProgressHUD.showSpinner(attachedTo: self.view, animated: true)
-        guard let details = self.proposedRecipeDetails else { return }
+        guard var details = self.proposedRecipeDetails else { return }
+
+        // Convert the time values to an array to before sending them to the server.
+        for timeKey in ["prepTime", "cookTime", "totalTime"] {
+            if let time = details[timeKey] as? String, let comp = try? DateComponents.from(iso8601String: time) {
+                details[timeKey] = [comp.hour ?? 0, comp.minute ?? 0]
+            }
+        }
 
         self.recipe?.update(details, completionHandler: {
             toggleEditDoneButton()
             // Inform all listeners, that the recipe was changed.
-            var userInfo: [String: Any] = ["details": details]
+            var userInfo: [String: Any] = [:]
+            if let proposedDetails = self.proposedRecipeDetails {
+                userInfo["details"] = proposedDetails
+            }
             if let recipeID = self.recipe?.recipeID {
                 userInfo["recipeID"] = recipeID
             }

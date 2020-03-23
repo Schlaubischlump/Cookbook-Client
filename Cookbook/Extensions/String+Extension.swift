@@ -17,7 +17,8 @@ extension String {
     */
     func readableTime() -> String {
         let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.day, .hour, .minute, .second]
+        formatter.allowedUnits = [.hour, .minute] // [.day, .hour, .minute, .second]
+        formatter.zeroFormattingBehavior = .pad
         if let comps = try? DateComponents.from(iso8601String: self), let str = formatter.string(from: comps) {
             return str
         }
@@ -31,7 +32,7 @@ extension String {
     func iso8601() -> String {
         let formatter = DateFormatter()
         var format = ""
-        for comp in ["ss", "mm", "HH", "dd"] {
+        for comp in ["mm", "HH"] { // ["ss", "mm", "HH", "dd"]
             format = comp+(format.isEmpty ? "" : ":"+format)
             formatter.dateFormat = format
             if let date = formatter.date(from: self) {
