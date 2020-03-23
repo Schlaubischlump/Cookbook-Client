@@ -65,11 +65,9 @@ extension RecipeDetailViewController: ReloadableViewController {
         recipe.loadRecipeDetails(completionHandler: { prop in
             // v0.6 Migration fix. Check if we can restore the original time values.
             var details = prop
-            for timeKey in ["prepTime", "cookTime", "totalTime"] {
-                if "PT0H0M" == prop?[timeKey] as? String {
-                    if let newTime = prop?["\(timeKey)_test"] as? String {
+            for timeKey in ["prepTime", "cookTime", "totalTime"] where "PT0H0M" == prop?[timeKey] as? String {
+                if let newTime = prop?["\(timeKey)_test"] as? String {
                         details?[timeKey] = newTime
-                    }
                 }
             }
 

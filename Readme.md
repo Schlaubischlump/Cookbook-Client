@@ -1,6 +1,6 @@
 # Cookbook 
 
-This is a Cookbook-Client application to manage your recipes stored in your NextCloud. For the corresponding NextCloud application see: [nextcloud-cookbook](https://github.com/mrzapp/nextcloud-cookbook). This is not a standalone application! Without the NextCloud backend this application is useless.
+This is a Cookbook-Client application to manage your recipes stored in your NextCloud (Cookbook v6.0 and up). For the corresponding NextCloud application see: [nextcloud-cookbook](https://github.com/mrzapp/nextcloud-cookbook). This is not a standalone application! Without the NextCloud backend this application is useless.
 
 - [x] View recipes    
 - [x] Share a recipe as pdf  
@@ -22,20 +22,18 @@ This is a Cookbook-Client application to manage your recipes stored in your Next
 
 ### macOS
 
-
 | ![](Screenshots/macOS/1.png) | ![](Screenshots/macOS/3.png) |
 |---|---|
 | ![](Screenshots/macOS/2.png)  | ![](Screenshots/macOS/4.png)  |
-
-
-### iOS
-
-| ![](Screenshots/iOS/1.png) | ![](Screenshots/iOS/3.png) |
-|---|---|
-|![](Screenshots/iOS/2.png) | ![](Screenshots/iOS/4.png) |
 
 ### iPadOS
 
 | ![](Screenshots/iPadOS/1.png) | ![](Screenshots/iPadOS/3.png) |
 |---|---|
 |![](Screenshots/iPadOS/2.png) | ![](Screenshots/iPadOS/4.png) |
+
+### iOS
+
+| ![](Screenshots/iOS/1.png) | ![](Screenshots/iOS/3.png) |
+|---|---|
+|![](Screenshots/iOS/2.png) | ![](Screenshots/iOS/4.png) |
