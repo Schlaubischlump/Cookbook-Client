@@ -1,5 +1,3 @@
-# Cookbook 
-
 <div align="center">
   <img src="Cookbook/Assets.xcassets/AppIcon.appiconset/Icon_Mac-512.png" width="128px">
   <h2 align="center">Cookbook-Client</h2>
