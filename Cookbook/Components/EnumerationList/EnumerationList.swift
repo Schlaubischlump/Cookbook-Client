@@ -316,7 +316,7 @@ extension EnumerationList: UIPointerInteractionDelegate {
 
         guard self.isEditing else { return nil }
 
-        // Add a custom highlight to the add footer view button.
+        // Add a custom highlight to the add button inside the footerView.
         if let addButton = interaction.view {
             let targetedPreview = UITargetedPreview(view: addButton)
             let pointerRect = CGRect(rect: addButton.frame, padding: 5)

@@ -31,6 +31,14 @@ extension RecipeDetailViewController {
                 self.isEditable = true
             })
 
+            // Update the toolbar items on iOS.
+            #if !targetEnvironment(macCatalyst)
+            let editButton = UIBarButtonItem.with(kind: .done, target: self, action: #selector(self.editRecipe))
+            self.navigationItem.rightBarButtonItem = editButton
+            // Disable the share button.
+            self.toolbarItems?.last?.isEnabled = false
+            #endif
+
             NotificationCenter.default.post(name: .willEditRecipe, object: self, userInfo: nil)
             return
         }
@@ -55,6 +63,15 @@ extension RecipeDetailViewController {
             if let recipeID = self.recipe?.recipeID {
                 userInfo["recipeID"] = recipeID
             }
+
+            // Update the toolbar items on iOS.
+            #if !targetEnvironment(macCatalyst)
+            let editButton = UIBarButtonItem.with(kind: .edit, target: self, action: #selector(self.editRecipe))
+            self.navigationItem.rightBarButtonItem = editButton
+            // Enable the share button.
+            self.toolbarItems?.last?.isEnabled = true
+            #endif
+
             NotificationCenter.default.post(name: .didEditRecipe, object: self, userInfo: userInfo)
             hud?.hide(animated: true)
         }, errorHandler: { _ in
