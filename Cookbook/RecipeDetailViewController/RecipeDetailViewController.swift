@@ -156,6 +156,22 @@ class RecipeDetailViewController: UIViewController {
     private var logoutObserver: NSObjectProtocol?
     private var reloadObserver: NSObjectProtocol?
 
+    // MARK: - Constructor
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.setup()
+    }
+
+    private func setup() {
+        self.title = ""
+    }
+
     // MARK: - Helper
 
     /**
@@ -227,8 +243,6 @@ class RecipeDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.title = ""
 
         self.scrollView?.delegate = self
         self.scrollView?.keyboardDismissMode = .interactive
