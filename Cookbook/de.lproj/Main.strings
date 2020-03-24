@@ -1,18 +1,18 @@
 
 /* Class = "UITableViewController"; title = "Master"; ObjectID = "7bK-jq-Zjz"; */
-"7bK-jq-Zjz.title" = "Master";
+"7bK-jq-Zjz.title" = "Rezepte";
 
 /* Class = "UILabel"; text = "Title"; ObjectID = "Arm-wq-HPj"; */
 "Arm-wq-HPj.text" = "Title";
 
 /* Class = "UIViewController"; title = "Detail"; ObjectID = "JEX-9P-axG"; */
-"JEX-9P-axG.title" = "Detail";
+"JEX-9P-axG.title" = "";
 
 /* Class = "UINavigationController"; title = "Master"; ObjectID = "RMx-3f-FxP"; */
-"RMx-3f-FxP.title" = "Master";
+"RMx-3f-FxP.title" = "Rezepte";
 
 /* Class = "UINavigationItem"; title = "Master"; ObjectID = "Zdf-7t-Un8"; */
-"Zdf-7t-Un8.title" = "Master";
+"Zdf-7t-Un8.title" = "Rezepte";
 
 /* Class = "UINavigationItem"; title = "Detail"; ObjectID = "mOI-FS-AaM"; */
-"mOI-FS-AaM.title" = "Detail";
+"mOI-FS-AaM.title" = "";

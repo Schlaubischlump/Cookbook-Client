@@ -43,27 +43,6 @@ class RecipesViewController: UITableViewController {
     /// Open the next recipeDetailViewController in edit mode.
     var openNextRecipeDetailViewInEditMode: Bool = false
 
-    // MARK: Constructor
-
-    override init(style: UITableView.Style) {
-        super.init(style: style)
-        self.setup()
-    }
-
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.setup()
-    }
-
-    func setup() {
-        self.title = NSLocalizedString("RECIPES", comment: "")
-    }
-
     // MARK: - View handling
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,7 +71,6 @@ class RecipesViewController: UITableViewController {
         self.title = ""
 
         #else
-
         // Set the navigationbar title.
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.tableView.rowHeight = 80.0
