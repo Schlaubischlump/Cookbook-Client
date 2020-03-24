@@ -87,7 +87,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
     #endif
 
     func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
-        return scene.userActivity
+        let activity = NSUserActivity(activityType: ActivityType.default)
+        if let splitViewController = self.window?.rootViewController as? SplitViewController,
+           let recipeDetailController = splitViewController.recipeDetailController,
+           let recipe = recipeDetailController.recipe {
+                activity.title = ActivityTitle.newWindow
+                activity.persistentIdentifier = UUID().uuidString
+                activity.addUserInfoEntries(from: recipe.toDict())
+        }
+        return activity
     }
 
     // MARK: - Helper
@@ -97,12 +105,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
     func configure(window: UIWindow?, with activity: NSUserActivity) -> Bool {
         guard activity.title == ActivityTitle.newWindow else { return false }
 
-        guard let row = activity.userInfo?["row"] as? Int,
-            let splitViewController = window?.rootViewController as? SplitViewController else { return false }
+        guard let info = activity.userInfo as? [String: Any],
+              let recipe = Recipe.from(dict: info),
+              let splitViewController = window?.rootViewController as? SplitViewController else { return false }
 
-        // Select the user specified row.
-        splitViewController.recipesMasterController?.firstSelectedRow = row
-        splitViewController.recipesMasterController?.isActivatedByNewWindowActivity = true
+        let recipeDetailViewController = splitViewController.recipeDetailController
+        recipeDetailViewController?.recipe = recipe
+
+        // Configure the navigation and toolbar depending on the platform.
+        #if targetEnvironment(macCatalyst)
+        recipeDetailViewController?.navigationController?.isNavigationBarHidden = true
+        #else
+        recipeDetailViewController?.setupNavigationAndToolbar()
+        #endif
+
         return true
     }
 
@@ -111,12 +127,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
     func splitViewController(_ splitViewController: UISplitViewController,
                              collapseSecondary secondaryViewController: UIViewController,
                              onto primaryViewController: UIViewController) -> Bool {
-
-        if (splitViewController as? SplitViewController)?.recipeDetailController?.recipe == nil {
-            // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will
-            // be discarded.
-            return true
-        }
-        return false
+        // If we drag and drop a window or open one with the context menu, then the `configure` methods guarantees us
+        // that we have a recipe. In this case we want to collapse to the detailViewController.
+        let navController = secondaryViewController as? UINavigationController
+        let recipeDetailViewController = navController?.topViewController as? RecipeDetailViewController
+        return recipeDetailViewController?.recipe == nil
     }
 }

@@ -37,12 +37,32 @@ class RecipesViewController: UITableViewController {
     /// First row to select when the tableView appears. Set this to a nil, to not select any cell.
     var firstSelectedRow: Int? = 0
 
-    /// Set this flag to true when opening a new window with drag and drop.
-    /// In this case we want to open the detailViewController directly.
-    var isActivatedByNewWindowActivity: Bool = false
-
     /// Reload the recipe data on viewWillAppear.
     var reloadRecipesOnViewWillAppear: Bool = false
+
+    /// Open the next recipeDetailViewController in edit mode.
+    var openNextRecipeDetailViewInEditMode: Bool = false
+
+    // MARK: Constructor
+
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+        self.setup()
+    }
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.setup()
+    }
+
+    func setup() {
+        self.title = NSLocalizedString("RECIPES", comment: "")
+    }
 
     // MARK: - View handling
     override func viewDidLoad() {
@@ -60,22 +80,20 @@ class RecipesViewController: UITableViewController {
         self.searchController.searchResultsUpdater = self
         self.navigationItem.searchController = self.searchController
 
-        // The viewController title.
-        let title = NSLocalizedString("RECIPES", comment: "")
-
         #if targetEnvironment(macCatalyst)
+        // Always display the navigation bar.
+        self.navigationItem.hidesSearchBarWhenScrolling = false
 
         self.tableView.contentInset.top = 15.0
         self.tableView.rowHeight = 30.0
 
         // Add a fake title to make the UI look a little bit nicer on macOS.
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem.with(kind: .fakeTitle(self.title!))
         self.title = ""
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem.with(kind: .fakeTitle(title))
 
         #else
 
         // Set the navigationbar title.
-        self.title = title
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.tableView.rowHeight = 80.0
 
@@ -183,14 +201,9 @@ extension RecipesViewController {
             let recipe = self.filteredRecipes[indexPath.row]
             controller.recipe = recipe
 
-            // Change the toolbar edit icon back to normal.
+            // Hide the navigationBar on macOS.
             #if targetEnvironment(macCatalyst)
             navController.navigationBar.isHidden = true
-
-            let editItem = self.view.window?.windowScene?.titlebar?.toolbar?.items.first(where: {
-                $0.itemIdentifier == UIBarButtonItem.Kind.edit.identifier
-            })
-            editItem?.image = .toolbarImage(kEditToolbarImage)
             #else
             // Setup the navigation and toolbar buttons on iOS.
             controller.setupNavigationAndToolbar()
@@ -199,6 +212,10 @@ extension RecipesViewController {
             controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
             controller.navigationItem.leftItemsSupplementBackButton = true
             #endif
+
+            // We might need to open the view in edit mode.
+            controller.startEditModeOnViewDidAppear = self.openNextRecipeDetailViewInEditMode
+            self.openNextRecipeDetailViewInEditMode = false
         }
     }
 
@@ -224,9 +241,7 @@ extension RecipesViewController {
                 && !self.splitViewController!.isCollapsed
 
             // Nevertheless we want this to be executed when we open a new window on iPad.
-            if isSplitViewControllerSeparated || self.isActivatedByNewWindowActivity {
-                self.isActivatedByNewWindowActivity = false
-
+            if isSplitViewControllerSeparated {
                 guard self.firstSelectedRow != nil else { return }
 
                 let indexPath = IndexPath(row: self.firstSelectedRow!, section: 0)

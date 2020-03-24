@@ -43,6 +43,11 @@ extension RecipeDetailViewController {
         self.updateContentSize()
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
+
+        // Toggle edit mode if we are forced to open in edit mode.
+        if self.startEditModeOnViewDidAppear {
+            self.editRecipe(item: nil)
+        }
     }
 
     /**
@@ -73,7 +78,7 @@ extension RecipeDetailViewController {
                     self.isEditable = true
                 }
             } else {
-                // Start editing the recipeDetail view.
+                // Stop editing the recipeDetail view if we are the active view.
                 UIView.animate(withDuration: 0.25, animations: {
                     self.isEditable = false
                 })

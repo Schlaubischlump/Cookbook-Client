@@ -121,6 +121,14 @@ class RecipeDetailViewController: UIViewController {
                 self.ingredientsList?.isEditable = true
                 self.instructionsList?.isEditable = true
                 self.toolsList?.isEditable = true
+
+                // Update the toolbar items on iOS.
+                #if !targetEnvironment(macCatalyst)
+                let editButton = UIBarButtonItem.with(kind: .done, target: self, action: #selector(self.editRecipe))
+                self.navigationItem.rightBarButtonItem = editButton
+                // Disable the share button.
+                self.toolbarItems?.last?.isEnabled = false
+                #endif
             } else {
                 // Write all the data entered in the UI back to the datastructure.
                 self.descriptionList?.isEditable = false
@@ -130,9 +138,20 @@ class RecipeDetailViewController: UIViewController {
 
                 // Hide all not requiered fields.
                 self.reloadRecipeDescriptionList(includeAllFields: false)
+
+                // Update the toolbar items on iOS.
+                #if !targetEnvironment(macCatalyst)
+                let editButton = UIBarButtonItem.with(kind: .edit, target: self, action: #selector(self.editRecipe))
+                self.navigationItem.rightBarButtonItem = editButton
+                // Disable the share button.
+                self.toolbarItems?.last?.isEnabled = true
+                #endif
             }
         }
     }
+
+    /// Start edit mode as soon as the view appears on the screen.
+    var startEditModeOnViewDidAppear: Bool = false
 
     private var logoutObserver: NSObjectProtocol?
     private var reloadObserver: NSObjectProtocol?
@@ -277,6 +296,11 @@ class RecipeDetailViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        // Edit mode will end if the view disappears.
+        if self.isEditable {
+            NotificationCenter.default.post(name: .didEditRecipe, object: self, userInfo: nil)
+        }
 
         // Remove notification listener
         let center = NotificationCenter.default

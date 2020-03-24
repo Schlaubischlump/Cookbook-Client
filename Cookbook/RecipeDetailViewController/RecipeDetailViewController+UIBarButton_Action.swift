@@ -25,28 +25,8 @@ extension RecipeDetailViewController {
 
     /// Edit the current recipe.
     @objc func editRecipe(item: Any?) {
-        let edit = !self.isEditable
-
-        /**
-         Toggle between the edit and done button.
-        */
-        func toggleEditDoneButton() {
-            #if targetEnvironment(macCatalyst)
-            let toolbarItem = item as? NSToolbarItem
-            toolbarItem?.image = .toolbarImage(edit ? kDoneToolbarImage : kEditToolbarImage)
-            #else
-            let editButton = UIBarButtonItem.with(kind: edit ? .done : .edit, target: self,
-                                                  action: #selector(self.editRecipe))
-            self.navigationItem.rightBarButtonItem = editButton
-            // Disable the share button.
-            self.toolbarItems?.last?.isEnabled = !edit
-            #endif
-        }
-
         // Just update the UI to represent the edit state.
-        if edit {
-            toggleEditDoneButton()
-
+        if !self.isEditable {
             UIView.animate(withDuration: 0.25, animations: {
                 self.isEditable = true
             })
@@ -67,7 +47,6 @@ extension RecipeDetailViewController {
         }
 
         self.recipe?.update(details, completionHandler: {
-            toggleEditDoneButton()
             // Inform all listeners, that the recipe was changed.
             var userInfo: [String: Any] = [:]
             if let proposedDetails = self.proposedRecipeDetails {

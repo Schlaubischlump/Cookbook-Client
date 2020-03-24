@@ -13,9 +13,10 @@ import UIKit
 extension RecipesViewController: UITableViewDragDelegate {
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession,
                    at indexPath: IndexPath) -> [UIDragItem] {
-        let userActivity = NSUserActivity(activityType: ActivityType.main)
+        let recipe = self.filteredRecipes[indexPath.row]
+        let userActivity = NSUserActivity(activityType: ActivityType.default)
         userActivity.title = ActivityTitle.newWindow
-        userActivity.userInfo = ["row": indexPath.row]
+        userActivity.userInfo = recipe.toDict()
         guard let image = tableView.cellForRow(at: indexPath)?.imageView?.image else { return [] }
         let itemProvider = NSItemProvider(object: image)
         itemProvider.registerObject(userActivity, visibility: .all)

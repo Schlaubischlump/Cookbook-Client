@@ -274,6 +274,7 @@ extension EnumerationList: UITableViewDataSource {
             // textView.text will not be displayed, because we are settings the attributedText afterwards.
             myCell.textView.text = " "
             myCell.textView.attributedText = attrStr
+            // This fix is necessary for the pdf share function when dark mode is active.
             let textColor: UIColor = (self.overrideUserInterfaceStyle == .light) ? .black : .label
             myCell.textView.textColor = textColor
             myCell.detailLabel.textColor = textColor

@@ -40,6 +40,20 @@ class Recipe {
         return "\(self.name)"
     }
 
+    /// Return a dictionary with the basic recipe information (excluding the recipe details).
+    func toDict() -> [String: Any] {
+        return ["name": self.name, "recipeID": self.recipeID, "imageURL": imageURL, "userID": userID]
+    }
+
+    /// Create a recipe from the dictionary
+    static func from(dict: [String: Any]) -> Recipe? {
+        if let imageURL = dict["imageURL"] as? String, let name = dict["name"] as? String,
+           let recipeID = dict["recipeID"] as? Int, let userID = dict["userID"] as? String {
+                return Recipe(imageURL: imageURL, name: name, userID: userID, recipeID: recipeID)
+        }
+        return nil
+    }
+
     // MARK: - Constructor
 
     init(imageURL: String, name: String, userID: String, recipeID: Int) {

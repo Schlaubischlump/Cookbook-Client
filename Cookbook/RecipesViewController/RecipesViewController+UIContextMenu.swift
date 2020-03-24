@@ -14,12 +14,10 @@ extension RecipesViewController {
     private func newWindowAction(forIndexPath indexPath: IndexPath) -> UIAction {
         let newWindowAction = UIAction(title: NSLocalizedString("OPEN_IN_NEW_WINDOW", comment: ""),
                                        image: UIImage(systemName: "uiwindow.split.2x1")) { _ in
-            let userActivity = NSUserActivity(activityType: ActivityType.main)
+            // Open a new default window.
+            let userActivity = NSUserActivity(activityType: ActivityType.default)
             userActivity.title = ActivityTitle.newWindow
-            // We need to find the real indexPath for this row, not the one in the filtered list.
-            let recipeID = self.filteredRecipes[indexPath.row].recipeID
-            let trueIndexPath = self.recipes.firstIndex(where: { $0.recipeID == recipeID } )
-            userActivity.userInfo = ["row": trueIndexPath ?? 0]
+            userActivity.userInfo = self.filteredRecipes[indexPath.row].toDict()
             UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil)
         }
         return newWindowAction
@@ -38,24 +36,24 @@ extension RecipesViewController {
     private func editRecipeAction(forIndexPath indexPath: IndexPath) -> UIAction {
         let editRecipeAction = UIAction(title: NSLocalizedString("EDIT_RECIPE", comment: ""),
                                   image: UIImage(systemName: "square.and.pencil")) { _ in
-            if indexPath != self.tableView.indexPathForSelectedRow {
-                self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
-                self.performSegue(withIdentifier: "showDetail", sender: nil)
-            }
+            // Setup the detail view to open in edit mode.
             let splitViewController = self.splitViewController as? SplitViewController
-            var item: Any?
+            let recipesViewController = splitViewController?.recipesMasterController
+            let openRecipe = recipesViewController?.filteredRecipes[indexPath.row]
+            // Check if the recipe is already open and start the edit mode if this is the case.
+            if let recipeDetailViewController = splitViewController?.recipeDetailController,
+               recipeDetailViewController.recipe?.recipeID == openRecipe?.recipeID {
+                recipeDetailViewController.editRecipe(item: nil)
+            } else {
+                recipesViewController?.openNextRecipeDetailViewInEditMode = true
 
-            #if targetEnvironment(macCatalyst)
-            let toolbarItems = self.view.window?.windowScene?.titlebar?.toolbar?.items
-            item = toolbarItems?.filter { $0.itemIdentifier == UIBarButtonItem.Kind.edit.identifier }.first
-
-            #endif
-            // Wait 0.5 seconds until our viewController is added to the view hierachy. Otherwise the toolbar buttons
-            // will not be toggled. This is caused by the fact, that the UIScene is only set after viewDidAppear.
-            // The check in willEditRecipe in the SceneDelegate will therefore fail to identify the current window.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                splitViewController?.recipeDetailController?.editRecipe(item: item)
+                // Open the detail view.
+                if indexPath != self.tableView.indexPathForSelectedRow {
+                    self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+                    self.performSegue(withIdentifier: "showDetail", sender: nil)
+                }
             }
+
         }
         return editRecipeAction
     }

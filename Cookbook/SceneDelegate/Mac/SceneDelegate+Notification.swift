@@ -13,11 +13,18 @@ import Foundation
 import UIKit
 
 extension SceneDelegate {
-    private func setToolbarItemsEnabled(_ enabled: Bool, buttonKind: [UIBarButtonItem.Kind]? = nil) {
-        guard let scene = self.window?.windowScene else { return }
+    // MARK: - Helper functions
+    private var toolbarItems: [NSToolbarItem]? {
+        return self.window?.windowScene?.titlebar?.toolbar?.items
+    }
 
+    private func getToolbarItem(_ item: UIBarButtonItem.Kind) -> NSToolbarItem? {
+        return self.toolbarItems?.first(where: { $0.itemIdentifier ==  item.identifier})
+    }
+
+    private func setToolbarItemsEnabled(_ enabled: Bool, buttonKind: [UIBarButtonItem.Kind]? = nil) {
         #if targetEnvironment(macCatalyst)
-        if let toolbarItems = scene.titlebar?.toolbar?.items {
+        if let toolbarItems = self.toolbarItems {
             toolbarItems.forEach { item in
                 if buttonKind?.contains(where: { $0.identifier == item.itemIdentifier }) ?? true {
                     item.isEnabled = enabled
@@ -26,6 +33,8 @@ extension SceneDelegate {
         }
         #endif
     }
+
+    // MARK: - Toolbar button handling
 
     /// Disable toolbar items when we begin to load the data from the server.
     @objc func willLoadRecipes(_ notification: Notification) {
@@ -106,6 +115,9 @@ extension SceneDelegate {
         }
         self.setToolbarItemsEnabled(false)
         self.setToolbarItemsEnabled(true, buttonKind: [UIBarButtonItem.Kind.edit, UIBarButtonItem.Kind.sidebar])
+
+        let editItem = self.getToolbarItem(UIBarButtonItem.Kind.edit)
+        editItem?.image = .toolbarImage(kDoneToolbarImage)
     }
 
     /// Called after the edit operation was send to the server (this includes the case when an error occured).
@@ -115,6 +127,8 @@ extension SceneDelegate {
             return
         }
         self.setToolbarItemsEnabled(true)
+        let editItem = self.getToolbarItem(UIBarButtonItem.Kind.edit)
+        editItem?.image = .toolbarImage(kEditToolbarImage)
     }
 
     /// Called when the user wants to add a new recipe.
