@@ -11,15 +11,16 @@ import AlamofireImage
 
 // MARK: - Helper
 let kErrorHudDisplayDuration = 1.5
-let kMaxWidth: CGFloat = 300
 
 // MARK: - RecipesViewController
 
 class RecipesViewController: UITableViewController {
-    // Temporary presented viewController.
+    /// Presented viewcontroller when a new recipe should be created.
     var newRecipeController: RecipeDetailViewController?
+    /// Presented viewcontroller when the user needs to login.
     var loginViewController: NextCloudLoginController?
 
+    /// The searchcontroller instance to filter the recipes in the tableView based on their names.
     let searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
@@ -28,16 +29,17 @@ class RecipesViewController: UITableViewController {
         return searchController
     }()
 
-    /// All unfiltered recipes.
+    /// All unfiltered recipes, ignoring the currently active search.
     var recipes: [Recipe] = []
 
-    /// Filtered data which is displayed inside the tableView.
+    /// Filtered data which is displayed inside the tableView, respecting the active search.
     var filteredRecipes: [Recipe] = []
 
     /// First row to select when the tableView appears. Set this to a nil, to not select any cell.
     var firstSelectedRow: Int? = 0
 
-    /// Reload the recipe data on viewWillAppear.
+    /// Reload the recipe data on viewWillAppear. This property is useful to prevent a reload when the sidebar changes
+    /// its collapsed state.
     var reloadRecipesOnViewWillAppear: Bool = false
 
     /// Open the next recipeDetailViewController in edit mode.
@@ -46,13 +48,12 @@ class RecipesViewController: UITableViewController {
     // MARK: - View handling
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.splitViewController?.maximumPrimaryColumnWidth = kMaxWidth
-
-        // Add drag and drop support.
-        self.tableView.dragDelegate = self
 
         // Customize appearance.
         self.view.backgroundColor = .systemBackground
+
+        // Add drag and drop support.
+        self.tableView.dragDelegate = self
 
         // Add a searchController with the corresponding searchbar.
         self.definesPresentationContext = true
@@ -62,23 +63,19 @@ class RecipesViewController: UITableViewController {
         #if targetEnvironment(macCatalyst)
         // Always display the navigation bar.
         self.navigationItem.hidesSearchBarWhenScrolling = false
-
+        // Adjust the tableView to make it look nice
         self.tableView.contentInset.top = 15.0
         self.tableView.rowHeight = 30.0
-
         // Add a fake title to make the UI look a little bit nicer on macOS.
         self.navigationItem.leftBarButtonItem = UIBarButtonItem.with(kind: .fakeTitle(self.title!))
         self.title = ""
-
         #else
         // Set the navigationbar title.
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.tableView.rowHeight = 80.0
-
         // Add a toolbar item to create new recipe.
         self.navigationController?.isToolbarHidden = false
         self.toolbarItems = [UIBarButtonItem.with(kind: .add, target: self, action: #selector(self.addRecipe))]
-
         // Add a settings button on the right hand side on iOS.
         navigationItem.rightBarButtonItem = UIBarButtonItem.with(kind: .settings, target: self,
                                                                  action: #selector(self.showPreferencesiOS))
@@ -88,23 +85,16 @@ class RecipesViewController: UITableViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        self.clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
+        // Clear the selection if the viewController is collapsed.
+        self.clearsSelectionOnViewWillAppear = self.splitViewController?.isCollapsed ?? true
+
         super.viewWillAppear(animated)
 
-        // Make sure that the new names and images are loaded even on the iPhone.
-        // self.tableView.reloadData()
-
         // Register NotificationCenter callbacks.
-        let center = NotificationCenter.default
-        center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
-        center.addObserver(self, selector: #selector(self.didLoadRecipes), name: .didLoadRecipes, object: nil)
-        center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
-        center.addObserver(self, selector: #selector(self.didAddRecipe), name: .didAddRecipe, object: nil)
-        center.addObserver(self, selector: #selector(self.didAttemptLogin), name: .login, object: nil)
-        center.addObserver(self, selector: #selector(self.requestReload), name: .reload, object: nil)
-        center.addObserver(self, selector: #selector(self.didLogout), name: .logout, object: nil)
+        self.registerNotifications()
 
-        // Try to load the data.
+        // Try to load the data. We need to be sure that the view hierachy is already created before we call this
+        // function. Otherwise our app might crash.
         if self.reloadRecipesOnViewWillAppear {
             self.reloadData(useCachedData: false)
             // Prevent a reload each time the toggle button is clicked.
@@ -113,22 +103,13 @@ class RecipesViewController: UITableViewController {
     }
 
     deinit {
-        // Remove notification listener.
         // Do not remove these on viewWillDisappear. Otherwise collapsing the sidebar follwed by a logout will not
         // clear the tableView recipes.
-        let center = NotificationCenter.default
-        center.removeObserver(self, name: .didRemoveRecipe, object: nil)
-        center.removeObserver(self, name: .didLoadRecipes, object: nil)
-        center.removeObserver(self, name: .didEditRecipe, object: nil)
-        center.removeObserver(self, name: .didAddRecipe, object: nil)
-        center.removeObserver(self, name: .login, object: nil)
-        center.removeObserver(self, name: .logout, object: nil)
-        center.removeObserver(self, name: .reload, object: nil)
+        self.deregisterNotifications()
     }
-}
 
-// MARK: - NextCloudLogin
-extension RecipesViewController {
+    // MARK: - NextCloudLogin
+
     /**
      Show the Nextcloud login view and update the credentials when required.
      */
@@ -176,8 +157,7 @@ extension RecipesViewController {
                 let navController = segue.destination as? UINavigationController,
                 let controller = navController.topViewController as? RecipeDetailViewController else { return }
             // Update the detail controller with the recipe info.
-            let recipe = self.filteredRecipes[indexPath.row]
-            controller.recipe = recipe
+            controller.recipe = self.filteredRecipes[indexPath.row]
 
             // Hide the navigationBar on macOS.
             #if targetEnvironment(macCatalyst)
@@ -263,7 +243,6 @@ extension RecipesViewController {
 
         let recipe = self.filteredRecipes[indexPath.row]
         cell.textLabel!.text = recipe.description
-        cell.selectionStyle = .blue
 
         let height = tableView.rowHeight-10
         let currentImage = cell.imageView?.image

@@ -19,16 +19,21 @@ class SplitViewController: UISplitViewController {
         return (self.viewControllers.first as? UINavigationController)?.topViewController as? RecipesViewController
     }
 
-    // MARK: - Init
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
     // MARK: - View handling
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        #if targetEnvironment(macCatalyst)
+        self.primaryBackgroundStyle = .sidebar
+        let sidebarWidth: CGFloat = 300
+        self.maximumPrimaryColumnWidth = sidebarWidth
+        self.minimumPrimaryColumnWidth = sidebarWidth
+        #else
+        self.preferredDisplayMode = .allVisible
+        self.view.backgroundColor = .lightGray
+        #endif
+    }
 
     #if targetEnvironment(macCatalyst)
     override func viewWillAppear(_ animated: Bool) {

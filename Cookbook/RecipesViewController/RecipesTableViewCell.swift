@@ -11,6 +11,7 @@ import UIKit
 import AlamofireImage
 
 class RecipesTableViewCell: UITableViewCell {
+    /// Possible active download request to update the `imageView.image` property.
     var imageLoadingRequestReceipt: RequestReceipt?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -23,7 +24,11 @@ class RecipesTableViewCell: UITableViewCell {
         self.setup()
     }
 
+    /**
+     Perform the basic cell setup operations.
+     */
     func setup() {
         self.imageView?.image = #imageLiteral(resourceName: "placeholder_thumb")
+        self.selectionStyle = .blue
     }
 }

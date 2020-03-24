@@ -15,7 +15,6 @@ extension RecipesViewController: UITableViewDragDelegate {
                    at indexPath: IndexPath) -> [UIDragItem] {
         let recipe = self.filteredRecipes[indexPath.row]
         let userActivity = NSUserActivity(activityType: ActivityType.default)
-        userActivity.title = ActivityTitle.newWindow
         userActivity.userInfo = recipe.toDict()
         guard let image = tableView.cellForRow(at: indexPath)?.imageView?.image else { return [] }
         let itemProvider = NSItemProvider(object: image)

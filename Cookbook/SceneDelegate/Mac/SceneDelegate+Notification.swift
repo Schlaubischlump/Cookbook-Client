@@ -13,28 +13,45 @@ import Foundation
 import UIKit
 
 extension SceneDelegate {
-    // MARK: - Helper functions
-    private var toolbarItems: [NSToolbarItem]? {
-        return self.window?.windowScene?.titlebar?.toolbar?.items
+    // MARK: - Register / unregister Notifications
+
+    /**
+     Register notification center events to enable / disable the toolbar items when needed.
+     */
+    func registerNotifications() {
+        let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(willLoadRecipes), name: .willLoadRecipes, object: nil)
+        center.addObserver(self, selector: #selector(didLoadRecipes), name: .didLoadRecipes, object: nil)
+        center.addObserver(self, selector: #selector(didLogout), name: .logout, object: nil)
+        center.addObserver(self, selector: #selector(didLogin), name: .login, object: nil)
+        center.addObserver(self, selector: #selector(willLoadRecipeDetails), name: .willLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(didLoadRecipeDetails), name: .didLoadRecipeDetails, object: nil)
+        center.addObserver(self, selector: #selector(willAddRecipe), name: .willAddRecipe, object: nil)
+        center.addObserver(self, selector: #selector(didAddRecipe), name: .didAddRecipe, object: nil)
+        center.addObserver(self, selector: #selector(willEditRecipe), name: .willEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(didEditRecipe), name: .didEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(didRemoveRecipe), name: .didRemoveRecipe, object: nil)
     }
 
-    private func getToolbarItem(_ item: UIBarButtonItem.Kind) -> NSToolbarItem? {
-        return self.toolbarItems?.first(where: { $0.itemIdentifier ==  item.identifier})
+    /**
+     Stop listening for notifications.
+     */
+    func deregisterNotifications() {
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: .willLoadRecipes, object: nil)
+        center.removeObserver(self, name: .didLoadRecipes, object: nil)
+        center.removeObserver(self, name: .logout, object: nil)
+        center.removeObserver(self, name: .login, object: nil)
+        center.removeObserver(self, name: .willLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .didLoadRecipeDetails, object: nil)
+        center.removeObserver(self, name: .willEditRecipe, object: nil)
+        center.removeObserver(self, name: .didEditRecipe, object: nil)
+        center.removeObserver(self, name: .willAddRecipe, object: nil)
+        center.removeObserver(self, name: .didAddRecipe, object: nil)
+        center.removeObserver(self, name: .didRemoveRecipe, object: nil)
     }
 
-    private func setToolbarItemsEnabled(_ enabled: Bool, buttonKind: [UIBarButtonItem.Kind]? = nil) {
-        #if targetEnvironment(macCatalyst)
-        if let toolbarItems = self.toolbarItems {
-            toolbarItems.forEach { item in
-                if buttonKind?.contains(where: { $0.identifier == item.itemIdentifier }) ?? true {
-                    item.isEnabled = enabled
-                }
-            }
-        }
-        #endif
-    }
-
-    // MARK: - Toolbar button handling
+    // MARK: - Notification Callbacks to handle the toolbar
 
     /// Disable toolbar items when we begin to load the data from the server.
     @objc func willLoadRecipes(_ notification: Notification) {

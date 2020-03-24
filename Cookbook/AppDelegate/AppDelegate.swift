@@ -11,13 +11,14 @@ import Alamofire
 
 // MARK: UserActivitys
 
+/**
+ All available NSUserActivity types used in this application.
+ */
 struct ActivityType {
+    /// The activity type used on macOS to present the settings window.
     static let preferences: String = "nextcloud.cookbook.preferences"
+    /// The default activity type used to create a new window.
     static let `default`: String = "nextcloud.cookbook.default"
-}
-
-struct ActivityTitle {
-    static let newWindow: String = "openWindow"
 }
 
 // MARK: - UIApplication Delegate
@@ -38,11 +39,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
         let config = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-        let activityType = options.userActivities.first?.activityType
 
         // Allow opening a preference window on macOS.
         #if targetEnvironment(macCatalyst)
-        if activityType == ActivityType.preferences {
+        if options.userActivities.first?.activityType == ActivityType.preferences {
             config.delegateClass = PreferencesSceneDelegateMac.self
             config.storyboard = UIStoryboard(name: "Preferences_Mac", bundle: Bundle.main)
             return config
@@ -53,13 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         config.delegateClass = SceneDelegate.self
         config.storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         return config
-    }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after
-        // application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

@@ -16,7 +16,6 @@ extension RecipesViewController {
                                        image: UIImage(systemName: "uiwindow.split.2x1")) { _ in
             // Open a new default window.
             let userActivity = NSUserActivity(activityType: ActivityType.default)
-            userActivity.title = ActivityTitle.newWindow
             userActivity.userInfo = self.filteredRecipes[indexPath.row].toDict()
             UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil)
         }

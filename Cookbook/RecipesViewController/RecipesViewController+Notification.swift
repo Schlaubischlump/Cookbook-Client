@@ -11,8 +11,40 @@
 import Foundation
 import UIKit
 
-// MARK: - Notification handling
 extension RecipesViewController {
+
+    // MARK: - Helper
+
+    /**
+     Start listening for incoming notifications.
+     */
+    func registerNotifications() {
+        let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didLoadRecipes), name: .didLoadRecipes, object: nil)
+        center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didAddRecipe), name: .didAddRecipe, object: nil)
+        center.addObserver(self, selector: #selector(self.didAttemptLogin), name: .login, object: nil)
+        center.addObserver(self, selector: #selector(self.requestReload), name: .reload, object: nil)
+        center.addObserver(self, selector: #selector(self.didLogout), name: .logout, object: nil)
+    }
+
+    /**
+     Stop listening for notifications.
+     */
+    func deregisterNotifications() {
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: .didRemoveRecipe, object: nil)
+        center.removeObserver(self, name: .didLoadRecipes, object: nil)
+        center.removeObserver(self, name: .didEditRecipe, object: nil)
+        center.removeObserver(self, name: .didAddRecipe, object: nil)
+        center.removeObserver(self, name: .login, object: nil)
+        center.removeObserver(self, name: .logout, object: nil)
+        center.removeObserver(self, name: .reload, object: nil)
+    }
+
+    // MARK: - Notification handling
+
     /// Called after a login attempt.
     @objc func didAttemptLogin(_ notification: Notification) {
         self.reloadData(useCachedData: false)
