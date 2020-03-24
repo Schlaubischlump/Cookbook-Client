@@ -65,7 +65,7 @@ class PreferencesTextFieldCell: UITableViewCell {
     }
 }
 
-class PreferencesButtonCell: UITableViewCell {
+class PreferencesButtonCell: UITableViewCell, UIPointerInteractionDelegate {
     static let identifier: String = "buttonCell"
 
     /// Button title.
@@ -83,7 +83,27 @@ class PreferencesButtonCell: UITableViewCell {
         self.textLabel?.font = .systemFont(ofSize: UIFont.labelFontSize)
         self.textLabel?.textColor = self.tintColor
         self.textLabel?.textAlignment = .center
-        self.textLabel?.text = "Button"
+
+        if #available(iOS 13.4, *) {
+            let pointerInteraction = UIPointerInteraction(delegate: self)
+            self.addInteraction(pointerInteraction)
+        }
+    }
+
+    @available(iOS 13.4, *)
+    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        var pointerStyle: UIPointerStyle?
+
+        // Add a custom highlight to the logout buttn.
+        if let label = self.textLabel {
+            let targetedPreview = UITargetedPreview(view: label)
+            let textSize = label.text?.size(withAttributes: [NSAttributedString.Key.font: label.font!])
+            let width: CGFloat = (textSize?.width ?? 60) + 20
+            let pointerRect = CGRect(x: self.frame.midX - width/2, y: 3, width: width, height: label.frame.height-6)
+            let pointerShape: UIPointerShape = .roundedRect(pointerRect)
+            pointerStyle = UIPointerStyle.init(effect: .highlight(targetedPreview), shape: pointerShape)
+        }
+        return pointerStyle
     }
 
     required init?(coder: NSCoder) {

@@ -226,6 +226,13 @@ extension EnumerationList: UITableViewDataSource {
         addButton.frame.origin = CGPoint(x: self.separatorInset.left, y: 5)
         addButton.addTarget(self, action: #selector(self.appendRow), for: .touchUpInside)
         footerView.addSubview(addButton)
+
+        // Setup mouse curser support for the add button.
+        if #available(iOS 13.4, *) {
+            let pointerInteraction = UIPointerInteraction(delegate: self)
+            addButton.addInteraction(pointerInteraction)
+        }
+
         return footerView
     }
 
@@ -299,5 +306,23 @@ extension EnumerationList: UITableViewDelegate {
         guard let myCell = cell as? EnumerationCell else { return }
         myCell.detailLabel.text = nil
         myCell.textView.attributedText = nil
+    }
+}
+
+extension EnumerationList: UIPointerInteractionDelegate {
+    @available(iOS 13.4, *)
+    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        var pointerStyle: UIPointerStyle?
+
+        guard self.isEditing else { return nil }
+
+        // Add a custom highlight to the add footer view button.
+        if let addButton = interaction.view {
+            let targetedPreview = UITargetedPreview(view: addButton)
+            let pointerRect = CGRect(rect: addButton.frame, padding: 5)
+            let pointerShape: UIPointerShape = .roundedRect(pointerRect)
+            pointerStyle = UIPointerStyle.init(effect: .highlight(targetedPreview), shape: pointerShape)
+        }
+        return pointerStyle
     }
 }

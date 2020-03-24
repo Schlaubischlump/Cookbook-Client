@@ -43,6 +43,7 @@
 		639AE6AC23AF7826008244BA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 639AE6AB23AF7826008244BA /* Alamofire */; };
 		639AE6B623AF8856008244BA /* AlamofireImage in Frameworks */ = {isa = PBXBuildFile; productRef = 639AE6B523AF8856008244BA /* AlamofireImage */; };
 		639AE6BB23B0FEBE008244BA /* EnumerationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639AE6BA23B0FEBE008244BA /* EnumerationList.swift */; };
+		63B65134242ABFE700F50D7E /* CGRect+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B65133242ABFE700F50D7E /* CGRect+Extension.swift */; };
 		63D8CA62241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA61241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift */; };
 		63D8CA64241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA63241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift */; };
 		63D8CA66241D456F004A7F9C /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA65241D456F004A7F9C /* SplitViewController.swift */; };
@@ -120,6 +121,7 @@
 		639AE6A623AF759E008244BA /* Cookbook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cookbook.entitlements; sourceTree = "<group>"; };
 		639AE6A823AF76F7008244BA /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		639AE6BA23B0FEBE008244BA /* EnumerationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumerationList.swift; sourceTree = "<group>"; };
+		63B65133242ABFE700F50D7E /* CGRect+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extension.swift"; sourceTree = "<group>"; };
 		63D8CA61241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UIBarButton_Action.swift"; sourceTree = "<group>"; };
 		63D8CA63241D38FA004A7F9C /* RecipesViewController+UITableViewDragDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesViewController+UITableViewDragDelegate.swift"; sourceTree = "<group>"; };
 		63D8CA65241D456F004A7F9C /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			children = (
 				63DC16D324201F3800CF9F96 /* Mac */,
 				6338231D240B497A002DA167 /* String+Extension.swift */,
+				63B65133242ABFE700F50D7E /* CGRect+Extension.swift */,
 				63382321240C0176002DA167 /* Array+Extension.swift */,
 				638BA66B240EED6E007F6B74 /* DateComponents+Extension.swift */,
 				638BA667240C6ABF007F6B74 /* UIView+Extension.swift */,
@@ -611,6 +614,7 @@
 				630209192427EED300A3870D /* EnumerationList+Protocol.swift in Sources */,
 				63E3288B2421ABD5008F51A9 /* RecipesViewController+ReloadableViewController.swift in Sources */,
 				63DC16C3241E602600CF9F96 /* AppDelegate+UIMenu.swift in Sources */,
+				63B65134242ABFE700F50D7E /* CGRect+Extension.swift in Sources */,
 				6302091E2427FFB400A3870D /* RecipeDetailViewController+Keyboard.swift in Sources */,
 				6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */,
 				638BA668240C6ABF007F6B74 /* UIView+Extension.swift in Sources */,

@@ -13,7 +13,7 @@ import UIKit
  This class implements a tableView cell with no selection highlight and some
  additional properties.
  */
-open class EnumerationCell: UITableViewCell {
+class EnumerationCell: UITableViewCell {
     static let identifier = "EnumerationCell"
 
     var textChanged: ((String) -> Void)?
@@ -39,6 +39,7 @@ open class EnumerationCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
+
         self.selectionStyle = .none
         self.backgroundColor = .clear
         self.contentView.backgroundColor = .clear
@@ -51,6 +52,12 @@ open class EnumerationCell: UITableViewCell {
         let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
         deleteButton.setImage(image, for: .normal)
         deleteButton.addTarget(self, action: #selector(self.deleteAccessoryTapped), for: .touchUpInside)
+
+        if #available(iOS 13.4, *) {
+            let pointerInteraction = UIPointerInteraction(delegate: self)
+            deleteButton.addInteraction(pointerInteraction)
+        }
+
         self.editingAccessoryView = deleteButton
 
         // Add the textView.
@@ -95,5 +102,23 @@ open class EnumerationCell: UITableViewCell {
 extension EnumerationCell: UITextViewDelegate {
     public func textViewDidChange(_ textView: UITextView) {
         self.textChanged?(textView.attributedText.string)
+    }
+}
+
+extension EnumerationCell: UIPointerInteractionDelegate {
+    @available(iOS 13.4, *)
+    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        var pointerStyle: UIPointerStyle?
+
+        guard self.isEditing else { return nil }
+
+        // Add a custom highlight to the edit accessory view.
+        if let trashButton = interaction.view {
+            let targetedPreview = UITargetedPreview(view: trashButton)
+            let pointerRect = CGRect(rect: trashButton.frame, padding: 5)
+            let pointerShape: UIPointerShape = .roundedRect(pointerRect)
+            pointerStyle = UIPointerStyle.init(effect: .highlight(targetedPreview), shape: pointerShape)
+        }
+        return pointerStyle
     }
 }
