@@ -256,10 +256,11 @@
                                         <constraint firstAttribute="bottom" secondItem="NsG-7r-GrE" secondAttribute="bottom" constant="10" id="zpE-Du-DsY"/>
                                     </constraints>
                                 </tableViewCellContentView>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <connections>
                                     <outlet property="label" destination="NsG-7r-GrE" id="pBG-Cv-ZcA"/>
                                     <outlet property="lineSeparator" destination="2fe-5x-Mht" id="dYl-rc-03q"/>
+                                    <outlet property="separatorBottomConstraint" destination="8uI-oZ-5Jc" id="wfs-ua-Ywh"/>
+                                    <outlet property="separatorTopConstraint" destination="EQw-zx-5Zv" id="FEh-mu-Hcd"/>
                                     <outlet property="thumbnail" destination="yeJ-Mj-mvM" id="1dI-SS-puf"/>
                                     <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showDetail" id="6S0-TO-JiA"/>
                                 </connections>

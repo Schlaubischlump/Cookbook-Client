@@ -24,7 +24,24 @@ class RecipesTableViewCell: UITableViewCell {
     var imageLoadingRequestReceipt: RequestReceipt?
 
     /// Hide / show the line separator.
+    /// Note: The .sidebar Styles kills the UITableView separators.
     var showLineSeparator: Bool = true
+
+    /// We need to adjust the constraints on macOS.
+    @IBOutlet var separatorBottomConstraint: NSLayoutConstraint! {
+        didSet {
+            #if targetEnvironment(macCatalyst)
+            self.separatorBottomConstraint.constant -= 2
+            #endif
+        }
+    }
+    @IBOutlet var separatorTopConstraint: NSLayoutConstraint! {
+        didSet {
+            #if targetEnvironment(macCatalyst)
+            self.separatorTopConstraint.constant -= 2
+            #endif
+        }
+    }
 
     /// Color when the cell is selected.
     var selectedColor: UIColor? {
@@ -52,7 +69,6 @@ class RecipesTableViewCell: UITableViewCell {
      Perform the basic cell setup operations.
      */
     func setup() {
-        //self.selectionStyle = .none
         let bgView = UIView()
         bgView.backgroundColor = .clear
         self.selectedBackgroundView = bgView
