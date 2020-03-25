@@ -123,7 +123,7 @@ extension RecipesViewController {
                 guard let imgView = cell?.thumbnail else { return }
                 // Animte the possible image change.
                 UIView.transition(with: imgView, duration: 0.25, options: .transitionCrossDissolve, animations: {
-                    imgView.image = image?.af_imageRounded(withCornerRadius: 5)
+                    imgView.image = image
                 })
                 cell?.setNeedsLayout()
             })

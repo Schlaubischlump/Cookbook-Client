@@ -12,7 +12,12 @@ import AlamofireImage
 
 class RecipesTableViewCell: UITableViewCell {
     /// Recipe imageView.
-    @IBOutlet var thumbnail: UIImageView!
+    @IBOutlet var thumbnail: UIImageView! {
+        didSet {
+            self.thumbnail.layer.cornerRadius = 5
+            self.thumbnail.layer.masksToBounds = true
+        }
+    }
 
     /// Textlabel.
     @IBOutlet var label: UILabel!
@@ -78,7 +83,7 @@ class RecipesTableViewCell: UITableViewCell {
         super.prepareForReuse()
 
         self.label.text = nil
-        self.thumbnail.image = #imageLiteral(resourceName: "placeholder_thumb").af_imageRounded(withCornerRadius: 5)
+        self.thumbnail.image = #imageLiteral(resourceName: "placeholder_thumb")
         self.selectionStyle = .blue
     }
 

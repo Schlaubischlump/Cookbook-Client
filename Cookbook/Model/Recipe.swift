@@ -28,6 +28,8 @@ class Recipe {
     var name: String
     var userID: String
     var recipeID: Int
+    /// Keep a cached version of the thumbnail image.
+    var thumbnail: UIImage?
 
     static let descriptionKeys = [NSLocalizedString("DESCRIPTION", comment: ""),
                                   NSLocalizedString("SOURCE", comment: ""),
@@ -35,11 +37,7 @@ class Recipe {
                                   NSLocalizedString("COOKING_TIME", comment: ""),
                                   NSLocalizedString("TOTAL_TIME", comment: ""),
                                   NSLocalizedString("SERVINGS", comment: "")]
-
-    var description: String {
-        return "\(self.name)"
-    }
-
+    
     /// Return a dictionary with the basic recipe information (excluding the recipe details).
     func toDict() -> [String: Any] {
         return ["name": self.name, "recipeID": self.recipeID, "imageURL": imageURL, "userID": userID]

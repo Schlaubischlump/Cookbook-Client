@@ -233,16 +233,23 @@ class RecipesViewController: UITableViewController {
 
         if let recipeCell = cell as? RecipesTableViewCell {
             let recipe = self.filteredRecipes[indexPath.row]
-            recipeCell.label.text = recipe.description
+            recipeCell.label.text = recipe.name
             recipeCell.selectedColor = self.view.tintColor.withAlphaComponent(0.5)
             recipeCell.showLineSeparator = (indexPath.row != 0)
 
-            // Load image asynchronous.
-            recipeCell.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
-                // Resize image to fill the height and redraw the UI.
-                recipeCell.thumbnail.image = (image ?? #imageLiteral(resourceName: "placeholder_thumb")).af_imageRounded(withCornerRadius: 5)
-                recipeCell.setNeedsLayout()
-            })
+            if let image = recipe.thumbnail {
+                // Check if we have a cached thumbnail image and if so use it. We should not rely on AlamoreFireImage's
+                // caching.
+                recipeCell.thumbnail.image = image
+            } else {
+                // Load image asynchronous.
+                recipeCell.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
+                    // Resize image to fill the height and redraw the UI.
+                    recipeCell.thumbnail.image = image ?? #imageLiteral(resourceName: "placeholder_thumb")
+                    recipeCell.setNeedsLayout()
+                    recipe.thumbnail = image
+                })
+            }
         }
         return cell
     }

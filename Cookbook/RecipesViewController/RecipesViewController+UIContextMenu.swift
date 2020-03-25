@@ -48,7 +48,7 @@ extension RecipesViewController {
 
                 // Open the detail view.
                 if indexPath != self.tableView.indexPathForSelectedRow {
-                    self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+                    self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
                     self.performSegue(withIdentifier: "showDetail", sender: nil)
                 }
             }
