@@ -44,7 +44,6 @@
 "OK"="Ok";
 "CANCEL"="Cancel";
 "NEW_RECIPE"="New recipe";
-"ACTION"="Action";
 "CREATE_NEW_RECIPE"="Create new recipe";
 "EDIT_RECIPE"="Edit recipe";
 "DELETE_RECIPE"="Delete recipe";

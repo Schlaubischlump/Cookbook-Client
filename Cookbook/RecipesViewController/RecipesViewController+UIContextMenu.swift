@@ -60,7 +60,7 @@ extension RecipesViewController {
     /// Action to delete the recipe at the given indexPath.
     private func deleteRecipeAction(forIndexPath indexPath: IndexPath) -> UIAction {
         let deleteRecipeAction = UIAction(title: NSLocalizedString("DELETE_RECIPE", comment: ""),
-                                          image: UIImage(systemName: "trash")) { _ in
+                                          image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
             let alert = UIAlertController(title: NSLocalizedString("CONFIRM_DELETE_TITLE", comment: ""),
                                           message: NSLocalizedString("CONFIRM_DELETE_MESSAGE", comment: ""),
                                           preferredStyle: .alert)
@@ -99,14 +99,13 @@ extension RecipesViewController {
         if UIDevice.current.userInterfaceIdiom != .phone {
             items.append(self.newWindowAction(forIndexPath: indexPath))
         }
-
-        // Add universell actions.
+        // Add actions available on all platforms.
         items.append(self.createRecipeAction(forIndexPath: indexPath))
         items.append(self.editRecipeAction(forIndexPath: indexPath))
         items.append(self.deleteRecipeAction(forIndexPath: indexPath))
 
-        let actionProvider: ([UIMenuElement]) -> UIMenu? = { _ in
-            return UIMenu(title: NSLocalizedString("ACTION", comment: ""), image: nil, identifier: nil, children: items)
+        let actionProvider: UIContextMenuActionProvider = { _ in
+            return UIMenu(title: "", image: nil, identifier: nil, children: items)
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: actionProvider)

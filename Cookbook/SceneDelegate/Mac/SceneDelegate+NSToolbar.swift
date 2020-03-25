@@ -99,6 +99,7 @@ extension SceneDelegate: NSToolbarDelegate {
         toolbarItem.isEnabled = false
         toolbarItem.paletteLabel = barType.paletteLabel
         toolbarItem.label = barType.paletteLabel
+        toolbarItem.toolTip = barType.paletteLabel
         return toolbarItem
     }
 
