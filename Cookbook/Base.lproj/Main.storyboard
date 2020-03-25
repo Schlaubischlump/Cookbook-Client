@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
     <device id="ipad12_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -213,28 +214,53 @@
         <scene sceneID="smW-Zh-WAh">
             <objects>
                 <tableViewController title="Recipes" clearsSelectionOnViewWillAppear="NO" id="7bK-jq-Zjz" customClass="RecipesViewController" customModule="Cookbook" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="r7i-6Z-zg0">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="r7i-6Z-zg0">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="separatorColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="Arm-wq-HPj" style="IBUITableViewCellStyleDefault" id="WCw-Qf-5nD" customClass="RecipesTableViewCell" customModule="Cookbook" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.5" width="375" height="51.5"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="89" id="WCw-Qf-5nD" customClass="RecipesTableViewCell" customModule="Cookbook" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="89"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WCw-Qf-5nD" id="37f-cq-3Eg">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="51.5"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WCw-Qf-5nD" id="37f-cq-3Eg">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="89"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Arm-wq-HPj">
-                                            <rect key="frame" x="16" y="0.0" width="343" height="51.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yeJ-Mj-mvM">
+                                            <rect key="frame" x="15" y="10" width="69" height="69"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" highlighted="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NsG-7r-GrE">
+                                            <rect key="frame" x="94" y="10" width="271" height="69"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                            <color key="textColor" name="sidbarLabelColor"/>
+                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </label>
+                                        <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-5x-Mht">
+                                            <rect key="frame" x="15" y="0.0" width="360" height="1"/>
+                                            <color key="backgroundColor" name="lineSeparatorColor"/>
+                                        </view>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="2fe-5x-Mht" secondAttribute="trailing" id="7O3-lh-oBV"/>
+                                        <constraint firstItem="2fe-5x-Mht" firstAttribute="bottom" secondItem="37f-cq-3Eg" secondAttribute="top" constant="1" id="8uI-oZ-5Jc"/>
+                                        <constraint firstItem="2fe-5x-Mht" firstAttribute="top" secondItem="37f-cq-3Eg" secondAttribute="top" id="EQw-zx-5Zv"/>
+                                        <constraint firstItem="yeJ-Mj-mvM" firstAttribute="leading" secondItem="37f-cq-3Eg" secondAttribute="leading" constant="15" id="Ogd-M6-ziw"/>
+                                        <constraint firstItem="NsG-7r-GrE" firstAttribute="top" secondItem="37f-cq-3Eg" secondAttribute="top" constant="10" id="TBi-Gh-tmL"/>
+                                        <constraint firstItem="yeJ-Mj-mvM" firstAttribute="width" secondItem="37f-cq-3Eg" secondAttribute="height" constant="-20" id="eci-ow-RZk"/>
+                                        <constraint firstItem="NsG-7r-GrE" firstAttribute="leading" secondItem="yeJ-Mj-mvM" secondAttribute="trailing" constant="10" id="gag-Za-BGh"/>
+                                        <constraint firstAttribute="bottom" secondItem="yeJ-Mj-mvM" secondAttribute="bottom" constant="10" id="qQF-Zk-9or"/>
+                                        <constraint firstItem="2fe-5x-Mht" firstAttribute="leading" secondItem="37f-cq-3Eg" secondAttribute="leading" constant="15" id="qp3-Iu-qjV"/>
+                                        <constraint firstItem="yeJ-Mj-mvM" firstAttribute="top" secondItem="37f-cq-3Eg" secondAttribute="top" constant="10" id="sFG-Tn-vEf"/>
+                                        <constraint firstItem="NsG-7r-GrE" firstAttribute="trailing" secondItem="37f-cq-3Eg" secondAttribute="trailing" constant="-10" id="v7e-bV-5SQ"/>
+                                        <constraint firstAttribute="bottom" secondItem="NsG-7r-GrE" secondAttribute="bottom" constant="10" id="zpE-Du-DsY"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <connections>
+                                    <outlet property="label" destination="NsG-7r-GrE" id="pBG-Cv-ZcA"/>
+                                    <outlet property="lineSeparator" destination="2fe-5x-Mht" id="dYl-rc-03q"/>
+                                    <outlet property="thumbnail" destination="yeJ-Mj-mvM" id="1dI-SS-puf"/>
                                     <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showDetail" id="6S0-TO-JiA"/>
                                 </connections>
                             </tableViewCell>
@@ -249,7 +275,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="709" y="-630"/>
+            <point key="canvasLocation" x="708.984375" y="-630.30746705710101"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="r7l-gg-dq7">
@@ -268,10 +294,16 @@
             <point key="canvasLocation" x="-45" y="129"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="placeholder" width="1024" height="600"/>
-    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Tll-UG-LXB"/>
     </inferredMetricsTieBreakers>
+    <resources>
+        <image name="placeholder" width="1024" height="600"/>
+        <namedColor name="lineSeparatorColor">
+            <color red="0.83999999999999997" green="0.83999999999999997" blue="0.83999999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="sidbarLabelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
+    </resources>
 </document>

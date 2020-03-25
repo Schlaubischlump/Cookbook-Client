@@ -81,7 +81,6 @@ class PreferencesButtonCell: UITableViewCell, UIPointerInteractionDelegate {
 
         self.textLabel?.isUserInteractionEnabled = false
         self.textLabel?.font = .systemFont(ofSize: UIFont.labelFontSize)
-        self.textLabel?.textColor = self.tintColor
         self.textLabel?.textAlignment = .center
 
         if #available(iOS 13.4, *) {
@@ -181,6 +180,7 @@ class PreferencesViewControlleriOS: UITableViewController {
             self.textFieldValues[indexPath] = cell.textField.text
         } else if let cell = cell as? PreferencesButtonCell {
             cell.title = NSLocalizedString("LOGOUT", comment: "")
+            cell.textLabel?.textColor = self.view.tintColor
             cell.action = #selector(self.sendLogout)
         }
 

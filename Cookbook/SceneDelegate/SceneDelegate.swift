@@ -20,6 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         guard let splitViewController = window.rootViewController as? SplitViewController else { return }
         splitViewController.delegate = self
 
+        window.tintColor = UIColor(named: "cookbookGreen")
+
         #if targetEnvironment(macCatalyst)
         // Setup the mac toolbar and register all notifications to enable / disable the toolbar items.
         self.setupToolbar()

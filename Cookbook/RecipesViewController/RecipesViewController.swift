@@ -60,19 +60,17 @@ class RecipesViewController: UITableViewController {
         self.searchController.searchResultsUpdater = self
         self.navigationItem.searchController = self.searchController
 
+        self.tableView.rowHeight = 80.0
+
         #if targetEnvironment(macCatalyst)
         // Always display the navigation bar.
         self.navigationItem.hidesSearchBarWhenScrolling = false
-        // Adjust the tableView to make it look nice
-        self.tableView.contentInset.top = 15.0
-        self.tableView.rowHeight = 30.0
         // Add a fake title to make the UI look a little bit nicer on macOS.
         self.navigationItem.leftBarButtonItem = UIBarButtonItem.with(kind: .fakeTitle(self.title!))
         self.title = ""
         #else
         // Set the navigationbar title.
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.tableView.rowHeight = 80.0
         // Add a toolbar item to create new recipe.
         self.navigationController?.isToolbarHidden = false
         self.toolbarItems = [UIBarButtonItem.with(kind: .add, target: self, action: #selector(self.addRecipe))]
@@ -180,12 +178,6 @@ class RecipesViewController: UITableViewController {
     // MARK: - Table View
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell,
                             forRowAt indexPath: IndexPath) {
-        #if targetEnvironment(macCatalyst)
-        cell.textLabel?.font = .systemFont(ofSize: UIFont.labelFontSize-1)
-        #else
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.font = .boldSystemFont(ofSize: UIFont.labelFontSize)
-        #endif
 
         // Do not auto select an item if we are searching.
         guard !self.searchController.searchBar.isFirstResponder else { return }
@@ -216,18 +208,16 @@ class RecipesViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell,
                             forRowAt indexPath: IndexPath) {
-        // Save some memory.
-        cell.textLabel?.text = nil
-
         // Stop loading the image if the cell disappears.
         guard let recipeCell = cell as? RecipesTableViewCell else { return }
+
+        // Save some memory.
+        recipeCell.label.text = nil
+
         if let receipt = recipeCell.imageLoadingRequestReceipt {
             ImageDownloader.default.cancelRequest(with: receipt)
             recipeCell.imageLoadingRequestReceipt = nil
         }
-
-        // Reset the image
-        // cell.imageView?.image = #imageLiteral(resourceName: "placeholder_thumb")
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -241,22 +231,19 @@ class RecipesViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        let recipe = self.filteredRecipes[indexPath.row]
-        cell.textLabel!.text = recipe.description
+        if let recipeCell = cell as? RecipesTableViewCell {
+            let recipe = self.filteredRecipes[indexPath.row]
+            recipeCell.label.text = recipe.description
+            recipeCell.selectedColor = self.view.tintColor.withAlphaComponent(0.5)
+            recipeCell.showLineSeparator = (indexPath.row != 0)
 
-        let height = tableView.rowHeight-10
-        let currentImage = cell.imageView?.image
-        cell.imageView?.image = currentImage?.af_imageAspectScaled(toFill: CGSize(width: height, height: height))
-
-        guard let recipeCell = cell as? RecipesTableViewCell  else { return cell }
-
-        // Load image asynchronous.
-        recipeCell.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
-            // Resize image to fill the height and redraw the UI.
-            let newImage = image ?? #imageLiteral(resourceName: "placeholder_thumb")
-            recipeCell.imageView?.image = newImage.af_imageAspectScaled(toFill: CGSize(width: height, height: height))
-            recipeCell.setNeedsLayout()
-        })
-        return recipeCell
+            // Load image asynchronous.
+            recipeCell.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
+                // Resize image to fill the height and redraw the UI.
+                recipeCell.thumbnail.image = (image ?? #imageLiteral(resourceName: "placeholder_thumb")).af_imageRounded(withCornerRadius: 5)
+                recipeCell.setNeedsLayout()
+            })
+        }
+        return cell
     }
 }

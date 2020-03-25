@@ -94,15 +94,25 @@ extension RecipesViewController {
      */
     public override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath,
                                    point: CGPoint) -> UIContextMenuConfiguration? {
-        var items: [UIAction] = []
         // Disable new window option on iPhones
+        var items: [UIMenuElement] = []
         if UIDevice.current.userInterfaceIdiom != .phone {
             items.append(self.newWindowAction(forIndexPath: indexPath))
         }
+
+        let createRecipeAction = self.createRecipeAction(forIndexPath: indexPath)
+        let editRecipeAction = self.editRecipeAction(forIndexPath: indexPath)
+        let deleteRecipeAction = self.deleteRecipeAction(forIndexPath: indexPath)
+
         // Add actions available on all platforms.
-        items.append(self.createRecipeAction(forIndexPath: indexPath))
-        items.append(self.editRecipeAction(forIndexPath: indexPath))
-        items.append(self.deleteRecipeAction(forIndexPath: indexPath))
+        #if targetEnvironment(macCatalyst)
+        // Add a little separator between the items on macOS.
+        let actionMenu = UIMenu(title: "", options: .displayInline, children: [createRecipeAction, editRecipeAction])
+        let deleteMenu = UIMenu(title: "", options: .displayInline, children: [deleteRecipeAction])
+        items += [actionMenu, deleteMenu]
+        #else
+        items += [createRecipeAction, editRecipeAction, deleteRecipeAction]
+        #endif
 
         let actionProvider: UIContextMenuActionProvider = { _ in
             return UIMenu(title: "", image: nil, identifier: nil, children: items)

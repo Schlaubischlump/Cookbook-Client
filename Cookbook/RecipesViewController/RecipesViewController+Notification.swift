@@ -119,20 +119,18 @@ extension RecipesViewController {
             let recipe = self.filteredRecipes[row]
 
             // Reload the thumb image.
-            let height = self.tableView.rowHeight-10
-
             cell?.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
-                guard let imgView = cell?.imageView else { return }
+                guard let imgView = cell?.thumbnail else { return }
                 // Animte the possible image change.
                 UIView.transition(with: imgView, duration: 0.25, options: .transitionCrossDissolve, animations: {
-                    imgView.image = image?.af_imageAspectScaled(toFill: CGSize(width: height, height: height))
+                    imgView.image = image?.af_imageRounded(withCornerRadius: 5)
                 })
                 cell?.setNeedsLayout()
             })
 
             // Update the displayed text.
             if let name = recipeDetails["name"] as? String {
-                cell?.textLabel?.text = name
+                cell?.label?.text = name
                 cell?.setNeedsDisplay()
 
                 // We need to update the recipe name because otherwise the search update will not work.
