@@ -17,7 +17,10 @@ extension RecipesViewController: UISearchResultsUpdating {
 
     /// Update the search results when the searchField query changes.
     func updateSearchResults(for searchController: UISearchController) {
-        guard let searchText = searchController.searchBar.text else { return }
+        guard let searchText = searchController.searchBar.text else {
+            self.tableView.reloadData()
+            return
+        }
 
         // If an item is selected, make sure to keep the selection intact. This is for example important if you edit
         // a recipe while you are searching.
@@ -29,9 +32,7 @@ extension RecipesViewController: UISearchResultsUpdating {
         if searchText.isEmpty {
             self.filteredRecipes = self.recipes
         } else {
-            self.filteredRecipes = self.recipes.filter { (recipe: Recipe) -> Bool in
-                return recipe.name.lowercased().contains(searchText.lowercased())
-            }
+            self.filteredRecipes = self.recipes.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
 
         // Calculate the new index of the same recipe. If it does not exist (e.g. during a search) we do not want to
@@ -48,7 +49,6 @@ extension RecipesViewController: UISearchResultsUpdating {
             let recipe = splitViewController?.recipeDetailController?.recipe
             self.firstSelectedRow = self.recipes.firstIndex(where: { $0.recipeID == recipe?.recipeID }) ?? 0
         }
-
         self.tableView.reloadData()
     }
 }

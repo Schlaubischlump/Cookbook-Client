@@ -107,55 +107,23 @@ extension RecipesViewController {
     @objc func didEditRecipe(_ notification: Notification) {
         if let recipeID = notification.userInfo?["recipeID"] as? Int,
            let recipeDetails = notification.userInfo?["details"] as? [String: Any] {
-            // Save the current seach text.
-            let searchText = self.searchController.searchBar.text ?? ""
+
             // Check if the edited recipe is visible. Depending on the active window this might not be the case.
             // If we selected an item and start searching this might also be the case.
-            let index = self.filteredRecipes.firstIndex(where: { $0.recipeID == recipeID })
-
-            guard let row = index else {
-                // We need to update the name, otherwise we are working on outdated data. Everything else can not be
-                // edited, or belongs to the recipe details and is managed by the RecipeDetailViewController.
-                if let name = recipeDetails["name"] as? String,
-                   let recipe = self.recipes.first(where: { $0.recipeID == recipeID }) {
-                    recipe.name = name
-                }
-                // If we changed the name of the current recipe to one that matches the search string, we need to
-                // reload the table to make it visible.
-                if !searchText.isEmpty {
-                    self.updateSearchResults()
-                }
-                return
+            var recipe: Recipe?
+            if let row = self.filteredRecipes.firstIndex(where: { $0.recipeID == recipeID }) {
+                recipe = self.filteredRecipes[row]
+            } else {
+                recipe = self.recipes.first(where: { $0.recipeID == recipeID })
             }
 
-            // Get a reference to the active cell.
-            let indexPath = IndexPath(row: row, section: 0)
-            let cell = self.tableView.cellForRow(at: indexPath) as? RecipesTableViewCell
-            let recipe = self.filteredRecipes[row]
-
-            // Reload the thumb image.
-            cell?.imageLoadingRequestReceipt = recipe.loadImage(completionHandler: { image in
-                guard let imgView = cell?.thumbnail else { return }
-                // Animte the possible image change.
-                UIView.transition(with: imgView, duration: 0.25, options: .transitionCrossDissolve, animations: {
-                    imgView.image = image
-                })
-                cell?.setNeedsLayout()
-            })
-
-            // Update the displayed text.
+            // We need to update the recipe name because otherwise the search update will not work.
             if let name = recipeDetails["name"] as? String {
-                cell?.label?.text = name
-                cell?.setNeedsDisplay()
-
-                // We need to update the recipe name because otherwise the search update will not work.
-                recipe.name = name
+                recipe?.name = name
             }
 
-            // If we are currently searching for a recipe, we might need to update the list.
-            if !searchText.isEmpty {
-                self.updateSearchResults()
-            }
+            // Update the currently displayed information, including the recipe name and image.
+            self.updateSearchResults()
         }
     }
 

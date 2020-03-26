@@ -14,10 +14,10 @@ This is a Cookbook client application to manage your recipes stored in your Next
 - [x] Allow text selection    
 - [x] Support Add / edit / delete recipe   
 - [x] Cookbook v.0.6 support 
+- [x] Tooltips on macOS  
 
 **More enhancement ideas:**   
 - [ ] Pull to refresh / refresh toolbar item
-- [ ] Tooltips on macOS  
 - [ ] Support Cookbook v0.6 categories   
 - [ ] Custom recipe folder   
 - [ ] Keyboard shortcuts iOS and macOS    

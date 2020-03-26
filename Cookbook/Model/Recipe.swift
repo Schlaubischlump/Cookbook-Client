@@ -28,8 +28,15 @@ class Recipe {
     var name: String
     var userID: String
     var recipeID: Int
+
+    /// Shared image cache.
+    static private var thumbnailCache: [Int: UIImage] = [:]
+
     /// Keep a cached version of the thumbnail image.
-    var thumbnail: UIImage?
+    var thumbnail: UIImage? {
+        get { return Recipe.thumbnailCache[self.recipeID] }
+        set (image) { Recipe.thumbnailCache[self.recipeID] = image }
+    }
 
     static let descriptionKeys = [NSLocalizedString("DESCRIPTION", comment: ""),
                                   NSLocalizedString("SOURCE", comment: ""),
@@ -93,11 +100,8 @@ class Recipe {
 
         // Download the image.
         return ImageDownloader.default.download([router], completion: { (response: AFIDataResponse<Image>) in
-            guard let image = response.value else {
-                completionHandler(nil)
-                return
-            }
             // Cache the thumbnail image.
+            let image = response.value
             if thumb {
                 self.thumbnail = image
             }
