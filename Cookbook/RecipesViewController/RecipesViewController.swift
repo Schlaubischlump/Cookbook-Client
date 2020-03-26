@@ -247,7 +247,6 @@ class RecipesViewController: UITableViewController {
                     // Resize image to fill the height and redraw the UI.
                     recipeCell.thumbnail.image = image ?? #imageLiteral(resourceName: "placeholder_thumb")
                     recipeCell.setNeedsLayout()
-                    recipe.thumbnail = image
                 })
             }
         }

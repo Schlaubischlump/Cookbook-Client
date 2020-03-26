@@ -37,7 +37,7 @@ class Recipe {
                                   NSLocalizedString("COOKING_TIME", comment: ""),
                                   NSLocalizedString("TOTAL_TIME", comment: ""),
                                   NSLocalizedString("SERVINGS", comment: "")]
-    
+
     /// Return a dictionary with the basic recipe information (excluding the recipe details).
     func toDict() -> [String: Any] {
         return ["name": self.name, "recipeID": self.recipeID, "imageURL": imageURL, "userID": userID]
@@ -50,6 +50,29 @@ class Recipe {
                 return Recipe(imageURL: imageURL, name: name, userID: userID, recipeID: recipeID)
         }
         return nil
+    }
+
+    // MARK: - Helper
+
+    /**
+     Delete the currently cached thumb and fullSize images cached by AlamoreFire.
+     - Return: true if at least one image was removed, false otherwise.
+     */
+    @discardableResult
+    private func clearCachedImages() -> Bool {
+        var removedImage = false
+        let cache = ImageDownloader.default.imageCache as? AutoPurgingImageCache
+        let imageThumbRoute = Router.image(rid: self.recipeID, thumb: false)
+        if let thumbRequest = imageThumbRoute.urlRequest {
+            removedImage = cache?.removeImages(matching: thumbRequest) ?? false
+        }
+        let imageFullSizeRoute = Router.image(rid: self.recipeID, thumb: true)
+        if let fullSizeRequest = imageFullSizeRoute.urlRequest {
+            removedImage = cache?.removeImages(matching: fullSizeRequest) ?? false || removedImage
+        }
+        removedImage = removedImage || (self.thumbnail != nil)
+        self.thumbnail = nil
+        return removedImage
     }
 
     // MARK: - Constructor
@@ -73,6 +96,10 @@ class Recipe {
             guard let image = response.value else {
                 completionHandler(nil)
                 return
+            }
+            // Cache the thumbnail image.
+            if thumb {
+                self.thumbnail = image
             }
             completionHandler(image)
         }).first
@@ -182,11 +209,7 @@ class Recipe {
             .responseData { (response) in
                 switch response.result {
                 case .success:
-                    // Clean the currently stored images (full and thumb) for this recipe.
-                    if let request = router.urlRequest {
-                        let cache = ImageDownloader.default.imageCache as? AutoPurgingImageCache
-                        cache?.removeImages(matching: request)
-                    }
+                    self.clearCachedImages()
                     completionHandler()
                 case .failure(let error):
                     errorHandler(error)
@@ -205,11 +228,7 @@ class Recipe {
             .responseData { (response) in
                 switch response.result {
                 case .success:
-                    // Clean the currently stored images (full and thumb) for this recipe, we don't need them any more.
-                    if let request = router.urlRequest {
-                        let cache = ImageDownloader.default.imageCache as? AutoPurgingImageCache
-                        cache?.removeImages(matching: request)
-                    }
+                    self.clearCachedImages()
                     completionHandler()
                 case .failure(let error):
                     errorHandler(error)
