@@ -34,6 +34,7 @@ extension RecipesViewController {
     #endif
 
     // MARK: - Create a new recipe.
+
     @objc func addRecipe(item: Any?) {
         let storyBoard =  UIStoryboard(name: "Main", bundle: nil)
         let viewCon = storyBoard.instantiateViewController(withIdentifier: "RecipeDetailViewController")
@@ -44,15 +45,11 @@ extension RecipesViewController {
         // Setup the navigationBar items.
         newRecipeController.title = NSLocalizedString("NEW_RECIPE", comment: "")
 
-        let saveButton = UIBarButtonItem.with(kind: .save)
+        let saveButton = UIBarButtonItem.with(kind: .save, target: self, action: #selector(saveClicked))
         newRecipeController.navigationItem.rightBarButtonItem = saveButton
-        saveButton.target = self
-        saveButton.action = #selector(saveClicked)
 
-        let cancelButton = UIBarButtonItem.with(kind: .cancel)
+        let cancelButton = UIBarButtonItem.with(kind: .cancel, target: self, action: #selector(cancelClicked))
         newRecipeController.navigationItem.leftBarButtonItem = cancelButton
-        cancelButton.target = self
-        cancelButton.action = #selector(cancelClicked)
 
         // Setup the navigationController.
         let navController = UINavigationController(rootViewController: newRecipeController)

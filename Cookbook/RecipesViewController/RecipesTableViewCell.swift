@@ -12,12 +12,7 @@ import AlamofireImage
 
 class RecipesTableViewCell: UITableViewCell {
     /// Recipe imageView.
-    @IBOutlet var thumbnail: UIImageView! {
-        didSet {
-            self.thumbnail.layer.cornerRadius = 5
-            self.thumbnail.layer.masksToBounds = true
-        }
-    }
+    @IBOutlet var thumbnail: UIImageView!
 
     /// Textlabel.
     @IBOutlet var label: UILabel!
@@ -29,7 +24,7 @@ class RecipesTableViewCell: UITableViewCell {
     var imageLoadingRequestReceipt: RequestReceipt?
 
     /// Hide / show the line separator.
-    /// Note: The .sidebar Styles kills the UITableView separators.
+    /// Note: The .sidebar style kills the UITableView separators.
     var showLineSeparator: Bool = true
 
     /// We need to adjust the constraints on macOS.

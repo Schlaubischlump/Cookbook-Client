@@ -24,12 +24,7 @@ extension RecipesViewController: ReloadableViewController {
      */
     func reloadDataFromServer() {
         // If we are currently showing the login view we want to attach all ProgressHUDs to this view.
-        var attachedView: UIView?
-        if let view = self.loginViewController?.view {
-            attachedView = view
-        } else if let view = self.splitViewController?.view {
-            attachedView = view
-        }
+        let attachedView = self.loginViewController?.view ?? self.splitViewController?.view
 
         NotificationCenter.default.post(name: .willLoadRecipes, object: self)
 
@@ -45,12 +40,13 @@ extension RecipesViewController: ReloadableViewController {
             // Save the login information for the next time and dismiss the login screen if it exists.
             try? loginCredentials.updateStoredInformation()
 
+            // Inform all observers about the new recipes.
+            NotificationCenter.default.post(name: .didLoadRecipes, object: self)
+
             // Dismiss the login view if it is currently visible.
             if self.loginViewController != nil {
                 self.dismiss(animated: true, completion: {
                     self.loginViewController = nil
-                    // Inform all observers about the new recipes.
-                    NotificationCenter.default.post(name: .didLoadRecipes, object: self)
                 })
             } else {
                 NotificationCenter.default.post(name: .didLoadRecipes, object: self)

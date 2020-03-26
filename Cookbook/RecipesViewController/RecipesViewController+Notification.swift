@@ -88,7 +88,7 @@ extension RecipesViewController {
         self.searchController.searchBar.text = ""
         self.searchController.isActive = false
 
-        // Open the sidebar.
+        // Open the sidebar to prevent a disabled window state on macOS.
         let splitViewController = self.splitViewController as? SplitViewController
         if splitViewController?.displayMode != .allVisible {
             splitViewController?.toggleSidebar()

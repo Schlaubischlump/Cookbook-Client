@@ -15,18 +15,18 @@ let kMaxCellWidth: CGFloat = 500
 class RecipeDetailViewController: UIViewController {
     // MARK: - Properties
 
-    /// main scrollview container
+    /// Main scrollview and the corresponding container.
     @IBOutlet var scrollView: UIScrollView?
     @IBOutlet var contentView: UIView?
 
-    /// parallax header image view
+    /// Parallax header image view.
     @IBOutlet var parallaxHeaderImageView: UIImageView?
 
-    /// header image view top / height constraint
+    /// Header image view top / height constraint.
     @IBOutlet var parallaxHeightConstraint: NSLayoutConstraint?
     @IBOutlet var parallaxTopConstraint: NSLayoutConstraint?
 
-    /// List with general information about the recipe
+    /// List with general information about the recipe.
     @IBOutlet var descriptionList: EnumerationList?
     @IBOutlet var descriptionListHeight: NSLayoutConstraint?
 
@@ -61,13 +61,14 @@ class RecipeDetailViewController: UIViewController {
     /// Recipe which belongs to this viewcontroller.
     var recipe: Recipe? {
         didSet (newRecipe) {
+            // If the recipe changes reload the view.
             if self.recipe?.recipeID != newRecipe?.recipeID {
                 self.reloadData(useCachedData: false)
             }
         }
     }
 
-    /// Recipe details for this detailItem.
+    /// Recipe details for this recipe instance.
     var recipeDetails: [String: Any] = [:]
 
     /**
@@ -137,6 +138,7 @@ class RecipeDetailViewController: UIViewController {
     /// Start edit mode as soon as the view appears on the screen.
     var startEditModeOnViewDidAppear: Bool = false
 
+    /// Oberserver for reload and logout requests.
     private var logoutObserver: NSObjectProtocol?
     private var reloadObserver: NSObjectProtocol?
 
@@ -145,7 +147,7 @@ class RecipeDetailViewController: UIViewController {
     /**
      Update the recipe description list. If `includeAllFields` is true, the description list will include entries
      with an empty value as well as an additional field for `image` and `name`.
-     - Parameter includeAllFields: show all avaiable fields
+     - Parameter includeAllFields: true to show all avaiable fields, false to only show the once with a value
      */
     private func reloadRecipeDescriptionList(includeAllFields: Bool = false) {
         var (descKeys, descData) = Recipe.parseDescriptionValuesFor(recipeDetails: self.recipeDetails)
@@ -174,7 +176,9 @@ class RecipeDetailViewController: UIViewController {
         self.updateContentSize()
     }
 
-    /// Update the scrollView contentSize to display all the content.
+    /**
+     Update the scrollView contentSize to display all the content.
+    */
     @objc func updateContentSize() {
         self.toolsListHeight?.constant = self.toolsList?.contentSize.height ?? 0
         self.descriptionListHeight?.constant = self.descriptionList?.contentSize.height ?? 0
@@ -199,6 +203,7 @@ class RecipeDetailViewController: UIViewController {
         self.toolsList?.allowsCellInsertion = true
         self.ingredientsList?.allowsCellInsertion = true
         self.instructionsList?.allowsCellInsertion = true
+
         self.toolsList?.allowsCellDeletion = true
         self.ingredientsList?.allowsCellDeletion = true
         self.instructionsList?.allowsCellDeletion = true

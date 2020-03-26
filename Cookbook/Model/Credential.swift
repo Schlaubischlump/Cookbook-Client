@@ -36,7 +36,7 @@ class Credentials {
 
     static func setDefaultInformation() {
         let defaults = UserDefaults.standard
-        defaults.register(defaults: [.server: "", .user: "", .password: ""])
+        defaults.register(defaults: [.server: "", .user: ""])
         defaults.synchronize()
     }
 
@@ -113,8 +113,6 @@ class Credentials {
 
         defaults.set(self.server, forKey: .server)
         defaults.set(self.username, forKey: .user)
-        // Add dummy data for the password
-        defaults.set("12345678", forKey: .password)
         defaults.synchronize()
 
         //print("Store: ", self.server, self.username)

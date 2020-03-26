@@ -11,6 +11,9 @@ import UIKit
 
 // MARK: - Drag and Drop
 extension RecipesViewController: UITableViewDragDelegate {
+    /**
+     Override this function to allow opening a new window via drag & drop.
+     */
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession,
                    at indexPath: IndexPath) -> [UIDragItem] {
         let recipe = self.filteredRecipes[indexPath.row]
@@ -20,9 +23,6 @@ extension RecipesViewController: UITableViewDragDelegate {
         let itemProvider = NSItemProvider(object: image)
         itemProvider.registerObject(userActivity, visibility: .all)
 
-        let dragItem = UIDragItem(itemProvider: itemProvider)
-        //dragItem.localObject = self.filteredRecipes[indexPath.row]
-
-        return [dragItem]
+        return [UIDragItem(itemProvider: itemProvider)]
     }
 }

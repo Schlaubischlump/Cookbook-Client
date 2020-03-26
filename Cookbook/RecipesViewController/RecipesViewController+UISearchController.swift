@@ -15,7 +15,10 @@ extension RecipesViewController: UISearchResultsUpdating {
         self.updateSearchResults(for: self.searchController)
     }
 
-    /// Update the search results when the searchField query changes.
+    /**
+     Update the tableView with respect to the currently entered searchString.
+     - Parameter searchController: the searchController instance to use.
+     */
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else {
             self.tableView.reloadData()

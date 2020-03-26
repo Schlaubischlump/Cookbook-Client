@@ -13,11 +13,11 @@
  +-----------------------------------------+-----------+-----------------------------+------------------------+--------+
  |               Description               |  Method   |             Path            |        Parameters      | Format |
  +-----------------------------------------+-----------+-----------------------------+------------------------+--------+
- | List all recipes                        |    get    |   api/recipes               |        keywords        |  json  |
+ | List all recipes                        |    get    |   /api/recipes              |        keywords        |  json  |
  | Get an image for a recipe               |    get    |   /recipes/{id}/image       |   size (thumb, full)   | binary |
- | List all recipe information             |    get    |   api/recipe/{id}           |                        |  json  |
- | Delete a recipe                         |   delete  |   api/recipe/{id}           |                        |        |
- | Change the recipe information           |    put    |   api/recipe/{id}           |      recipe details    |        |
+ | List all recipe information             |    get    |   /api/recipe/{id}          |                        |  json  |
+ | Delete a recipe                         |   delete  |   /api/recipe/{id}          |                        |        |
+ | Change the recipe information           |    put    |   /api/recipe/{id}          |      recipe details    |        |
  +-----------------------------------------+-----------+-----------------------------+------------------------+--------+
  
  */

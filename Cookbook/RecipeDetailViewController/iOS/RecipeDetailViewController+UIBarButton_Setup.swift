@@ -11,7 +11,8 @@ import UIKit
 
 extension RecipeDetailViewController {
     /**
-     Setup the navigation and toolbar items on iOS. MacOS does not need this method, because it uses NSToolbarItems.
+     Setup the navigation and toolbar items on iOS. MacOS does not need this method, because it uses NSToolbarItems
+     instead.
      */
     func setupNavigationAndToolbar() {
         // Setup the toolbar to add/edit/delte items.

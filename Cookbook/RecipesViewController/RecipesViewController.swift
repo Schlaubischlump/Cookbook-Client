@@ -181,24 +181,17 @@ class RecipesViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell,
                             forRowAt indexPath: IndexPath) {
 
-        // Do not auto select an item if we are searching.
-        guard !self.searchController.searchBar.isFirstResponder else { return }
+        // Do not auto select an item if we are searching or if we explicitly do not want to change the selection.
+        guard !self.searchController.searchBar.isFirstResponder, let row = self.firstSelectedRow else { return }
 
         // Only when we display the last cell. viewDidAppear is not called often enough for this, so we use
         // `willDisplayCell`. We want to execute this function only once. In this case we just choose the last cell.
         if indexPath.row == tableView.indexPathsForVisibleRows?.last?.row {
             // If both views are visible select the first item if possible and none is currently selected.
             // This prevents opening the first item when the app launches on an iPhone.
-            let isSplitViewControllerSeparated = self.splitViewController?.displayMode == .allVisible
-                && !self.splitViewController!.isCollapsed
-
-            // Nevertheless we want this to be executed when we open a new window on iPad.
-            if isSplitViewControllerSeparated {
-                guard self.firstSelectedRow != nil else { return }
-
-                let indexPath = IndexPath(row: self.firstSelectedRow!, section: 0)
+            if self.splitViewController?.displayMode == .allVisible && !self.splitViewController!.isCollapsed {
                 self.tableView.becomeFirstResponder()
-                self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+                self.tableView.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
 
                 let identifier = "showDetail"
                 if self.shouldPerformSegue(withIdentifier: identifier, sender: indexPath) {
@@ -216,6 +209,7 @@ class RecipesViewController: UITableViewController {
         // Save some memory.
         recipeCell.label.text = nil
 
+        // Cancel any running thumbnail download request.
         if let receipt = recipeCell.imageLoadingRequestReceipt {
             ImageDownloader.default.cancelRequest(with: receipt)
             recipeCell.imageLoadingRequestReceipt = nil
