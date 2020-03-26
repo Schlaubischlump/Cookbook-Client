@@ -71,9 +71,7 @@ enum Router: URLRequestConvertible {
         let url = try baseURLString.asURL()
         var urlRequest = URLRequest(url: url.appendingPathComponent(self.path))
         urlRequest.httpMethod = self.method.rawValue
-        if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
-            urlRequest.setValue(authorizationHeader.value, forHTTPHeaderField: authorizationHeader.key)
-        }
+        urlRequest.headers.add(.authorization(username: user, password: password))
 
         switch self {
         case .allRecipes(let parameters):

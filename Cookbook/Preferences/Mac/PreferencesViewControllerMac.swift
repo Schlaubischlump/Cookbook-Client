@@ -92,7 +92,7 @@ class PreferencesViewControllerMac: UIViewController {
         // Reset the login credentials before we try the next api request.
         if self.didPerformLogout && !loginCredentials.informationIsSet() { return }
 
-        SessionManager.default.session.reset {
+        Session.default.session.reset {
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: .reload, object: nil)
             }

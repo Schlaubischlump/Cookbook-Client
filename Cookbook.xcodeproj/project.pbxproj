@@ -18,10 +18,11 @@
 		63382322240C0176002DA167 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63382321240C0176002DA167 /* Array+Extension.swift */; };
 		6369336A241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63693369241D0D15009831C9 /* RecipesViewController+UIContextMenu.swift */; };
 		6369336D241D1752009831C9 /* SceneDelegate+NSToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6369336C241D1752009831C9 /* SceneDelegate+NSToolbar.swift */; platformFilter = maccatalyst; };
+		63896BD5242CAD65006E4AD7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 63896BD4242CAD65006E4AD7 /* Alamofire */; };
+		63896BD8242CAD83006E4AD7 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 63896BD7242CAD83006E4AD7 /* MBProgressHUD */; };
 		638BA668240C6ABF007F6B74 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA667240C6ABF007F6B74 /* UIView+Extension.swift */; };
 		638BA66C240EED6F007F6B74 /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA66B240EED6E007F6B74 /* DateComponents+Extension.swift */; };
 		638BA66F240EEDC9007F6B74 /* NextCloudLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA66E240EEDC9007F6B74 /* NextCloudLoginViewController.swift */; };
-		638BA67724108CBB007F6B74 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 638BA67624108CBB007F6B74 /* MBProgressHUD */; };
 		638BA68124110EAF007F6B74 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 638BA68024110EAF007F6B74 /* Settings.bundle */; platformFilter = ios; };
 		638BA68A241189EB007F6B74 /* UserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BA689241189EB007F6B74 /* UserDefaults+Extension.swift */; };
 		638BA691241272B6007F6B74 /* Preferences_Mac.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 638BA690241272B6007F6B74 /* Preferences_Mac.storyboard */; };
@@ -40,8 +41,6 @@
 		639AE68E23AF758E008244BA /* CookbookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639AE68D23AF758E008244BA /* CookbookTests.swift */; };
 		639AE69923AF758E008244BA /* CookbookUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639AE69823AF758E008244BA /* CookbookUITests.swift */; };
 		639AE6A923AF76F7008244BA /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639AE6A823AF76F7008244BA /* Router.swift */; };
-		639AE6AC23AF7826008244BA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 639AE6AB23AF7826008244BA /* Alamofire */; };
-		639AE6B623AF8856008244BA /* AlamofireImage in Frameworks */ = {isa = PBXBuildFile; productRef = 639AE6B523AF8856008244BA /* AlamofireImage */; };
 		639AE6BB23B0FEBE008244BA /* EnumerationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639AE6BA23B0FEBE008244BA /* EnumerationList.swift */; };
 		63B65134242ABFE700F50D7E /* CGRect+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B65133242ABFE700F50D7E /* CGRect+Extension.swift */; };
 		63D8CA62241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8CA61241D355D004A7F9C /* RecipesViewController+UIBarButton_Action.swift */; };
@@ -61,6 +60,7 @@
 		63E3289124224C2A008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289024224C29008F51A9 /* RecipeDetailViewController+ReloadableViewController.swift */; };
 		63E3289424238B5A008F51A9 /* RecipeDetailViewController+UIBarButton_Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289324238B5A008F51A9 /* RecipeDetailViewController+UIBarButton_Setup.swift */; platformFilter = ios; };
 		63E3289624238E54008F51A9 /* RecipeDetailViewController+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E3289524238E54008F51A9 /* RecipeDetailViewController+Notification.swift */; };
+		63F5B255242CADFE004E38DA /* AlamofireImage in Frameworks */ = {isa = PBXBuildFile; productRef = 63F5B254242CADFE004E38DA /* AlamofireImage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,9 +149,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				638BA67724108CBB007F6B74 /* MBProgressHUD in Frameworks */,
-				639AE6AC23AF7826008244BA /* Alamofire in Frameworks */,
-				639AE6B623AF8856008244BA /* AlamofireImage in Frameworks */,
+				63896BD8242CAD83006E4AD7 /* MBProgressHUD in Frameworks */,
+				63896BD5242CAD65006E4AD7 /* Alamofire in Frameworks */,
+				63F5B255242CADFE004E38DA /* AlamofireImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,9 +439,9 @@
 			);
 			name = Cookbook;
 			packageProductDependencies = (
-				639AE6AB23AF7826008244BA /* Alamofire */,
-				639AE6B523AF8856008244BA /* AlamofireImage */,
-				638BA67624108CBB007F6B74 /* MBProgressHUD */,
+				63896BD4242CAD65006E4AD7 /* Alamofire */,
+				63896BD7242CAD83006E4AD7 /* MBProgressHUD */,
+				63F5B254242CADFE004E38DA /* AlamofireImage */,
 			);
 			productName = Cookbook;
 			productReference = 639AE67123AF7588008244BA /* Cookbook.app */;
@@ -517,9 +517,9 @@
 			);
 			mainGroup = 639AE66823AF7588008244BA;
 			packageReferences = (
-				639AE6AA23AF7826008244BA /* XCRemoteSwiftPackageReference "Alamofire" */,
-				639AE6B423AF8856008244BA /* XCRemoteSwiftPackageReference "AlamofireImage" */,
-				638BA67524108CBB007F6B74 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
+				63896BD3242CAD65006E4AD7 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				63896BD6242CAD83006E4AD7 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
+				63F5B253242CADFE004E38DA /* XCRemoteSwiftPackageReference "AlamofireImage" */,
 			);
 			productRefGroup = 639AE67223AF7588008244BA /* Products */;
 			projectDirPath = "";
@@ -996,7 +996,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		638BA67524108CBB007F6B74 /* XCRemoteSwiftPackageReference "MBProgressHUD" */ = {
+		63896BD3242CAD65006E4AD7 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.5;
+			};
+		};
+		63896BD6242CAD83006E4AD7 /* XCRemoteSwiftPackageReference "MBProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jdg/MBProgressHUD";
 			requirement = {
@@ -1004,38 +1012,30 @@
 				minimumVersion = 1.2.0;
 			};
 		};
-		639AE6AA23AF7826008244BA /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.9.1;
-			};
-		};
-		639AE6B423AF8856008244BA /* XCRemoteSwiftPackageReference "AlamofireImage" */ = {
+		63F5B253242CADFE004E38DA /* XCRemoteSwiftPackageReference "AlamofireImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/AlamofireImage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.6.0;
+				minimumVersion = 4.0.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		638BA67624108CBB007F6B74 /* MBProgressHUD */ = {
+		63896BD4242CAD65006E4AD7 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 638BA67524108CBB007F6B74 /* XCRemoteSwiftPackageReference "MBProgressHUD" */;
-			productName = MBProgressHUD;
-		};
-		639AE6AB23AF7826008244BA /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 639AE6AA23AF7826008244BA /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 63896BD3242CAD65006E4AD7 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		639AE6B523AF8856008244BA /* AlamofireImage */ = {
+		63896BD7242CAD83006E4AD7 /* MBProgressHUD */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 639AE6B423AF8856008244BA /* XCRemoteSwiftPackageReference "AlamofireImage" */;
+			package = 63896BD6242CAD83006E4AD7 /* XCRemoteSwiftPackageReference "MBProgressHUD" */;
+			productName = MBProgressHUD;
+		};
+		63F5B254242CADFE004E38DA /* AlamofireImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63F5B253242CADFE004E38DA /* XCRemoteSwiftPackageReference "AlamofireImage" */;
 			productName = AlamofireImage;
 		};
 /* End XCSwiftPackageProductDependency section */

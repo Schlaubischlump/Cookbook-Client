@@ -92,7 +92,7 @@ class Recipe {
         let router = Router.image(rid: self.recipeID, thumb: thumb)
 
         // Download the image.
-        return ImageDownloader.default.download([router], completion: { (response: DataResponse<Image>) in
+        return ImageDownloader.default.download([router], completion: { (response: AFIDataResponse<Image>) in
             guard let image = response.value else {
                 completionHandler(nil)
                 return
@@ -123,7 +123,7 @@ class Recipe {
     func loadRecipeDetails(completionHandler: @escaping DetailsCompletionHandler,
                            errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.recipe(rid: self.recipeID)
-        SessionManager
+        Session
             .default
             .request(router)
             .validate(statusCode: 200..<300)
@@ -152,7 +152,7 @@ class Recipe {
     static func loadRecipes(completionHandler: @escaping RecipesCompletionHandler,
                             errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.allRecipes(paramters: ["keywords": ""])
-        SessionManager
+        Session
             .default
             .request(router)
             .validate(statusCode: 200..<300)
@@ -202,7 +202,7 @@ class Recipe {
     func update(_ recipeDetails: [String: Any], completionHandler: @escaping UpdateCompletionHandler,
                 errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.update(rid: self.recipeID, recipeDetails: recipeDetails)
-        SessionManager
+        Session
             .default
             .request(router)
             .validate(statusCode: 200..<300)
@@ -221,7 +221,7 @@ class Recipe {
     func delete(_ completionHandler: @escaping UpdateCompletionHandler,
                 errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.delete(rid: self.recipeID)
-        SessionManager
+        Session
             .default
             .request(router)
             .validate(statusCode: 200..<300)
@@ -240,7 +240,7 @@ class Recipe {
     static func create(_ recipeDetails: [String: Any], completionHandler: @escaping CreateCompletionHandler,
                        errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.create(recipeDetails: recipeDetails)
-        SessionManager
+        Session
             .default
             .request(router)
             .validate(statusCode: 200..<300)
