@@ -32,7 +32,7 @@ extension RecipeDetailViewController: ReloadableViewController {
         self.title = recipe?.name ?? ""
         self.descriptionList?.title = recipe?.name ?? ""
 
-        let (descriptionKeys, descriptionData) = Recipe.parseDescriptionValuesFor(jsonArray: self.recipeDetails)
+        let (descriptionKeys, descriptionData) = Recipe.parseDescriptionValuesFor(recipeDetails: self.recipeDetails)
         self.descriptionList?.enumerationStyle = .string(descriptionKeys)
         self.descriptionList?.data = descriptionData
 

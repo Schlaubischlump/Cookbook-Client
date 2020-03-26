@@ -148,7 +148,7 @@ class RecipeDetailViewController: UIViewController {
      - Parameter includeAllFields: show all avaiable fields
      */
     private func reloadRecipeDescriptionList(includeAllFields: Bool = false) {
-        var (descKeys, descData) = Recipe.parseDescriptionValuesFor(jsonArray: self.recipeDetails)
+        var (descKeys, descData) = Recipe.parseDescriptionValuesFor(recipeDetails: self.recipeDetails)
 
         if includeAllFields {
             // Add a value for each possible field.

@@ -24,15 +24,21 @@ enum RecipeError: Error {
 }
 
 class Recipe {
+    /// The image url on the NextCloud belongig to the recipe.
     var imageURL: String
+    /// The image name.
     var name: String
+    /// The user name.
     var userID: String
+    /// The unique recipeID.
     var recipeID: Int
 
     /// Shared image cache.
     static private var thumbnailCache: [Int: UIImage] = [:]
 
-    /// Keep a cached version of the thumbnail image.
+    /// Keep a cached version of the thumbnail image because the thumbnail might be requiered more often and we do not
+    /// want to trust that AlamofireImage will cache the image all the time. Futhermore this reduces lets us access the
+    // image synchronous.
     var thumbnail: UIImage? {
         get { return Recipe.thumbnailCache[self.recipeID] }
         set (image) { Recipe.thumbnailCache[self.recipeID] = image }
@@ -45,12 +51,18 @@ class Recipe {
                                   NSLocalizedString("TOTAL_TIME", comment: ""),
                                   NSLocalizedString("SERVINGS", comment: "")]
 
-    /// Return a dictionary with the basic recipe information (excluding the recipe details).
+    /**
+     Get the simple representation of the recipe as dicitonary.
+     - Return: a dictionary with the basic recipe information (excluding the recipe details).
+     */
     func toDict() -> [String: Any] {
         return ["name": self.name, "recipeID": self.recipeID, "imageURL": imageURL, "userID": userID]
     }
 
-    /// Create a recipe from the dictionary
+    /**
+     Create a recipe from its simple dictionary representation.
+     - Return: Recipe instance.
+    */
     static func from(dict: [String: Any]) -> Recipe? {
         if let imageURL = dict["imageURL"] as? String, let name = dict["name"] as? String,
            let recipeID = dict["recipeID"] as? Int, let userID = dict["userID"] as? String {
@@ -93,7 +105,12 @@ class Recipe {
 
     // MARK: - Data loading
 
-    /// Load the corersponding recipe image either as thumbnail or in full resolution.
+    /**
+     Load the corersponding recipe image either as thumbnail or in full resolution.
+     - Parameter completionHandler: closure with the attached image data or nil called after the request is completed
+     - Parameter thumb: true to request the thumbnail or false to request the full version of the image
+     - Return: RequestReceipt instance to cancel the loading request.
+    */
     @discardableResult
     func loadImage(completionHandler: @escaping ImageCompletionHandler, thumb: Bool = true) -> RequestReceipt? {
         let router = Router.image(rid: self.recipeID, thumb: thumb)
@@ -109,8 +126,11 @@ class Recipe {
         }).first
     }
 
-    /// Parse the json dictionary and return the description data with corresponding keys as arrays.
-    static func parseDescriptionValuesFor(jsonArray recipeDetails: [String: Any]) -> ([String], [String]) {
+    /**
+     Parse the recipe details dictionary and return the description data with corresponding keys as arrays.
+     - Parameter recipeDetails: the complete recipe details to parse (only a subset of all entries is used)
+    */
+    static func parseDescriptionValuesFor(recipeDetails: [String: Any]) -> ([String], [String]) {
         let servings: Int? = (recipeDetails["recipeYield"] as? Int)
 
         let descriptionData: [String] = [(recipeDetails["description"] as? String ?? ""),
@@ -123,7 +143,11 @@ class Recipe {
         return (Recipe.descriptionKeys.booleanMask(mask), descriptionData.booleanMask(mask))
     }
 
-    /// Load the recipe details as json array. Use parseDescriptionValuesFor(jsonArray:) to parse the Data.
+    /**
+     Load the recipe details as json array from the server.
+     - Parameter completionHandler: closure called when the recipe details are loaded successfully
+     - Parameter errorHandler: closure called when an error occured.
+    */
     func loadRecipeDetails(completionHandler: @escaping DetailsCompletionHandler,
                            errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.recipe(rid: self.recipeID)
@@ -152,7 +176,11 @@ class Recipe {
         }
     }
 
-    /// Load all recipes from the server.
+    /**
+     Load all recipes from the server.
+     - Parameter completionHandler: closure with all Recipe instances called when the data is loaded successfully
+     - Parameter errorHandler: closure called when an error occured.
+    */
     static func loadRecipes(completionHandler: @escaping RecipesCompletionHandler,
                             errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.allRecipes(paramters: ["keywords": ""])
@@ -202,7 +230,12 @@ class Recipe {
 
     // MARK: - Add / update / delete
 
-    /// Update an existing recipe with new recipe details.
+    /**
+     Update an existing recipe with new recipe details.
+     - Parameter recipeDetails: the new recipe detail information
+     - Parameter completionHandler: closure called when the update operation was successfull
+     - Parameter errorHandler: closure called when an error occured
+    */
     func update(_ recipeDetails: [String: Any], completionHandler: @escaping UpdateCompletionHandler,
                 errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.update(rid: self.recipeID, recipeDetails: recipeDetails)
@@ -221,7 +254,11 @@ class Recipe {
         }
     }
 
-    /// Delete an existing recipe from the server.
+    /**
+     Delete an existing recipe from the server.
+     - Parameter completionHandler: closure called when the delete operation was successfull
+     - Parameter errorHandler: closure called when an error occured.
+    */
     func delete(_ completionHandler: @escaping UpdateCompletionHandler,
                 errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.delete(rid: self.recipeID)
@@ -240,7 +277,12 @@ class Recipe {
         }
     }
 
-    /// Create a new recipe.
+    /**
+     Create a new recipe.
+     - Parameter recipeDetails: the recipe detail information for this new recipe
+     - Parameter completionHandler: closure called when the update operation was successfull
+     - Parameter errorHandler: closure called when an error occured.
+    */
     static func create(_ recipeDetails: [String: Any], completionHandler: @escaping CreateCompletionHandler,
                        errorHandler: @escaping ErrorHandler = { _ in }) {
         let router = Router.create(recipeDetails: recipeDetails)
