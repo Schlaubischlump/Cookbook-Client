@@ -21,6 +21,9 @@ extension Notification.Name {
     /// Called when all recipes are loaded from the server (excluding the recipe details).
     static let didLoadRecipes = Notification.Name("com.cookbook.didLoadRecipes.notification")
 
+    /// Called when the login prompt is displayed.
+    static let showLoginPrompt = Notification.Name("com.cookbook.showLoginPrompt.notification")
+
     /// Called when the recipe detail view starts loading the data from the server.
     static let willLoadRecipeDetails = Notification.Name("com.cookbook.willLoadRecipeDetails.notification")
     /// Called when the recipe detail view finished loading.

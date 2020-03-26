@@ -22,6 +22,7 @@ extension RecipesViewController {
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(self.didRemoveRecipe), name: .didRemoveRecipe, object: nil)
         center.addObserver(self, selector: #selector(self.didLoadRecipes), name: .didLoadRecipes, object: nil)
+        center.addObserver(self, selector: #selector(self.showLoginPrompt), name: .showLoginPrompt, object: nil)
         center.addObserver(self, selector: #selector(self.didEditRecipe), name: .didEditRecipe, object: nil)
         center.addObserver(self, selector: #selector(self.didAddRecipe), name: .didAddRecipe, object: nil)
         center.addObserver(self, selector: #selector(self.didAttemptLogin), name: .login, object: nil)
@@ -36,6 +37,7 @@ extension RecipesViewController {
         let center = NotificationCenter.default
         center.removeObserver(self, name: .didRemoveRecipe, object: nil)
         center.removeObserver(self, name: .didLoadRecipes, object: nil)
+        center.removeObserver(self, name: .showLoginPrompt, object: nil)
         center.removeObserver(self, name: .didEditRecipe, object: nil)
         center.removeObserver(self, name: .didAddRecipe, object: nil)
         center.removeObserver(self, name: .login, object: nil)
@@ -77,6 +79,19 @@ extension RecipesViewController {
             if !(self.searchController.searchBar.text?.isEmpty ?? true) {
                 self.present(self.searchController, animated: false)
             }
+        }
+    }
+
+    /// Called when the login prompt is displayed.
+    @objc func showLoginPrompt(_ notification: Notification) {
+        // Reset the search.
+        self.searchController.searchBar.text = ""
+        self.searchController.isActive = false
+
+        // Open the sidebar.
+        let splitViewController = self.splitViewController as? SplitViewController
+        if splitViewController?.displayMode != .allVisible {
+            splitViewController?.toggleSidebar()
         }
     }
 

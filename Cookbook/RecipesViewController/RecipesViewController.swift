@@ -120,6 +120,8 @@ class RecipesViewController: UITableViewController {
         self.loginViewController?.username = loginCredentials.username
         self.loginViewController?.password = loginCredentials.password
 
+        NotificationCenter.default.post(name: .showLoginPrompt, object: nil)
+
         self.loginViewController?.beginSheetModal(self) { [weak self] response in
             switch response {
             case .login:

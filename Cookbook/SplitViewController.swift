@@ -45,7 +45,7 @@ class SplitViewController: UISplitViewController {
     #endif
 
     // MARK: - Catalyst Helper
-    @objc func toggleSidebar(item: Any) {
+    @objc func toggleSidebar(item: Any?=nil) {
         // Make sure to make the master view controller the new fist responder.
         self.recipesMasterController?.view.becomeFirstResponder()
 

@@ -22,7 +22,7 @@ extension RecipesViewController: UISearchResultsUpdating {
         // If an item is selected, make sure to keep the selection intact. This is for example important if you edit
         // a recipe while you are searching.
         let selectedRow = tableView.indexPathForSelectedRow?.row
-        let keepSelection = selectedRow != nil
+        let keepSelection = selectedRow != nil && selectedRow! < self.filteredRecipes.count
         let recipeID: Int? = keepSelection ? self.filteredRecipes[selectedRow!].recipeID : nil
 
         // Update the search result.
