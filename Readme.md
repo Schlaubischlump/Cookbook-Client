@@ -15,11 +15,12 @@ This is a Cookbook client application to manage your recipes stored in your Next
 - [x] Support Add / edit / delete recipe   
 - [x] Cookbook v.0.6 support 
 - [x] Tooltips on macOS  
+- [x] ~~Custom recipe folder (not needed)~~   
+
 
 **More enhancement ideas:**   
-- [ ] Pull to refresh / refresh toolbar item
+- [ ] Pull to refresh / refresh toolbar item   
 - [ ] Support Cookbook v0.6 categories   
-- [ ] Custom recipe folder   
 - [ ] Keyboard shortcuts iOS and macOS    
 - [ ] Offline support / Caching   
 - [ ] NextCloud two factor authentication (use an application password) 
