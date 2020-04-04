@@ -233,7 +233,7 @@ class PreferencesViewControlleriOS: UITableViewController {
         loginCredentials.password = self.textFieldValues[IndexPath(row: 2, section: 0)]
 
         // Reset the login credentials before we try the next api request.
-        SessionManager.default.session.reset {
+        Session.default.session.reset {
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: .reload, object: nil)
                 if let completion = self.modalCompletionHandler {
