@@ -209,12 +209,14 @@ class Recipe {
                         let img = (entry["image_url"] as? String) ?? ""
                         let name = entry["name"] as? String
                         let user = entry["user_id"] as? String
-                        let rid = (entry["recipe_id"] as? String)?.intValue
+                        // Fix: Cookbook 0.63
+                        let rid = entry["recipe_id"] as? Int ?? (entry["recipe_id"] as? String)?.intValue
 
                         if let name = name, let user = user, let rid = rid {
                             let recipe = Recipe(imageURL: img, name: name, userID: user, recipeID: rid)
                             recipes.append(recipe)
                         }
+                        print(recipes)
                     }
                     // Sort the recipes by name.
                     recipes.sort(by: {
