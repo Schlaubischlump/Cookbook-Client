@@ -11,7 +11,7 @@ import UIKit
 import MBProgressHUD
 
 /**
- Wrapper class for MBProgressHUD which supports sending notifications when a HUD is displayed or hidden.
+ Wrapper class for MBProgressHUD.
  */
 class ProgressHUD: MBProgressHUD {
     /// Create a new HUD attached to a specific view.
