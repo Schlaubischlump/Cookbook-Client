@@ -187,7 +187,8 @@ class RecipesViewController: UITableViewController {
         // Only when we display the last cell. viewDidAppear is not called often enough for this, so we use
         // `willDisplayCell`. We want to execute this function only once. In this case we just choose the last cell.
         if indexPath.row == tableView.indexPathsForVisibleRows?.last?.row {
-            // If both views are visible select the first item if possible and none is currently selected.
+            // If both views are visible select the first item if possible, but only if none is currently selected.
+            guard tableView.indexPathForSelectedRow == nil else { return }
             // This prevents opening the first item when the app launches on an iPhone.
             if self.splitViewController?.displayMode == .allVisible && !self.splitViewController!.isCollapsed {
                 self.tableView.becomeFirstResponder()

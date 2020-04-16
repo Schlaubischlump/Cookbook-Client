@@ -216,7 +216,6 @@ class Recipe {
                             let recipe = Recipe(imageURL: img, name: name, userID: user, recipeID: rid)
                             recipes.append(recipe)
                         }
-                        print(recipes)
                     }
                     // Sort the recipes by name.
                     recipes.sort(by: {
