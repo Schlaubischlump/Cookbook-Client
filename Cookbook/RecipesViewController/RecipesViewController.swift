@@ -192,10 +192,12 @@ class RecipesViewController: UITableViewController {
             // This prevents opening the first item when the app launches on an iPhone.
             if self.splitViewController?.displayMode == .allVisible && !self.splitViewController!.isCollapsed {
                 self.tableView.becomeFirstResponder()
-                self.tableView.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
+
+                let firstIndexPath = IndexPath(row: row, section: 0)
+                self.tableView.selectRow(at: firstIndexPath, animated: false, scrollPosition: .none)
 
                 let identifier = "showDetail"
-                if self.shouldPerformSegue(withIdentifier: identifier, sender: indexPath) {
+                if self.shouldPerformSegue(withIdentifier: identifier, sender: firstIndexPath) {
                     self.performSegue(withIdentifier: identifier, sender: nil)
                 }
             }

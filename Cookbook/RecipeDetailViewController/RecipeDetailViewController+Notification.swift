@@ -57,7 +57,7 @@ extension RecipeDetailViewController {
         if let recipeID = notification.userInfo?["recipeID"] as? Int,
            let newRecipeDetails = notification.userInfo?["details"] as? [String: Any] {
 
-            // If the currently displayed recipe belong to this recipe change the dispalyed information.
+            // If the currently displayed recipe is the same as the edited recipe change the dispalyed information.
             guard recipeID == self.recipe?.recipeID else { return }
 
             // Update the displayed name.
